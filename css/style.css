@@ -1,0 +1,352 @@
+:root {
+  --bg: #0b1220;
+  --panel: #141d2f;
+  --panel-alt: #1a2540;
+  --border: #263457;
+  --text: #eaf0ff;
+  --text-dim: #9fb0d0;
+  --accent: #4f8cff;
+  --accent-dark: #2f5fc7;
+  --win: #2fbf71;
+  --danger: #e5533d;
+  --radius: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  padding-bottom: 2rem;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1rem;
+}
+
+.site-header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+}
+
+.main-nav {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  flex: 1 1 auto;
+  min-width: 4.5rem;
+}
+
+.nav-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+main#app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+h3 {
+  margin-top: 2rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+.hint {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+button,
+input[type="text"],
+select {
+  font: inherit;
+  color: var(--text);
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.55rem 0.8rem;
+}
+
+button {
+  cursor: pointer;
+  background: var(--panel-alt);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+button:not(:disabled):hover {
+  border-color: var(--accent);
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:not(:disabled):hover {
+  background: var(--accent-dark);
+}
+
+.btn-danger {
+  background: transparent;
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.btn-small {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+input[type="text"],
+select {
+  width: 100%;
+}
+
+/* Setup */
+
+.team-input-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.setup-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Draft */
+
+.on-the-clock {
+  font-size: 1.05rem;
+}
+
+.draft-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.draft-filters input[type="text"] {
+  flex: 2 1 10rem;
+}
+
+.draft-filters select {
+  flex: 1 1 6rem;
+}
+
+.player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+}
+
+.player-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.65rem 0.8rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.2rem 0.6rem;
+  align-items: center;
+}
+
+.player-main {
+  grid-column: 1;
+  font-weight: 600;
+}
+
+.player-season,
+.player-points {
+  grid-column: 1;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.player-card button {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: center;
+}
+
+.pos-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+  margin-right: 0.4rem;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+}
+
+.pos-QB { color: #ff9f4f; border-color: #ff9f4f; }
+.pos-RB { color: #4fd6ff; border-color: #4fd6ff; }
+.pos-WR { color: #7dff4f; border-color: #7dff4f; }
+.pos-TE { color: #d38bff; border-color: #d38bff; }
+
+.roster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 0.75rem;
+}
+
+.mini-roster {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.7rem;
+}
+
+.mini-roster h4 {
+  margin: 0 0 0.4rem 0;
+}
+
+.mini-roster ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+.mini-roster li {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.1rem 0;
+}
+
+.slot-label {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  min-width: 3.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Teams */
+
+.team-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  padding: 0.6rem 0.8rem;
+}
+
+.team-panel summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 0.3rem 0;
+}
+
+.roster-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.roster-table th,
+.roster-table td {
+  text-align: left;
+  padding: 0.4rem 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.season-line {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+/* Season */
+
+.week-block {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.6rem;
+}
+
+.week-block h4 {
+  margin: 0 0 0.4rem 0;
+}
+
+.matchup {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.95rem;
+  padding: 0.15rem 0;
+}
+
+.matchup .vs {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+
+.matchup .win {
+  color: var(--win);
+  font-weight: 700;
+}
+
+.bye-note {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+}
+
+.standings-table td:nth-child(4),
+.standings-table td:nth-child(5) {
+  font-variant-numeric: tabular-nums;
+}
+
+.site-footer {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  padding: 1rem;
+}
+
+@media (max-width: 480px) {
+  .site-header h1 {
+    font-size: 1.05rem;
+  }
+  .nav-btn {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.4rem;
+  }
+}
