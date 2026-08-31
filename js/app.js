@@ -38,6 +38,7 @@ const state = {
   draft: null,
   season: null,
   draftFilter: { query: "", position: "ALL", tagFilter: "ALL" },
+  playersFilter: { query: "", position: "ALL", tagFilter: "ALL" },
 };
 
 function getRules() {
@@ -590,6 +591,68 @@ function handleTeamsChange(target) {
   }
 }
 
+// ------------------------------------------------------------ players
+
+// Read-only, filterable directory of every player/coach/kicker/defense
+// in the game -- ESPN's "Players" tab equivalent. No Draft button here
+// (that's the Draft screen's job); this is for browsing and checking
+// who's already been taken.
+function renderPlayers() {
+  const rules = getRules();
+  const draft = state.draft;
+  const draftedIds = draft ? new Set(draft.draftedPlayerIds) : new Set();
+
+  const results = searchPlayers(state.playersFilter, rules).sort(
+    (a, b) => b.best.summary.pointsPerGame - a.best.summary.pointsPerGame
+  );
+
+  const rows = results
+    .map(({ player, best }) => {
+      const drafted = draftedIds.has(player.id);
+      return `
+        <div class="player-card">
+          <div class="player-main">
+            ${playerAvatar(player)}
+            <span class="pos-badge pos-${player.position}">${player.position}</span>
+            <span class="player-name">${escapeHtml(player.name)}</span>
+            ${tagBadge(player)}
+            ${byeBadge(best.season.team)}
+            ${injuryBadge(player)}
+            ${drafted ? '<span class="tag-badge drafted-badge" title="Already on a roster">DRAFTED</span>' : ""}
+          </div>
+          <div class="player-season">${escapeHtml(formatSeasonLine(player, best))}</div>
+          <div class="player-points">${best.summary.totalPoints} pts season &middot; ${best.summary.pointsPerGame} pts/gm</div>
+        </div>`;
+    })
+    .join("") || `<p class="hint">No players match your search/filter.</p>`;
+
+  return `
+    <h2>Players</h2>
+    <p class="hint">Every player, coach, kicker, and defense in the game, ranked by points per game at their career-best (or projected) season. ${draft ? "DRAFTED marks anyone already on a roster." : "Set up a league to see draft status here."}</p>
+
+    <div class="draft-filters">
+      <input type="text" id="players-search" placeholder="Search players..." value="${escapeHtml(state.playersFilter.query)}" />
+      <select id="players-position-filter">
+        ${["ALL", "QB", "RB", "WR", "TE", "COACH", "K", "DEF"]
+          .map((p) => `<option value="${p}" ${state.playersFilter.position === p ? "selected" : ""}>${p}</option>`)
+          .join("")}
+      </select>
+      <select id="players-tag-filter">
+        ${[
+          ["ALL", "All Players"],
+          ["HOF", "Hall of Famers"],
+          ["HOVG", "Hall of Very Good"],
+          ["ACTIVE", "Active"],
+        ]
+          .map(([v, label]) => `<option value="${v}" ${state.playersFilter.tagFilter === v ? "selected" : ""}>${label}</option>`)
+          .join("")}
+      </select>
+    </div>
+
+    <div class="player-list">${rows}</div>
+  `;
+}
+
 // ------------------------------------------------------------- season
 
 // Per-starter box score for one team's side of a matchup, plus the
@@ -739,8 +802,56 @@ function renderSeason() {
     )
     .join("");
 
-  const history = [...season.weeklyResults]
-    .reverse()
+  return `
+    <h2>Season</h2>
+    <p class="hint">${currentWeekLabel(season)}</p>
+    <button class="btn btn-primary" data-action="advance-week" ${complete ? "disabled" : ""}>
+      ${complete ? "Season Finished" : "Advance Week"}
+    </button>
+    <p class="hint">Set lineups any time from the <button class="link-btn" data-action="goto-teams-from-season">Teams tab</button> -- changes apply starting with the next week you advance; past weeks keep their own recorded lineup. See every matchup so far on the <button class="link-btn" data-action="goto-games-from-season">Games tab</button>.</p>
+
+    <h3>Standings${isRegularSeasonComplete(season) ? " (Regular Season)" : ""}</h3>
+    <table class="roster-table standings-table">
+      <thead><tr><th>#</th><th>Team</th><th>W-L-T</th><th>PF</th><th>PA</th></tr></thead>
+      <tbody>${standings}</tbody>
+    </table>
+
+    ${renderPlayoffsSection(season, draft)}
+  `;
+}
+
+function handleSeasonClick(action) {
+  if (action === "advance-week") {
+    advanceWeek(state.season, state.draft, getRules());
+    persist();
+    render();
+    const justPlayed = state.season.weeklyResults[state.season.weeklyResults.length - 1];
+    showWeekCompleteSplash(justPlayed);
+  } else if (action === "goto-teams-from-season") {
+    setScreen("teams");
+  } else if (action === "goto-games-from-season") {
+    setScreen("games");
+  }
+}
+
+// -------------------------------------------------------------- games
+
+// Chronological (forward order -- week 1 first) list of every matchup
+// played so far, plus the NFL schedule reference -- ESPN's "Games" /
+// schedule tab equivalent. Mirrors renderSeason()'s old history section
+// exactly, just moved here and no longer reversed.
+function renderGames() {
+  const draft = state.draft;
+  if (!draft || draft.status !== "complete") {
+    return `<h2>Games</h2><p class="hint">Finish the draft first.</p>`;
+  }
+  if (!state.season) {
+    state.season = createSeason(draft, SEASON_WEEKS);
+    persist();
+  }
+  const season = state.season;
+
+  const history = season.weeklyResults
     .map((wk) => {
       const isPlayoff = wk.round === "playoff";
       const labels =
@@ -757,42 +868,15 @@ function renderSeason() {
       const weekHeading = isPlayoff ? `Week ${wk.week} &mdash; Playoffs: ${escapeHtml(wk.roundLabel)}` : `Week ${wk.week}`;
       return `<div class="week-block"><h4>${weekHeading}</h4>${matchups}${byes}</div>`;
     })
-    .join("") || `<p class="hint">No weeks played yet.</p>`;
+    .join("") || `<p class="hint">No weeks played yet -- advance a week from the Season tab.</p>`;
 
   return `
-    <h2>Season</h2>
-    <p class="hint">${currentWeekLabel(season)}</p>
-    <button class="btn btn-primary" data-action="advance-week" ${complete ? "disabled" : ""}>
-      ${complete ? "Season Finished" : "Advance Week"}
-    </button>
-    <p class="hint">Set lineups any time from the <button class="link-btn" data-action="goto-teams-from-season">Teams tab</button> -- changes apply starting with the next week you advance; past weeks keep their own recorded lineup.</p>
-
-    <h3>Standings${isRegularSeasonComplete(season) ? " (Regular Season)" : ""}</h3>
-    <table class="roster-table standings-table">
-      <thead><tr><th>#</th><th>Team</th><th>W-L-T</th><th>PF</th><th>PA</th></tr></thead>
-      <tbody>${standings}</tbody>
-    </table>
-
-    ${renderPlayoffsSection(season, draft)}
-
-    <h3>Weekly Results</h3>
-    <p class="hint">Click a matchup to see each starter's actual points that week.</p>
+    <h2>Games</h2>
+    <p class="hint">Every matchup played so far, in order. Click a matchup to see each starter's actual points that week.</p>
     <div class="week-history">${history}</div>
 
     ${renderNflSchedule(season.weeks)}
   `;
-}
-
-function handleSeasonClick(action) {
-  if (action === "advance-week") {
-    advanceWeek(state.season, state.draft, getRules());
-    persist();
-    render();
-    const justPlayed = state.season.weeklyResults[state.season.weeklyResults.length - 1];
-    showWeekCompleteSplash(justPlayed);
-  } else if (action === "goto-teams-from-season") {
-    setScreen("teams");
-  }
 }
 
 // ---------------------------------------------------------------- faq
@@ -816,7 +900,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What are the Coach, K, and DEF roster spots?",
-    a: "Every team drafts exactly one Coach (from the top 10 all-time NFL coaches and top 5 all-time college coaches), one Kicker, and one Defense (a single all-time-great team defensive season), alongside the usual offensive skill positions. Kickers score on field goals/extra points made; defenses score on sacks, interceptions, fumble recoveries, defensive TDs, safeties, and a tiered bonus/penalty for points allowed per game -- all real scoring, adjustable in js/scoring.js. A started Coach doesn't score individually, but adds a flat 5% bonus to your team's total for the week (shown under that team's box score) -- benching your Coach removes the bonus. None of the three count toward the retired/active alternation.",
+    a: "Every team drafts exactly one Coach (from the top 10 all-time NFL coaches and top 4 all-time college coaches), one Kicker, and one Defense (a single all-time-great team defensive season), alongside the usual offensive skill positions. Kickers score on field goals/extra points made; defenses score on sacks, interceptions, fumble recoveries, defensive TDs, safeties, and a tiered bonus/penalty for points allowed per game -- all real scoring, adjustable in js/scoring.js. A started Coach doesn't score individually, but adds a flat 5% bonus to your team's total for the week (shown under that team's box score) -- benching your Coach removes the bonus. None of the three count toward the retired/active alternation.",
   },
   {
     q: "What's the injury (Q/D/O/IR) badge?",
@@ -848,11 +932,15 @@ const FAQ_ITEMS = [
   },
   {
     q: "How are weekly matchups and standings decided?",
-    a: "Teams play a round-robin regular-season schedule (with a bye if you have an odd number of teams). Higher total score wins the week; standings rank by wins, then losses, then total points. Click any matchup in Weekly Results to see exactly what each starter scored that week.",
+    a: "Teams play a round-robin regular-season schedule (with a bye if you have an odd number of teams). Higher total score wins the week; standings rank by wins, then losses, then total points. Click any matchup on the Games tab to see exactly what each starter scored that week.",
   },
   {
-    q: "What's the BYE badge on the Draft screen, and the NFL Schedule on the Season screen?",
-    a: "The BYE badge is generated for gameplay flavor, not a real published bye-week calendar. The Season screen's NFL Schedule is a mix: Week 1 is the real announced 2026 schedule (confirmed complete, all 32 teams, via web search). Weeks 2 onward are algorithmically generated -- getting the rest of the real schedule turned out not to be achievable here: the sites that publish it are unreachable from this environment, and search results only ever return a handful of games per week (roughly a third to half of each week, at best) rather than a complete slate. Both real and generated portions are a foundation for future features like matchup-adjusted scoring.",
+    q: "What's the difference between the Players, Season, and Games tabs?",
+    a: "Season is the league's standings and playoff bracket -- rankings, not games. Games is every matchup played so far, in chronological order (week 1 first), plus the NFL schedule reference -- click any matchup to see each starter's actual points that week. Players is a full, filterable directory of everyone in the game (search, position, and HOF/HOVG/ACTIVE filters), independent of any draft, marking anyone already DRAFTED once a league exists. This mirrors a typical fantasy platform's separate rankings/schedule/player-pool tabs.",
+  },
+  {
+    q: "What's the BYE badge on the Draft screen, and the NFL Schedule on the Games screen?",
+    a: "The BYE badge is generated for gameplay flavor, not a real published bye-week calendar. The Games screen's NFL Schedule is a mix: Week 1 is the real announced 2026 schedule (confirmed complete, all 32 teams, via web search). Weeks 2 onward are algorithmically generated -- getting the rest of the real schedule turned out not to be achievable here: the sites that publish it are unreachable from this environment, and search results only ever return a handful of games per week (roughly a third to half of each week, at best) rather than a complete slate. Both real and generated portions are a foundation for future features like matchup-adjusted scoring.",
   },
   {
     q: "Is my league saved?",
@@ -894,7 +982,9 @@ function render() {
   if (state.screen === "setup") app.innerHTML = renderSetup();
   else if (state.screen === "draft") app.innerHTML = renderDraft();
   else if (state.screen === "teams") app.innerHTML = renderTeams();
+  else if (state.screen === "players") app.innerHTML = renderPlayers();
   else if (state.screen === "season") app.innerHTML = renderSeason();
+  else if (state.screen === "games") app.innerHTML = renderGames();
   else if (state.screen === "faq") app.innerHTML = renderFAQ();
 }
 
@@ -922,6 +1012,9 @@ function wireEvents() {
     } else if (state.screen === "draft" && e.target.id === "draft-search") {
       state.draftFilter.query = e.target.value;
       render();
+    } else if (state.screen === "players" && e.target.id === "players-search") {
+      state.playersFilter.query = e.target.value;
+      render();
     }
   });
 
@@ -933,6 +1026,12 @@ function wireEvents() {
       render();
     } else if (state.screen === "draft" && e.target.id === "draft-tag-filter") {
       state.draftFilter.tagFilter = e.target.value;
+      render();
+    } else if (state.screen === "players" && e.target.id === "players-position-filter") {
+      state.playersFilter.position = e.target.value;
+      render();
+    } else if (state.screen === "players" && e.target.id === "players-tag-filter") {
+      state.playersFilter.tagFilter = e.target.value;
       render();
     } else if (state.screen === "teams") {
       handleTeamsChange(e.target);

@@ -47,27 +47,36 @@ and mobile browsers, including iPhone.
    roster never ends up in a broken state. Editable any time, including
    mid-season — see Season below. A small circular avatar sits next to
    each player — a blank headshot placeholder for now (see FAQ).
-4. **Season** — click "Advance Week" to sim a week. Each starter's best
-   (or projected) season's points **per game** is the baseline; on top of
-   that, each week applies a randomized-but-repeatable variance (so
-   scores actually differ week to week rather than repeating a flat
-   number) and zeroes out anyone marked Out/IR that week (see the injury
-   FAQ entry). A started Coach adds a flat 5% bonus to that team's week
-   total, shown in the box score. Standings track regular-season W-L-T
-   and points for/against across a round-robin schedule (byes when team
-   count is odd) and freeze once the playoffs start. The last 1-2 of the
-   16 weeks are playoffs — a 4-team bracket (leagues of 4+) or a single
-   championship game (2-3 teams) seeded by regular-season standings,
-   culminating in a champion banner; see the FAQ for the exact format.
-   Every matchup in Weekly Results expands (click it) into a full box
-   score — each starter's actual points that week, for both teams. A
-   shortcut link on this screen jumps to the Teams tab so you can adjust
-   a lineup between weeks; the change only takes effect starting with the
+4. **Players** — a read-only, filterable directory of every player,
+   coach, kicker, and defense in the game (search, position, and
+   HOF/HOVG/ACTIVE filters, same as the Draft screen), ranked by points
+   per game at their best (or projected) season. Independent of any
+   draft — browse it from Setup onward — and marks anyone already
+   **DRAFTED** once a league exists.
+5. **Season** — rankings only, mirroring a typical fantasy platform's
+   separate rankings/schedule tabs. Click "Advance Week" to sim a week.
+   Each starter's best (or projected) season's points **per game** is the
+   baseline; on top of that, each week applies a randomized-but-repeatable
+   variance (so scores actually differ week to week rather than repeating
+   a flat number) and zeroes out anyone marked Out/IR that week (see the
+   injury FAQ entry). A started Coach adds a flat 5% bonus to that team's
+   week total, shown in the box score. Standings track regular-season
+   W-L-T and points for/against across a round-robin schedule (byes when
+   team count is odd) and freeze once the playoffs start. The last 1-2 of
+   the 16 weeks are playoffs — a 4-team bracket (leagues of 4+) or a
+   single championship game (2-3 teams) seeded by regular-season
+   standings, culminating in a champion banner; see the FAQ for the exact
+   format. A shortcut link jumps to the Teams tab so you can adjust a
+   lineup between weeks; the change only takes effect starting with the
    next week you advance, since each played week keeps the lineup (and
-   score) it actually used. The screen also shows the NFL schedule — Week
-   1 is the real announced 2026 slate, other weeks are generated (see the
-   FAQ and roadmap for why the rest isn't real too).
-5. **FAQ** — an in-app explainer covering all of the above.
+   score) it actually used. Another shortcut jumps to Games.
+6. **Games** — every matchup played so far, in chronological order (week
+   1 first, not reverse-chronological). Each one expands (click it) into
+   a full box score — each starter's actual points that week, for both
+   teams. Also shows the NFL schedule — Week 1 is the real announced 2026
+   slate, other weeks are generated (see the FAQ and roadmap for why the
+   rest isn't real too).
+7. **FAQ** — an in-app explainer covering all of the above.
 
 Every time you open or refresh the site, a splash screen shows the logo
 (`img/main-logo.jpg`) and plays the theme song (`audio/time-to-rumble.mp3`,
@@ -170,7 +179,7 @@ the roadmap below doesn't require rewrites:
   a real stats source — nothing downstream cares where the data comes
   from.
 - `js/data/coaches.js` / `js/data/kickers.js` / `js/data/defenses.js` —
-  the top-10-NFL/top-5-college all-time coaches, ~12 all-time kicker
+  the top-10-NFL/top-4-college all-time coaches, ~12 all-time kicker
   seasons, and 12 all-time team-defense seasons. Same shape as
   `players.js` (`tag`, `seasons`) so they flow through the same scoring
   engine, draft engine, and season sim unchanged; coaches additionally
@@ -226,7 +235,7 @@ the roadmap below doesn't require rewrites:
   not a snapshot), and its return value's `breakdown` (per-starter
   points) is stored on that week's matchup — together this is why
   editing a lineup any time only affects weeks simulated afterward, and
-  why the Season screen's matchup detail can show exactly what happened
+  why the Games screen's matchup detail can show exactly what happened
   even after the lineup later changes. `getRegularSeasonWeeks()` decides
   how many of the 16 weeks are regular season (14, or 15 for leagues
   under 4 teams) versus playoffs; `advanceWeek()` branches to
@@ -267,7 +276,7 @@ the roadmap below doesn't require rewrites:
   across a 16-week round robin when team count doesn't divide evenly.
 - **Large/adversarial leagues can exhaust a position's pool**: dataset
   sizes are prototype-scale (e.g. 16 active QBs, 16 active TEs, 12
-  kickers, 12 defenses, 15 coaches). A typical draft comfortably supports
+  kickers, 12 defenses, 14 coaches). A typical draft comfortably supports
   up to ~8 teams; heavily testing showed a 10+ team league, or a
   strategy that greedily stacks one position, can exhaust that
   position's pool before every roster fills, leaving a slot permanently
@@ -277,7 +286,7 @@ the roadmap below doesn't require rewrites:
   Fix is the same as other size limits here: grow the relevant data file.
 - **NFL schedule / bye weeks**: the per-team bye-week badge on the Draft
   screen is generated for gameplay flavor, not a real calendar. The
-  Season screen's NFL Schedule is real for Week 1 (confirmed complete —
+  Games screen's NFL Schedule is real for Week 1 (confirmed complete —
   all 32 teams, sourced via web search in Aug 2026) and algorithmically
   generated for every other week, labeled REAL vs. GENERATED per week.
   This was a deliberate scope call, not an oversight: every schedule-data

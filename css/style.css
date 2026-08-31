@@ -106,7 +106,7 @@ body {
 
 .main-nav {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.4rem;
 }
 
@@ -114,6 +114,7 @@ body {
   min-width: 0;
   padding-left: 0.3rem;
   padding-right: 0.3rem;
+  font-size: 0.85rem;
 }
 
 .nav-btn.active {
@@ -411,6 +412,12 @@ select {
   color: #0f2419;
   background: #4fd68a;
   border-color: #4fd68a;
+}
+
+.tag-badge.drafted-badge {
+  color: var(--danger);
+  background: transparent;
+  border-color: var(--danger);
 }
 
 .on-the-clock {

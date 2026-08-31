@@ -1,12 +1,11 @@
-// Top coaches, all time: 10 NFL head coaches + 5 college head coaches.
+// Top coaches, all time: 10 NFL head coaches + 4 college head coaches.
 // Approximate/best-effort career win-loss records, championship counts,
 // and championship-game/national-title-game appearances, hand-compiled
 // like the rest of this prototype's data -- not a verified statistical
 // source. `tag` follows the same HOF/HOVG/ACTIVE vocabulary as players:
 // HOF = actually enshrined (Pro or College Football Hall of Fame as a
-// coach); HOVG = a real, well-known non-enshrinement (some by omission,
-// one -- Paterno -- by a permanently complicated candidacy); ACTIVE =
-// still coaching.
+// coach); HOVG = a real, well-known non-enshrinement; ACTIVE = still
+// coaching.
 //
 // Coaches intentionally have NO scoring stats yet: `seasons` holds one
 // placeholder entry with `stats: {}`, which already scores 0 through
@@ -116,14 +115,6 @@ export const COACHES = [
     tag: "HOF",
     record: { wins: 377, losses: 129, ties: 4, titles: 2, titleAppearances: 5 },
     seasons: [{ year: 1999, team: null, games: 16, stats: {} }],
-  },
-  {
-    id: "coach-joe-paterno",
-    name: "Joe Paterno",
-    position: "COACH",
-    tag: "HOVG",
-    record: { wins: 409, losses: 136, ties: 3, titles: 2, titleAppearances: 5 },
-    seasons: [{ year: 1986, team: null, games: 16, stats: {} }],
   },
   {
     id: "coach-bear-bryant",
