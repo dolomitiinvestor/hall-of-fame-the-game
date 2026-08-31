@@ -767,7 +767,7 @@ function renderNflSchedule(weeks) {
     .join("");
   return `
     <h3>NFL Schedule</h3>
-    <p class="hint">Week 1 is the real announced 2026 schedule; every other week is generated for gameplay flavor pending more real data -- see the FAQ.</p>
+    <p class="hint">The real 2026 regular-season schedule -- see the FAQ.</p>
     <div class="nfl-schedule">${weekBlocks}</div>
   `;
 }
@@ -973,7 +973,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What's the BYE badge on the Draft screen, and the NFL Schedule on the Games screen?",
-    a: "The BYE badge is generated for gameplay flavor, not a real published bye-week calendar. The Games screen's NFL Schedule is a mix: Week 1 is the real announced 2026 schedule (confirmed complete, all 32 teams, via web search). Weeks 2 onward are algorithmically generated -- getting the rest of the real schedule turned out not to be achievable here: the sites that publish it are unreachable from this environment, and search results only ever return a handful of games per week (roughly a third to half of each week, at best) rather than a complete slate. Both real and generated portions are a foundation for future features like matchup-adjusted scoring.",
+    a: "Both are the real 2026 NFL schedule now, transcribed from a pro-football-reference.com schedule export the user supplied directly (this environment's own tooling can't reach schedule sites -- every one tried, including pro-football-reference.com itself, is blocked by network egress policy). It covers all 18 real weeks; the fantasy season only plays out over 16, so those are the ones shown and used for BYE badges. A generated round-robin fallback still exists in the code as a seam for a future season before its real schedule is entered, but isn't used this season since every week here is real.",
   },
   {
     q: "Is my league saved?",

@@ -75,10 +75,9 @@ and mobile browsers, including iPhone.
    to a real, attributed quote from that team's started Coach (one per
    team per game, picked deterministically — see the FAQ). Each matchup
    also expands (click it) into a full box score — each starter's actual
-   points that week, for both teams. Also shows the NFL schedule — Week
-   1 is the real announced 2026
-   slate, other weeks are generated (see the FAQ and roadmap for why the
-   rest isn't real too).
+   points that week, for both teams. Also shows the NFL schedule — the
+   real 2026 regular-season slate for every week the fantasy season
+   uses (see the FAQ and roadmap).
 7. **FAQ** — an in-app explainer covering all of the above.
 
 Every time you open or refresh the site, a splash screen shows the logo
@@ -251,16 +250,19 @@ the roadmap below doesn't require rewrites:
   bracket from standings (`seedPlayoffs()`) and plays it out
   (`playPlayoffMatchup()`) without touching the regular-season win/loss
   record.
-- `js/data/nflTeams.js` — the 32 current NFL teams and a generated
-  illustrative bye week per team (gameplay flavor, not a real calendar).
-- `js/data/realNflSchedule.js` / `js/nflSchedule.js` — real schedule data
-  where available (currently just Week 1, confirmed complete via web
-  search — see roadmap) layered over an algorithmically generated
-  32-team round-robin for every other week. `getNflSchedule()` picks real
-  data for a week when present and falls back to generated otherwise;
-  `isRealWeek()` tells the UI which is which. Add more weeks to
-  `REAL_SCHEDULE` in `realNflSchedule.js` as real data becomes available
-  — nothing else needs to change.
+- `js/data/nflTeams.js` — the 32 current NFL teams; `TEAM_BYE_WEEKS` is
+  derived from `REAL_SCHEDULE` (whichever team doesn't appear in a given
+  week's real games is on bye that week), not generated.
+- `js/data/realNflSchedule.js` / `js/nflSchedule.js` — the real 2026
+  regular-season schedule, all 18 weeks, transcribed from a
+  pro-football-reference.com schedule export the user supplied directly
+  (see roadmap). `getNflSchedule()` picks `REAL_SCHEDULE[week]` when
+  present and falls back to an algorithmically generated round-robin
+  otherwise; `isRealWeek()` tells the UI which is which. With real data
+  for every week the 16-week fantasy season uses, that fallback is
+  currently unused but stays in place as the seam for a future season
+  before its schedule is known — add it to `REAL_SCHEDULE` and nothing
+  else needs to change.
 - `js/storage.js` — the only module touching `localStorage`. Swapping in
   a backend/shared multiplayer state means replacing this file alone.
 - `js/app.js` — UI controller: renders screens from state and wires up
@@ -292,20 +294,21 @@ the roadmap below doesn't require rewrites:
   draft. The UI won't crash (the draft-clock auto-pick just stops
   offering picks once nothing is eligible) but that team's draft stalls.
   Fix is the same as other size limits here: grow the relevant data file.
-- **NFL schedule / bye weeks**: the per-team bye-week badge on the Draft
-  screen is generated for gameplay flavor, not a real calendar. The
-  Games screen's NFL Schedule is real for Week 1 (confirmed complete —
-  all 32 teams, sourced via web search in Aug 2026) and algorithmically
-  generated for every other week, labeled REAL vs. GENERATED per week.
-  This was a deliberate scope call, not an oversight: every schedule-data
-  site tried (ESPN, NFL.com, Pro-Football-Reference, RotoWire, Wikipedia,
-  etc.) was unreachable from this environment (blocked by network egress
-  policy), and web search only ever surfaced a partial slate per
-  week-specific query — roughly a third to half the games, at best, on
-  the weeks tried beyond Week 1 — so assembling a complete, verified
-  18-week schedule wasn't achievable with the tools available here. See
-  `js/data/realNflSchedule.js` for how to extend it as more weeks become
-  sourceable (e.g. pasting in real data directly).
+- **NFL schedule / bye weeks**: now real, not generated. The Games
+  screen's NFL Schedule and the per-team BYE badge (Draft/Players tabs)
+  both come from the real 2026 regular-season schedule (all 18 weeks;
+  the fantasy season uses 1-16), transcribed from a
+  pro-football-reference.com schedule export the user supplied directly
+  as a PDF. This environment's own tooling still can't fetch it —
+  every schedule site tried (ESPN, NFL.com, Pro-Football-Reference,
+  CBS Sports, Wikipedia, etc.) is blocked by network egress policy, and
+  web search only ever surfaced scattered single-game fragments, not
+  full weeks — so a direct fetch was never the path here; the user's
+  own upload was. The transcription was cross-checked programmatically
+  (all 272 games, no team playing itself or twice in a week, all 32
+  teams at exactly 17 games) before being committed. See
+  `js/data/realNflSchedule.js` for the seam to extend this to a future
+  season once its schedule is known.
 - **Weekly scores are simulated, not real historical box scores**: real
   per-week game logs for ~150 HOF/HOVG players (thousands of individual
   stat lines) aren't obtainable here for the same reason as the NFL

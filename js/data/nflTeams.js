@@ -1,12 +1,8 @@
-// Current (2020s-era) 32 NFL franchises, used for:
-//  - the generated NFL schedule shown on the Season screen
-//  - bye-week flavor badges shown next to players on the Draft screen
-//
-// This is NOT a real published schedule/bye-week calendar for any given
-// season -- it's algorithmically generated so every team plays someone
-// each week and every team gets one illustrative bye. Treat it as
-// gameplay flavor (and a seam for the "opponent-adjusted scoring"
-// roadmap item), not a source of truth for real NFL dates.
+// Current (2020s-era) 32 NFL franchises, used for the NFL schedule
+// (Games tab) and the BYE badges shown next to players (Draft/Players
+// tabs).
+
+import { REAL_SCHEDULE } from "./realNflSchedule.js";
 
 export const NFL_TEAMS = [
   { code: "ARI", name: "Arizona Cardinals" },
@@ -43,10 +39,28 @@ export const NFL_TEAMS = [
   { code: "WAS", name: "Washington Commanders" },
 ];
 
-// Deterministic, evenly-spread illustrative bye week (4-14) per team.
-export const TEAM_BYE_WEEKS = Object.fromEntries(
-  NFL_TEAMS.map(({ code }, i) => [code, 4 + (i % 11)])
-);
+// The fantasy season only runs 16 weeks, so bye weeks are derived
+// from REAL_SCHEDULE across weeks 1-16 only: for each week, whichever
+// teams don't appear as home or away are on bye that week. The real
+// 2026 schedule's actual byes (weeks 5-14) all fall within that
+// window, so every team resolves to a real bye week here -- no
+// generated/illustrative fallback needed.
+function computeByeWeeks() {
+  const byes = {};
+  for (let week = 1; week <= 16; week++) {
+    const playing = new Set();
+    (REAL_SCHEDULE[week] || []).forEach((g) => {
+      playing.add(g.home);
+      playing.add(g.away);
+    });
+    NFL_TEAMS.forEach(({ code }) => {
+      if (!playing.has(code)) byes[code] = week;
+    });
+  }
+  return byes;
+}
+
+export const TEAM_BYE_WEEKS = computeByeWeeks();
 
 // Relocated/renamed franchises that appear on older Hall of Fame
 // seasons in js/data/players.js, mapped to their current code so bye

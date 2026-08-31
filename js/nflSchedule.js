@@ -1,8 +1,7 @@
-// NFL schedule for the Season screen: real data where available,
-// algorithmically generated round-robin pairing everywhere else.
-// See js/data/realNflSchedule.js for what "real" currently covers
-// (just Week 1) and why, and js/data/nflTeams.js for the disclaimer
-// on the generated portion.
+// NFL schedule for the Games tab: the real 2026 season for every week
+// the fantasy season covers (1-16 -- see js/data/realNflSchedule.js).
+// The generated round-robin fallback stays in place as the seam for a
+// future season before its real schedule is entered.
 
 import { generateSchedule } from "./schedule.js";
 import { NFL_TEAMS } from "./data/nflTeams.js";
