@@ -47,10 +47,12 @@ and mobile browsers, including iPhone.
    slate, other weeks are generated pending more real data.
 5. **FAQ** — an in-app explainer covering all of the above.
 
-The first time you open the site, a splash screen shows the logo
-(`img/main-logo.jpg`); close it with the X. It won't show again on later
-visits (tracked separately from league state, so Reset League doesn't
-bring it back).
+Every time you open or refresh the site, a splash screen shows the logo
+(`img/main-logo.jpg`) and plays the theme song (`audio/time-to-rumble.mp3`,
+looped) until you close it with the X. Most browsers block audible
+autoplay until the page has had some user interaction, so the music may
+not start on a hard refresh with no prior interaction — that's a browser
+policy, not a bug.
 
 State is saved to `localStorage`, so progress survives a page refresh.
 "Reset League" on the Setup screen clears everything and starts over.

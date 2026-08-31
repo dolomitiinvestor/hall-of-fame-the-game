@@ -21,7 +21,7 @@ import {
   getStandingsList,
   SEASON_WEEKS,
 } from "./season.js";
-import { saveState, loadState, clearState, hasSeenSplash, markSplashSeen } from "./storage.js";
+import { saveState, loadState, clearState } from "./storage.js";
 import { getByeWeek, NFL_TEAMS } from "./data/nflTeams.js";
 import { getNflSchedule, isRealWeek } from "./nflSchedule.js";
 
@@ -733,18 +733,30 @@ function wireEvents() {
   });
 }
 
-// First-visit splash screen. Shown once (tracked in localStorage,
-// independent of league state so Reset League doesn't bring it back);
-// dismissed only by its close button, never by a timeout or backdrop
-// click, so it's never mistaken for a loading state.
+// Splash screen: shown on every page load/refresh, dismissed only by
+// its close button (never a timeout or backdrop click, so it's never
+// mistaken for a loading state). Plays the theme song on open, looped,
+// stopped when closed.
 function initSplash() {
-  if (hasSeenSplash()) return;
   const overlay = document.getElementById("splash-overlay");
   if (!overlay) return;
   overlay.hidden = false;
+
+  const audio = document.getElementById("splash-audio");
+  if (audio) {
+    audio.currentTime = 0;
+    // Most browsers block audible autoplay until the page has had a
+    // user gesture; if that happens, play() rejects and we just stay
+    // silent rather than throw.
+    audio.play().catch(() => {});
+  }
+
   document.getElementById("splash-close").addEventListener("click", () => {
     overlay.hidden = true;
-    markSplashSeen();
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
   });
 }
 
