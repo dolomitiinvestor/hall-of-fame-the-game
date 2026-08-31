@@ -226,6 +226,12 @@ function renderSetup() {
   ]
     .map(({ v, label }) => `<option value="${v}" ${settings.tePremium === v ? "selected" : ""}>${label}</option>`)
     .join("");
+  const superflexOptions = [
+    { v: "off", label: "Off" },
+    { v: "on", label: "On (extra slot also allows QB)" },
+  ]
+    .map(({ v, label }) => `<option value="${v}" ${(settings.superflex ? "on" : "off") === v ? "selected" : ""}>${label}</option>`)
+    .join("");
 
   return `
     <h2>Set Up Your League</h2>
@@ -241,9 +247,8 @@ function renderSetup() {
       <label>TE Premium
         <select id="format-tep">${tepOptions}</select>
       </label>
-      <label class="checkbox-row">
-        <input type="checkbox" id="format-superflex" ${settings.superflex ? "checked" : ""} />
-        Superflex (extra slot also allows QB)
+      <label>Superflex
+        <select id="format-superflex">${superflexOptions}</select>
       </label>
     </div>
 
@@ -281,7 +286,7 @@ function handleSetupChange(target) {
   } else if (target.id === "format-tep") {
     state.leagueSettings.tePremium = Number(target.value);
   } else if (target.id === "format-superflex") {
-    state.leagueSettings.superflex = target.checked;
+    state.leagueSettings.superflex = target.value === "on";
   } else {
     return;
   }

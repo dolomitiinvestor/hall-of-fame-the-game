@@ -370,18 +370,6 @@ select {
   color: var(--text-dim);
 }
 
-.format-row .checkbox-row {
-  flex-direction: row;
-  align-items: center;
-  font-size: 0.95rem;
-  color: var(--text);
-}
-
-.format-row input[type="checkbox"] {
-  width: auto;
-  padding: 0;
-}
-
 .roster-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
