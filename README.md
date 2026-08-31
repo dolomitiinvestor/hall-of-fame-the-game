@@ -1,9 +1,10 @@
 # Dynasty Hall of Fame
 
 A browser-based fantasy football prototype: draft from a pool of Pro
-Football Hall of Famers plus statistically great retired players who
-aren't (yet) enshrined, each at their career-best season, build a roster,
-and simulate a 16-week season with matchups and standings.
+Football Hall of Famers, statistically great retired players who aren't
+(yet) enshrined, and active players at their approximate current ADP,
+build a roster, and simulate a 16-week season with matchups and
+standings.
 
 It's a static site (vanilla HTML/CSS/JS, ES modules, no build step, no
 backend) so it can be hosted directly on GitHub Pages and works on desktop
@@ -16,19 +17,24 @@ and mobile browsers, including iPhone.
    reception), and Superflex (an extra starting slot that also allows a
    QB).
 2. **Draft** — a local, hot-seat snake draft with a 60-second pick clock.
-   On each turn, search/filter the player pool (by name, position, and
-   HOF status) and draft a player; their career-best season (computed
-   live from your league's scoring settings), their team's bye week, and
-   an HOF/NOT YET badge are shown next to their name. Players auto-fill
-   the most specific open roster slot (position → FLEX/SUPERFLEX →
-   BENCH). If the clock hits zero, the best available eligible player is
-   auto-drafted for you. Undo is available if you misclick.
-3. **Teams** — set your starting lineup. Only non-BENCH slots score.
-   Swapping a player into a slot swaps whoever was there back to where the
-   new player came from, so the roster never ends up in a broken state.
+   Picks also alternate leaguewide between retired and active players,
+   starting with a retired player on the very first overall pick (odd
+   picks must be HOF/HOVG, even picks must be ACTIVE) — the on-screen
+   hint always says which is required. On each turn, search/filter the
+   player pool (by name, position, and HOF/HOVG/ACTIVE tag) and draft a
+   player; their best (or projected) season — computed live from your
+   league's scoring settings — their team's bye week, and their tag badge
+   are shown next to their name. Players auto-fill the most specific open
+   roster slot (position → FLEX/SUPERFLEX → BENCH). If the clock hits
+   zero, the best available eligible player is auto-drafted for you. Undo
+   is available if you misclick.
+3. **Teams** — set your starting lineup (7 bench spots per team). Only
+   non-BENCH slots score. Swapping a player into a slot swaps whoever was
+   there back to where the new player came from, so the roster never ends
+   up in a broken state.
 4. **Season** — click "Advance Week" to sim a week. Each starter scores
-   their career-best season's fantasy points **per game**; short seasons
-   (strike years, wartime schedules, etc.) have that rate repeated across
+   their best (or projected) season's fantasy points **per game**; short
+   seasons (strike years, wartime schedules, etc.) have that rate repeated across
    all 16 simulated weeks rather than stopping early. Standings track
    W-L-T and points for/against across a round-robin schedule (byes when
    team count is odd). The screen also shows a generated NFL schedule
@@ -73,25 +79,28 @@ else.
 Each concern is its own module with a narrow interface, specifically so
 the roadmap below doesn't require rewrites:
 
-- `js/data/players.js` — raw player/season data: ~46 enshrined Hall of
-  Famers (`hof: true`) plus ~101 statistically great retired players not
-  (yet) enshrined (`hof: false`, the "Hall of Very Good"). Hand-compiled
-  approximate stats for this prototype. This is the file to replace with
-  a real stats source, and the file to extend with active/current players
-  later — nothing downstream cares where the data comes from.
+- `js/data/players.js` — raw player/season data, ~247 players total, each
+  tagged `tag: "HOF" | "HOVG" | "ACTIVE"`: ~46 enshrined Hall of Famers,
+  ~101 statistically great retired players not (yet) enshrined (the "Hall
+  of Very Good"), and ~100 active players at their approximate current
+  ADP. Hand-compiled/approximate for this prototype (see the roadmap
+  notes on data accuracy below). This is the file to replace with a real
+  stats source — nothing downstream cares where the data comes from.
 - `js/players.js` — data access layer (search/filter by name, position,
-  and HOF status; "best season" calculation). "Best season" is computed
-  dynamically from the current scoring rules rather than hard-coded, so
-  it stays correct if scoring changes.
+  and tag; "best season" calculation; `isRetired()`/`isActive()` group
+  helpers used by the draft's alternation rule). "Best season" is
+  computed dynamically from the current scoring rules rather than
+  hard-coded, so it stays correct if scoring changes.
 - `js/scoring.js` — the fantasy scoring engine. `DEFAULT_SCORING_RULES` is
   the fixed part; `buildScoringRules({ pprValue, tePremium })` layers a
   league's Setup-screen choices on top, and `calculateFantasyPoints()`
   turns a stat line (plus position, for TE Premium) into points.
 - `js/draftEngine.js` — pure state-machine snake draft (order, turns,
   roster-slot eligibility via `SLOT_ELIGIBILITY`, undo). `buildRosterSlots()`
-  adds a SUPERFLEX slot when a league enables it. No DOM code, so it's
-  ready to be driven by network messages instead of local clicks for real
-  multiplayer.
+  adds a SUPERFLEX slot when a league enables it. `getRequiredGroup()` /
+  `canDraftPlayer()` enforce the retired/active pick alternation, purely
+  from the overall pick counter. No DOM code, so it's ready to be driven
+  by network messages instead of local clicks for real multiplayer.
 - `js/schedule.js` — generic round-robin matchup generator (byes for odd
   counts), kept separate from scoring so the pairing algorithm (divisions,
   playoffs, etc.) can change independently. Reused by both the fantasy
@@ -117,9 +126,6 @@ the roadmap below doesn't require rewrites:
   draft engine is already headless/pure-data, so a real-time layer (e.g.
   WebSocket relay calling the same `draftPlayer()`/`undoLastPick()`
   functions) can sit on top without changing the engine.
-- **Current players**: dataset only has retired Hall of Famers today.
-  Add them to `js/data/players.js` (or a second data file merged in
-  `js/players.js`) with the same shape.
 - **Weekly variance**: every week currently uses a flat points-per-game
   rate. `weeklyPointsForPlayer()` in `season.js` is the single place to
   add randomness (e.g. a normal distribution around the rate).
@@ -138,12 +144,23 @@ the roadmap below doesn't require rewrites:
   plays every week in the schedule table; the separate per-team bye-week
   badge on the Draft screen is illustrative), not sourced from a real
   published NFL schedule.
-- **Data accuracy**: stats are hand-compiled from memory for well-known
-  record seasons and meant to be "close enough" for a prototype, not a
-  verified statistical source.
-- **HOF status accuracy**: each player's `hof` flag reflects Hall of Fame
+- **Data accuracy (HOF/HOVG)**: stats are hand-compiled from memory for
+  well-known record seasons and meant to be "close enough" for a
+  prototype, not a verified statistical source.
+- **Tag accuracy (HOF/HOVG)**: each player's `tag` reflects Hall of Fame
   status as best known at the time this file was written. Recently
   retired players whose induction timing was ambiguous at write time were
   left out of the "Hall of Very Good" pool entirely rather than guessed
-  at; still, HOF voting happens annually, so a `false` flag can go stale.
-  Update it directly in `js/data/players.js` as induction news changes.
+  at; still, HOF voting happens annually, so a tag can go stale. Update it
+  directly in `js/data/players.js` as induction news changes.
+- **ACTIVE player data**: the ~100 active players and their rough ADP
+  order were assembled from web searches across several fantasy outlets
+  in one sitting, not a live feed or a single authoritative source, so
+  expect drift from any one site's current rankings and from roster
+  moves after this file was written. Each active player's single season
+  is a **formulaic projection** (a smooth stat-line curve keyed to
+  position + approximate ADP tier, in `js/data/players.js`'s generator
+  notes) rather than a real analyst's per-player projection — it exists
+  so the same scoring engine and season sim work identically for retired
+  and active players. Swap in a real projections feed by replacing those
+  stat lines; nothing else needs to change.

@@ -229,7 +229,7 @@ select {
   color: var(--text-dim);
 }
 
-.hof-badge {
+.tag-badge {
   display: inline-block;
   font-size: 0.65rem;
   font-weight: 700;
@@ -239,16 +239,22 @@ select {
   border: 1px solid var(--border);
 }
 
-.hof-badge.hof-yes {
+.tag-badge.hof-tag {
   color: #1a1206;
   background: #e8b84f;
   border-color: #e8b84f;
 }
 
-.hof-badge.hof-no {
+.tag-badge.hovg-tag {
   color: var(--text-dim);
   background: transparent;
   border-style: dashed;
+}
+
+.tag-badge.active-tag {
+  color: #0f2419;
+  background: #4fd68a;
+  border-color: #4fd68a;
 }
 
 .on-the-clock {

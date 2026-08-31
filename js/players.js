@@ -30,15 +30,25 @@ export function getBestSeason(player, rules) {
   return { season: best, summary: bestSummary };
 }
 
-// `hofFilter`: "ALL" | "HOF" | "NOT_HOF" -- lets the draft pool be
-// narrowed to enshrined Hall of Famers, the "Hall of Very Good" (not
-// yet enshrined), or both.
-export function searchPlayers({ query = "", position = "ALL", hofFilter = "ALL" } = {}, rules) {
+// A player is either RETIRED (tag HOF or HOVG) or ACTIVE. This is the
+// grouping the draft's forced alternation (see draftEngine.js) cares
+// about -- HOF vs. HOVG only matters for display/filtering.
+export function isRetired(player) {
+  return player.tag === "HOF" || player.tag === "HOVG";
+}
+
+export function isActive(player) {
+  return player.tag === "ACTIVE";
+}
+
+// `tagFilter`: "ALL" | "HOF" | "HOVG" | "ACTIVE" -- lets the draft pool
+// be narrowed to enshrined Hall of Famers, the "Hall of Very Good" (not
+// yet enshrined), active players, or all of the above.
+export function searchPlayers({ query = "", position = "ALL", tagFilter = "ALL" } = {}, rules) {
   const q = query.trim().toLowerCase();
   return PLAYERS.filter((p) => {
     if (position !== "ALL" && p.position !== position) return false;
-    if (hofFilter === "HOF" && !p.hof) return false;
-    if (hofFilter === "NOT_HOF" && p.hof) return false;
+    if (tagFilter !== "ALL" && p.tag !== tagFilter) return false;
     if (q && !p.name.toLowerCase().includes(q)) return false;
     return true;
   }).map((p) => ({ player: p, best: getBestSeason(p, rules) }));
@@ -63,5 +73,6 @@ export function formatSeasonLine(player, best) {
     if (season.stats.recTD) parts.push(`${season.stats.recTD} rec TD`);
   }
   const shortSeason = season.games < 16 ? ` (${season.games} gm season)` : "";
-  return `${season.year} ${season.team}${shortSeason} - ${parts.join(", ")}`;
+  const yearLabel = isActive(player) ? `${season.year} proj.` : `${season.year}`;
+  return `${yearLabel} ${season.team}${shortSeason} - ${parts.join(", ")}`;
 }

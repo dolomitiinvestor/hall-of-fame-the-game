@@ -6,6 +6,9 @@ import {
   undoLastPick,
   getCurrentTeam,
   teamHasOpenSlotFor,
+  canDraftPlayer,
+  getRequiredGroup,
+  playerMatchesGroup,
   setSlotPlayer,
   shuffle,
   buildRosterSlots,
@@ -32,7 +35,7 @@ const state = {
   leagueSettings: { pprValue: 0.5, tePremium: 0, superflex: false },
   draft: null,
   season: null,
-  draftFilter: { query: "", position: "ALL", hofFilter: "ALL" },
+  draftFilter: { query: "", position: "ALL", tagFilter: "ALL" },
 };
 
 function getRules() {
@@ -129,8 +132,8 @@ function autoDraftForCurrentTeam() {
   const team = getCurrentTeam(draft);
   const candidates = searchPlayers({ query: "", position: "ALL" }, getRules())
     .filter(({ player }) => !draft.draftedPlayerIds.includes(player.id))
-    .filter(({ player }) => teamHasOpenSlotFor(team, player.position))
-    .sort((a, b) => b.best.summary.totalPoints - a.best.summary.totalPoints);
+    .filter(({ player }) => canDraftPlayer(draft, team, player))
+    .sort((a, b) => b.best.summary.pointsPerGame - a.best.summary.pointsPerGame);
 
   if (!candidates.length) {
     // Player pool exhausted before rosters filled -- nothing left to
@@ -275,10 +278,15 @@ function byeBadge(teamCode) {
   return wk ? `<span class="bye-badge" title="${escapeHtml(NFL_TEAM_NAMES[teamCode] || teamCode)} bye week">BYE Wk ${wk}</span>` : "";
 }
 
-function hofBadge(player) {
-  return player.hof
-    ? `<span class="hof-badge hof-yes" title="Enshrined in the Pro Football Hall of Fame">HOF</span>`
-    : `<span class="hof-badge hof-no" title="Not (yet) in the Pro Football Hall of Fame">NOT YET</span>`;
+const TAG_BADGE = {
+  HOF: { cls: "hof-tag", title: "Enshrined in the Pro Football Hall of Fame" },
+  HOVG: { cls: "hovg-tag", title: "Retired, not (yet) in the Hall of Fame -- the \"Hall of Very Good\"" },
+  ACTIVE: { cls: "active-tag", title: "Currently active NFL player" },
+};
+
+function tagBadge(player) {
+  const { cls, title } = TAG_BADGE[player.tag];
+  return `<span class="tag-badge ${cls}" title="${title}">${player.tag}</span>`;
 }
 
 function renderDraft() {
@@ -301,25 +309,32 @@ function renderDraft() {
 
   const currentTeam = getCurrentTeam(draft);
   const rules = getRules();
+  const requiredGroup = getRequiredGroup(draft);
+  const requiredLabel = requiredGroup === "RETIRED" ? "a RETIRED player (HOF or HOVG)" : "an ACTIVE player";
   const results = searchPlayers(state.draftFilter, rules)
     .filter(({ player }) => !draft.draftedPlayerIds.includes(player.id))
-    .sort((a, b) => b.best.summary.totalPoints - a.best.summary.totalPoints);
+    .sort((a, b) => b.best.summary.pointsPerGame - a.best.summary.pointsPerGame);
 
   const rows = results
     .map(({ player, best }) => {
-      const eligible = teamHasOpenSlotFor(currentTeam, player.position);
+      const groupOk = playerMatchesGroup(player, requiredGroup);
+      const slotOk = teamHasOpenSlotFor(currentTeam, player.position);
+      const eligible = groupOk && slotOk;
+      let buttonLabel = "Draft";
+      if (!groupOk) buttonLabel = requiredGroup === "RETIRED" ? "Must Be Retired" : "Must Be Active";
+      else if (!slotOk) buttonLabel = "No Open Slot";
       return `
         <div class="player-card">
           <div class="player-main">
             <span class="pos-badge pos-${player.position}">${player.position}</span>
             <span class="player-name">${escapeHtml(player.name)}</span>
-            ${hofBadge(player)}
+            ${tagBadge(player)}
             ${byeBadge(best.season.team)}
           </div>
           <div class="player-season">${escapeHtml(formatSeasonLine(player, best))}</div>
           <div class="player-points">${best.summary.totalPoints} pts season &middot; ${best.summary.pointsPerGame} pts/gm</div>
           <button class="btn btn-primary btn-small" data-action="draft-player" data-player="${player.id}" ${eligible ? "" : "disabled"}>
-            ${eligible ? "Draft" : "No open slot"}
+            ${buttonLabel}
           </button>
         </div>`;
     })
@@ -331,7 +346,7 @@ function renderDraft() {
       On the clock: <strong>${escapeHtml(currentTeam.name)}</strong>
       <span id="draft-timer" class="draft-timer ${draftTimerClass()}">${draftTimerSeconds}s</span>
     </p>
-    <p class="hint">Auto-picks the best available player if the clock runs out.</p>
+    <p class="hint">This pick must be ${requiredLabel} -- retired and active picks alternate, starting with retired. Auto-picks the best available eligible player if the clock runs out.</p>
 
     <div class="draft-filters">
       <input type="text" id="draft-search" placeholder="Search players..." value="${escapeHtml(state.draftFilter.query)}" />
@@ -340,13 +355,14 @@ function renderDraft() {
           .map((p) => `<option value="${p}" ${state.draftFilter.position === p ? "selected" : ""}>${p}</option>`)
           .join("")}
       </select>
-      <select id="draft-hof-filter">
+      <select id="draft-tag-filter">
         ${[
           ["ALL", "All Players"],
           ["HOF", "Hall of Famers"],
-          ["NOT_HOF", "Not Yet in HOF"],
+          ["HOVG", "Hall of Very Good"],
+          ["ACTIVE", "Active"],
         ]
-          .map(([v, label]) => `<option value="${v}" ${state.draftFilter.hofFilter === v ? "selected" : ""}>${label}</option>`)
+          .map(([v, label]) => `<option value="${v}" ${state.draftFilter.tagFilter === v ? "selected" : ""}>${label}</option>`)
           .join("")}
       </select>
       <button class="btn" data-action="undo-pick" ${draft.picks.length ? "" : "disabled"}>Undo Last Pick</button>
@@ -593,19 +609,19 @@ function handleSeasonClick(action) {
 const FAQ_ITEMS = [
   {
     q: "How does the draft work?",
-    a: "It's a local, hot-seat snake draft: pick order reverses each round. On your turn, search or filter the Hall of Fame player pool and hit Draft. Each player auto-fills the most specific open roster slot (their position, then FLEX/SUPERFLEX, then BENCH).",
+    a: "It's a local, hot-seat snake draft: pick order reverses each round. Picks also alternate between retired and active players leaguewide, starting with a retired player on the very first overall pick -- odd picks must be retired (HOF/HOVG), even picks must be active. On your turn, search or filter the player pool and hit Draft. Each player auto-fills the most specific open roster slot (their position, then FLEX/SUPERFLEX, then BENCH).",
   },
   {
     q: "What does the season line next to a player mean?",
-    a: "Every Hall of Famer's career-best season is calculated live from your league's current scoring settings (PPR, TE Premium) -- not hard-coded -- so it always reflects the format you picked in Setup. That's the season you're drafting them at.",
+    a: "Every retired player's career-best season is calculated live from your league's current scoring settings (PPR, TE Premium) -- not hard-coded -- so it always reflects the format you picked in Setup. Active players show a single projected season the same way (marked 'proj.'). That's the season you're drafting them at.",
   },
   {
     q: "What's the 60-second draft timer?",
-    a: "Each pick has 60 seconds on the clock. If time runs out, the app auto-drafts the highest-scoring eligible player still available for whoever's on the clock, just like an autopick in a real draft room.",
+    a: "Each pick has 60 seconds on the clock. If time runs out, the app auto-drafts the highest-scoring player still available that's eligible for the pick (right retired/active group, open roster slot), just like an autopick in a real draft room.",
   },
   {
-    q: "What does the HOF / NOT YET badge mean?",
-    a: "The player pool isn't limited to enshrined Hall of Famers. HOF marks a player actually inducted in Canton; NOT YET marks a statistically great retired player who hasn't been enshrined (yet, or possibly ever) -- a 'Hall of Very Good' pool alongside the Hall of Famers. Filter to one or the other with the dropdown next to the position filter.",
+    q: "What do the HOF / HOVG / ACTIVE badges mean, and why must picks alternate?",
+    a: "Every player carries one tag: HOF (enshrined in Canton), HOVG (retired, statistically great, not yet enshrined -- the 'Hall of Very Good'), or ACTIVE (currently playing). HOF and HOVG together count as 'retired' for the draft's alternating rule. Filter to any one tag with the dropdown next to the position filter. Active players' rough draft order (and their projected points) approximates this year's fantasy ADP, assembled from multiple outlets and formulaically projected -- not a live feed, so expect some drift from any single site.",
   },
   {
     q: "What do 0/0.5/1 PPR and TE Premium mean?",
@@ -633,7 +649,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What's coming next?",
-    a: "This is a v1 prototype. Planned next steps include real multiplayer drafting, mixing in current players alongside Hall of Famers, random weekly score variance, and opponent/defense-adjusted scoring (e.g. a great pass defense holding a player below their average that week).",
+    a: "This is a v1 prototype. Planned next steps include real multiplayer drafting, random weekly score variance, and opponent/defense-adjusted scoring (e.g. a great pass defense holding a player below their average that week).",
   },
 ];
 
@@ -700,8 +716,8 @@ function wireEvents() {
     } else if (state.screen === "draft" && e.target.id === "draft-position-filter") {
       state.draftFilter.position = e.target.value;
       render();
-    } else if (state.screen === "draft" && e.target.id === "draft-hof-filter") {
-      state.draftFilter.hofFilter = e.target.value;
+    } else if (state.screen === "draft" && e.target.id === "draft-tag-filter") {
+      state.draftFilter.tagFilter = e.target.value;
       render();
     } else if (state.screen === "teams") {
       handleTeamsChange(e.target);

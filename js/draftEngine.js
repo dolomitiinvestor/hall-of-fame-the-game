@@ -2,7 +2,7 @@
 // be unit tested and, later, driven by network messages instead of
 // local UI clicks for real multiplayer.
 
-import { getPlayerById } from "./players.js";
+import { getPlayerById, isRetired, isActive } from "./players.js";
 
 export const DEFAULT_ROSTER_SLOTS = [
   "QB",
@@ -12,6 +12,10 @@ export const DEFAULT_ROSTER_SLOTS = [
   "WR",
   "TE",
   "FLEX",
+  "BENCH",
+  "BENCH",
+  "BENCH",
+  "BENCH",
   "BENCH",
   "BENCH",
   "BENCH",
@@ -97,6 +101,27 @@ export function teamHasOpenSlotFor(team, position) {
   return !!findOpenSlotForPosition(team, position);
 }
 
+// The draft forces alternation between retired (HOF/HOVG) and active
+// players, starting with retired on the very first overall pick. This
+// is purely a function of the overall pick counter, independent of
+// team/round, so it applies the same way regardless of league size.
+export function getRequiredGroup(draft) {
+  if (draft.status === "complete") return null;
+  return draft.overallPick % 2 === 1 ? "RETIRED" : "ACTIVE";
+}
+
+export function playerMatchesGroup(player, requiredGroup) {
+  if (!requiredGroup) return true;
+  return requiredGroup === "RETIRED" ? isRetired(player) : isActive(player);
+}
+
+// Combines the position/slot check with the retired-vs-active check --
+// the single source of truth the UI uses to enable/disable a Draft
+// button, and that draftPlayer() below re-validates against.
+export function canDraftPlayer(draft, team, player) {
+  return teamHasOpenSlotFor(team, player.position) && playerMatchesGroup(player, getRequiredGroup(draft));
+}
+
 function advancePick(draft) {
   draft.overallPick++;
   draft.pickInRound++;
@@ -116,6 +141,12 @@ export function draftPlayer(draft, playerId) {
   const team = getCurrentTeam(draft);
   const player = getPlayerById(playerId);
   if (!player) throw new Error("Unknown player.");
+
+  const requiredGroup = getRequiredGroup(draft);
+  if (!playerMatchesGroup(player, requiredGroup)) {
+    const label = requiredGroup === "RETIRED" ? "a retired (HOF/HOVG)" : "an active";
+    throw new Error(`This pick must be ${label} player.`);
+  }
 
   const slot = findOpenSlotForPosition(team, player.position);
   if (!slot) throw new Error(`${team.name} has no open roster spot for a ${player.position}.`);
