@@ -21,7 +21,7 @@ export function getBestSeason(player, rules) {
   let best = null;
   let bestSummary = null;
   for (const season of player.seasons) {
-    const summary = getSeasonSummary(season, rules);
+    const summary = getSeasonSummary(season, rules, player.position);
     if (!best || summary.totalPoints > bestSummary.totalPoints) {
       best = season;
       bestSummary = summary;

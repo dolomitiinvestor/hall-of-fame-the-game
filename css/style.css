@@ -39,14 +39,15 @@ body {
 }
 
 .main-nav {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 0.4rem;
-  flex-wrap: wrap;
 }
 
 .nav-btn {
-  flex: 1 1 auto;
-  min-width: 4.5rem;
+  min-width: 0;
+  padding-left: 0.3rem;
+  padding-right: 0.3rem;
 }
 
 .nav-btn.active {
@@ -217,6 +218,74 @@ select {
 .pos-WR { color: #7dff4f; border-color: #7dff4f; }
 .pos-TE { color: #d38bff; border-color: #d38bff; }
 
+.bye-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.on-the-clock {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.draft-timer {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+}
+
+.draft-timer.timer-warning {
+  color: #ffb84f;
+  border-color: #ffb84f;
+}
+
+.draft-timer.timer-danger {
+  color: #ff6b5c;
+  border-color: #ff6b5c;
+}
+
+/* Setup: league format */
+
+.format-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.format-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.format-row .checkbox-row {
+  flex-direction: row;
+  align-items: center;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.format-row input[type="checkbox"] {
+  width: auto;
+  padding: 0;
+}
+
 .roster-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
@@ -255,9 +324,9 @@ select {
   letter-spacing: 0.03em;
 }
 
-/* Teams */
+/* Generic collapsible panel: team rosters, FAQ items, NFL schedule weeks */
 
-.team-panel {
+.panel {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -265,11 +334,48 @@ select {
   padding: 0.6rem 0.8rem;
 }
 
-.team-panel summary {
+.panel summary {
   cursor: pointer;
   font-weight: 700;
   font-size: 1.05rem;
   padding: 0.3rem 0;
+}
+
+.panel p {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin: 0.4rem 0 0.2rem;
+}
+
+.week-panel {
+  margin-bottom: 0.5rem;
+}
+
+.week-panel summary {
+  font-size: 0.95rem;
+}
+
+.nfl-week-games {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.nfl-game {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.nfl-game .at {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+
+.nfl-game .home-team {
+  font-weight: 600;
 }
 
 .roster-table {

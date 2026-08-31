@@ -17,7 +17,30 @@ export const DEFAULT_ROSTER_SLOTS = [
   "BENCH",
 ];
 
-const FLEX_ELIGIBLE = ["RB", "WR", "TE"];
+// Which player positions can fill each slot type. BENCH takes anyone;
+// FLEX takes the usual RB/WR/TE; SUPERFLEX (added when a league enables
+// the Superflex format) additionally allows QB.
+export const SLOT_ELIGIBILITY = {
+  QB: ["QB"],
+  RB: ["RB"],
+  WR: ["WR"],
+  TE: ["TE"],
+  FLEX: ["RB", "WR", "TE"],
+  SUPERFLEX: ["QB", "RB", "WR", "TE"],
+  BENCH: ["QB", "RB", "WR", "TE"],
+};
+
+// Builds a roster-slot template from league format settings. Kept
+// separate from DEFAULT_ROSTER_SLOTS so the base template stays simple
+// and each format toggle (Superflex, future ones) is one clear insert.
+export function buildRosterSlots({ superflex = false } = {}) {
+  const slots = [...DEFAULT_ROSTER_SLOTS];
+  if (superflex) {
+    const flexIdx = slots.indexOf("FLEX");
+    slots.splice(flexIdx + 1, 0, "SUPERFLEX");
+  }
+  return slots;
+}
 
 export function createDraft(teamNames, rosterSlots = DEFAULT_ROSTER_SLOTS, order = null) {
   const teams = teamNames.map((name, i) => ({
@@ -52,12 +75,20 @@ export function getCurrentTeam(draft) {
 }
 
 function findOpenSlotForPosition(team, position) {
+  // Prefer the exact-position slot first (e.g. a QB into the QB slot).
   let slot = team.roster.find((s) => s.slot === position && !s.playerId);
   if (slot) return slot;
-  if (FLEX_ELIGIBLE.includes(position)) {
-    slot = team.roster.find((s) => s.slot === "FLEX" && !s.playerId);
-    if (slot) return slot;
-  }
+  // Then any other eligible non-BENCH slot, in roster order (so FLEX
+  // fills before SUPERFLEX, matching how the template is laid out).
+  slot = team.roster.find(
+    (s) =>
+      s.slot !== "BENCH" &&
+      s.slot !== position &&
+      !s.playerId &&
+      (SLOT_ELIGIBILITY[s.slot] || []).includes(position)
+  );
+  if (slot) return slot;
+  // Finally, bench.
   slot = team.roster.find((s) => s.slot === "BENCH" && !s.playerId);
   return slot || null;
 }
