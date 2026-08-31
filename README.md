@@ -71,9 +71,12 @@ and mobile browsers, including iPhone.
    next week you advance, since each played week keeps the lineup (and
    score) it actually used. Another shortcut jumps to Games.
 6. **Games** — every matchup played so far, in chronological order (week
-   1 first, not reverse-chronological). Each one expands (click it) into
-   a full box score — each starter's actual points that week, for both
-   teams. Also shows the NFL schedule — Week 1 is the real announced 2026
+   1 first, not reverse-chronological). Each team's score is shown next
+   to a real, attributed quote from that team's started Coach (one per
+   team per game, picked deterministically — see the FAQ). Each matchup
+   also expands (click it) into a full box score — each starter's actual
+   points that week, for both teams. Also shows the NFL schedule — Week
+   1 is the real announced 2026
    slate, other weeks are generated (see the FAQ and roadmap for why the
    rest isn't real too).
 7. **FAQ** — an in-app explainer covering all of the above.
@@ -185,6 +188,11 @@ the roadmap below doesn't require rewrites:
   engine, draft engine, and season sim unchanged; coaches additionally
   carry a `record` (career W-L-T, titles, title-game appearances) read
   only for display.
+- `js/data/coachQuotes.js` — real, attributed quotes per coach (source:
+  a user-supplied quote list, hand-parsed into this structure), keyed by
+  coach id. `coachQuoteForTeam()` in `js/app.js` picks one deterministically
+  per team per week (seeded, like injuries/variance) for that team's
+  started Coach, shown on the Games tab; display-only, no scoring effect.
 - `js/players.js` — data access layer merging all four pools above into
   one list (search/filter by name, position, and tag; "best season"
   calculation; `isRetired()`/`isActive()` group helpers used by the

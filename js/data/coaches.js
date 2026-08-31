@@ -99,7 +99,7 @@ export const COACHES = [
     seasons: [{ year: 1998, team: null, games: 16, stats: {} }],
   },
 
-  // ------------------------------------------------------ College (top 5)
+  // ------------------------------------------------------ College (top 4)
   {
     id: "coach-nick-saban",
     name: "Nick Saban",

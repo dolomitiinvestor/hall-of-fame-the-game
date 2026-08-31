@@ -26,6 +26,8 @@ import { saveState, loadState, clearState } from "./storage.js";
 import { getByeWeek, NFL_TEAMS } from "./data/nflTeams.js";
 import { getNflSchedule, isRealWeek } from "./nflSchedule.js";
 import { getInjuryStatusKey, INJURY_STATUSES } from "./injuries.js";
+import { COACH_QUOTES } from "./data/coachQuotes.js";
+import { seededRandom } from "./rng.js";
 
 const NFL_TEAM_NAMES = Object.fromEntries(NFL_TEAMS.map((t) => [t.code, t.name]));
 
@@ -688,7 +690,34 @@ function renderPlayerBreakdown(score) {
     ${bonusRow}`;
 }
 
-function renderMatchupBox(m, draft, label) {
+// A deterministic quote from a team's started Coach (COACH slot, not
+// benched -- same rule as the coach scoring bonus), shown next to
+// their score after a game. Same pick if you look again, but varies
+// by team and week. No quote if the team has no Coach starting that
+// week, or the coach's id isn't in COACH_QUOTES yet.
+function coachQuoteForTeam(team, week) {
+  const coachSlot = team.roster.find((s) => s.slot === "COACH" && s.playerId);
+  if (!coachSlot) return null;
+  const coach = getPlayerById(coachSlot.playerId);
+  const quotes = COACH_QUOTES[coachSlot.playerId];
+  if (!coach || !quotes || !quotes.length) return null;
+  const idx = Math.floor(seededRandom(`quote:${team.id}:${week}`) * quotes.length);
+  return { coachName: coach.name, text: quotes[idx] };
+}
+
+function renderScoreBlock(team, score, win, week) {
+  const quote = coachQuoteForTeam(team, week);
+  const quoteHtml = quote
+    ? `<p class="coach-quote">&ldquo;${escapeHtml(quote.text)}&rdquo; <span class="coach-quote-author">&mdash; ${escapeHtml(quote.coachName)}</span></p>`
+    : "";
+  return `
+    <div class="matchup-score-block">
+      <span class="${win}">${escapeHtml(team.name)} ${score.total.toFixed(2)}</span>
+      ${quoteHtml}
+    </div>`;
+}
+
+function renderMatchupBox(m, draft, label, week) {
   const [aId, bId] = m.teamIds;
   const aTeam = draft.teams.find((t) => t.id === aId);
   const bTeam = draft.teams.find((t) => t.id === bId);
@@ -701,9 +730,9 @@ function renderMatchupBox(m, draft, label) {
     <details class="panel matchup-panel">
       <summary>
         ${labelTag}
-        <span class="${aWin}">${escapeHtml(aTeam.name)} ${aScore.total.toFixed(2)}</span>
+        ${renderScoreBlock(aTeam, aScore, aWin, week)}
         <span class="vs">vs</span>
-        <span class="${bWin}">${escapeHtml(bTeam.name)} ${bScore.total.toFixed(2)}</span>
+        ${renderScoreBlock(bTeam, bScore, bWin, week)}
       </summary>
       <div class="matchup-detail">
         <div class="matchup-team">
@@ -858,7 +887,7 @@ function renderGames() {
         isPlayoff && wk.matchups.length === 2 && wk.roundLabel === "Championship"
           ? ["Championship", "3rd Place"]
           : wk.matchups.map(() => wk.roundLabel);
-      const matchups = wk.matchups.map((m, i) => renderMatchupBox(m, draft, isPlayoff ? labels[i] : null)).join("");
+      const matchups = wk.matchups.map((m, i) => renderMatchupBox(m, draft, isPlayoff ? labels[i] : null, wk.week)).join("");
       const byeLabel = isPlayoff ? "Missed playoffs" : "Bye";
       const byes = wk.byeTeamIds.length
         ? `<div class="bye-note">${byeLabel}: ${wk.byeTeamIds
@@ -901,6 +930,10 @@ const FAQ_ITEMS = [
   {
     q: "What are the Coach, K, and DEF roster spots?",
     a: "Every team drafts exactly one Coach (from the top 10 all-time NFL coaches and top 4 all-time college coaches), one Kicker, and one Defense (a single all-time-great team defensive season), alongside the usual offensive skill positions. Kickers score on field goals/extra points made; defenses score on sacks, interceptions, fumble recoveries, defensive TDs, safeties, and a tiered bonus/penalty for points allowed per game -- all real scoring, adjustable in js/scoring.js. A started Coach doesn't score individually, but adds a flat 5% bonus to your team's total for the week (shown under that team's box score) -- benching your Coach removes the bonus. None of the three count toward the retired/active alternation.",
+  },
+  {
+    q: "What's the quote next to each team's score on the Games tab?",
+    a: "A real, attributed quote from that team's started Coach -- one per team, per game. It's picked deterministically (same pick if you look again, but varies game to game) from a fixed list of that coach's real quotes, not generated. A team without a Coach in the starting slot that week shows no quote, matching the same rule as the Coach scoring bonus.",
   },
   {
     q: "What's the injury (Q/D/O/IR) badge?",

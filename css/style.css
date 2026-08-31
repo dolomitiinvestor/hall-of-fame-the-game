@@ -615,6 +615,27 @@ select {
   font-weight: 700;
 }
 
+.matchup-score-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1 1 10rem;
+  min-width: 9rem;
+}
+
+.coach-quote {
+  margin: 0;
+  font-size: 0.7rem;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--text-dim);
+  white-space: normal;
+}
+
+.coach-quote-author {
+  font-style: normal;
+}
+
 .matchup-detail {
   display: flex;
   gap: 1rem;
