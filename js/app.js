@@ -23,7 +23,7 @@ import {
 } from "./season.js";
 import { saveState, loadState, clearState } from "./storage.js";
 import { getByeWeek, NFL_TEAMS } from "./data/nflTeams.js";
-import { getNflSchedule } from "./nflSchedule.js";
+import { getNflSchedule, isRealWeek } from "./nflSchedule.js";
 
 const NFL_TEAM_NAMES = Object.fromEntries(NFL_TEAMS.map((t) => [t.code, t.name]));
 
@@ -310,19 +310,19 @@ function renderDraft() {
   const currentTeam = getCurrentTeam(draft);
   const rules = getRules();
   const requiredGroup = getRequiredGroup(draft);
-  const requiredLabel = requiredGroup === "RETIRED" ? "a RETIRED player (HOF or HOVG)" : "an ACTIVE player";
+  const requiredLabel = requiredGroup === "RETIRED" ? "RETIRED (HOF or HOVG)" : "ACTIVE";
+  // Players whose retired/active tag doesn't match this pick's required
+  // group are hidden entirely rather than shown disabled -- COACH/K/DEF
+  // are always exempt (playerMatchesGroup returns true for them), so
+  // this only ever hides QB/RB/WR/TE of the wrong group.
   const results = searchPlayers(state.draftFilter, rules)
     .filter(({ player }) => !draft.draftedPlayerIds.includes(player.id))
+    .filter(({ player }) => playerMatchesGroup(player, requiredGroup))
     .sort((a, b) => b.best.summary.pointsPerGame - a.best.summary.pointsPerGame);
 
   const rows = results
     .map(({ player, best }) => {
-      const groupOk = playerMatchesGroup(player, requiredGroup);
       const slotOk = teamHasOpenSlotFor(currentTeam, player.position);
-      const eligible = groupOk && slotOk;
-      let buttonLabel = "Draft";
-      if (!groupOk) buttonLabel = requiredGroup === "RETIRED" ? "Must Be Retired" : "Must Be Active";
-      else if (!slotOk) buttonLabel = "No Open Slot";
       return `
         <div class="player-card">
           <div class="player-main">
@@ -333,12 +333,12 @@ function renderDraft() {
           </div>
           <div class="player-season">${escapeHtml(formatSeasonLine(player, best))}</div>
           <div class="player-points">${best.summary.totalPoints} pts season &middot; ${best.summary.pointsPerGame} pts/gm</div>
-          <button class="btn btn-primary btn-small" data-action="draft-player" data-player="${player.id}" ${eligible ? "" : "disabled"}>
-            ${buttonLabel}
+          <button class="btn btn-primary btn-small" data-action="draft-player" data-player="${player.id}" ${slotOk ? "" : "disabled"}>
+            ${slotOk ? "Draft" : "No Open Slot"}
           </button>
         </div>`;
     })
-    .join("") || `<p class="hint">No players match your search.</p>`;
+    .join("") || `<p class="hint">No eligible players match your search/filter right now.</p>`;
 
   return `
     <h2>Draft &mdash; Round ${draft.round} / ${draft.totalRounds}, Pick ${draft.overallPick}</h2>
@@ -346,12 +346,12 @@ function renderDraft() {
       On the clock: <strong>${escapeHtml(currentTeam.name)}</strong>
       <span id="draft-timer" class="draft-timer ${draftTimerClass()}">${draftTimerSeconds}s</span>
     </p>
-    <p class="hint">This pick must be ${requiredLabel} -- each team's own picks alternate retired/active, starting with retired. Auto-picks the best available eligible player if the clock runs out.</p>
+    <p class="hint">Your next QB/RB/WR/TE pick must be ${requiredLabel} -- each team's own skill-position picks alternate retired/active, starting with retired. Coach/K/DEF picks aren't restricted and are always shown. Auto-picks the best available eligible player if the clock runs out.</p>
 
     <div class="draft-filters">
       <input type="text" id="draft-search" placeholder="Search players..." value="${escapeHtml(state.draftFilter.query)}" />
       <select id="draft-position-filter">
-        ${["ALL", "QB", "RB", "WR", "TE"]
+        ${["ALL", "QB", "RB", "WR", "TE", "COACH", "K", "DEF"]
           .map((p) => `<option value="${p}" ${state.draftFilter.position === p ? "selected" : ""}>${p}</option>`)
           .join("")}
       </select>
@@ -513,12 +513,16 @@ function renderNflSchedule(weeks) {
           return `<div class="nfl-game"><span>${away} (${g.away})</span><span class="at">at</span><span class="home-team">${home} (${g.home})</span></div>`;
         })
         .join("");
-      return `<details class="panel week-panel"><summary>Week ${idx + 1}</summary><div class="nfl-week-games">${rows}</div></details>`;
+      const real = isRealWeek(idx + 1);
+      const badge = real
+        ? `<span class="tag-badge active-tag" title="Real, confirmed 2026 schedule">REAL</span>`
+        : `<span class="tag-badge hovg-tag" title="Algorithmically generated, not a real schedule">GENERATED</span>`;
+      return `<details class="panel week-panel"><summary>Week ${idx + 1} ${badge}</summary><div class="nfl-week-games">${rows}</div></details>`;
     })
     .join("");
   return `
     <h3>NFL Schedule</h3>
-    <p class="hint">Generated matchups (who's facing who, and who's home) for gameplay flavor -- see the FAQ.</p>
+    <p class="hint">Week 1 is the real announced 2026 schedule; every other week is generated for gameplay flavor pending more real data -- see the FAQ.</p>
     <div class="nfl-schedule">${weekBlocks}</div>
   `;
 }
@@ -609,7 +613,7 @@ function handleSeasonClick(action) {
 const FAQ_ITEMS = [
   {
     q: "How does the draft work?",
-    a: "It's a local, hot-seat snake draft: pick order reverses each round. Each team's own picks also alternate between retired and active players, starting with retired on their 1st pick, active on their 2nd, retired on their 3rd, and so on -- independently per team, not by overall pick order. On your turn, search or filter the player pool and hit Draft. Each player auto-fills the most specific open roster slot (their position, then FLEX/SUPERFLEX, then BENCH).",
+    a: "It's a local, hot-seat snake draft: pick order reverses each round. Each team's own QB/RB/WR/TE picks also alternate between retired and active, starting with retired on their 1st skill pick, active on their 2nd, retired on their 3rd, and so on -- independently per team, not by overall pick order. Whichever group isn't currently eligible is hidden from the list entirely rather than shown disabled. Coach, K, and DEF picks aren't part of that alternation and are always shown. On your turn, search or filter the player pool and hit Draft. Each player auto-fills the most specific open roster slot (their exact position, then FLEX/SUPERFLEX, then BENCH).",
   },
   {
     q: "What does the season line next to a player mean?",
@@ -621,7 +625,11 @@ const FAQ_ITEMS = [
   },
   {
     q: "What do the HOF / HOVG / ACTIVE badges mean, and why must picks alternate?",
-    a: "Every player carries one tag: HOF (enshrined in Canton), HOVG (retired, statistically great, not yet enshrined -- the 'Hall of Very Good'), or ACTIVE (currently playing). HOF and HOVG together count as 'retired' for the draft's alternating rule. Filter to any one tag with the dropdown next to the position filter. Active players' rough draft order (and their projected points) approximates this year's fantasy ADP, assembled from multiple outlets and formulaically projected -- not a live feed, so expect some drift from any single site.",
+    a: "Every player, coach, kicker, and defense carries one tag: HOF (enshrined in the relevant Hall of Fame), HOVG (retired/former, statistically or historically great, not yet enshrined -- the 'Hall of Very Good'), or ACTIVE (currently playing/coaching). HOF and HOVG together count as 'retired' for the draft's alternating rule, which only applies to QB/RB/WR/TE. Filter to any one tag with the dropdown next to the position filter. Active players' rough draft order (and their projected points) approximates this year's fantasy ADP, assembled from multiple outlets and formulaically projected -- not a live feed, so expect some drift from any single site.",
+  },
+  {
+    q: "What are the Coach, K, and DEF roster spots?",
+    a: "Every team drafts exactly one Coach (from the top 10 all-time NFL coaches and top 5 all-time college coaches), one Kicker, and one Defense (a single all-time-great team defensive season), alongside the usual offensive skill positions. Kickers score on field goals/extra points made; defenses score on sacks, interceptions, fumble recoveries, defensive TDs, safeties, and a tiered bonus/penalty for points allowed per game -- all real scoring, adjustable in js/scoring.js. Coaches show their career record and title/title-game-appearance totals but don't score fantasy points yet -- that's a point-modifier planned for later. None of the three count toward the retired/active alternation.",
   },
   {
     q: "What do 0/0.5/1 PPR and TE Premium mean?",
@@ -641,7 +649,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What's the BYE badge on the Draft screen, and the NFL Schedule on the Season screen?",
-    a: "Both are generated for gameplay flavor, not pulled from a real published NFL calendar: the BYE badge shows an illustrative bye week for the player's team, and the Season screen's NFL Schedule shows generated weekly matchups (who's facing who, and who's home) for all 32 teams. They're a foundation for future features like matchup-adjusted scoring.",
+    a: "The BYE badge is generated for gameplay flavor, not a real published bye-week calendar. The Season screen's NFL Schedule is a mix: Week 1 is the real announced 2026 schedule (confirmed complete, all 32 teams); every other week is algorithmically generated pending more real data, since most schedule-data sites couldn't be reached from here. Both are a foundation for future features like matchup-adjusted scoring.",
   },
   {
     q: "Is my league saved?",
@@ -649,7 +657,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What's coming next?",
-    a: "This is a v1 prototype. Planned next steps include real multiplayer drafting, random weekly score variance, and opponent/defense-adjusted scoring (e.g. a great pass defense holding a player below their average that week).",
+    a: "This is a v1 prototype. Planned next steps include real multiplayer drafting, random weekly score variance, opponent/defense-adjusted scoring (e.g. a great pass defense holding a player below their average that week), the coach point modifier, and filling in more real NFL schedule weeks.",
   },
 ];
 

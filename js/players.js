@@ -1,17 +1,23 @@
 // Player data access layer. This is the seam where "current players"
-// or a bigger/real stats source gets mixed in later -- callers only
-// use the functions below, never PLAYERS directly, so the data source
-// can change without touching draft/season/UI code.
+// or a bigger/real stats source gets mixed in later -- callers never
+// touch the raw data arrays directly, only the functions below, so the
+// data source (or how many pools get merged in) can change without
+// touching draft/season/UI code.
 
 import { PLAYERS } from "./data/players.js";
+import { COACHES } from "./data/coaches.js";
+import { KICKERS } from "./data/kickers.js";
+import { DEFENSES } from "./data/defenses.js";
 import { getSeasonSummary } from "./scoring.js";
 
+const ALL_PLAYERS = [...PLAYERS, ...COACHES, ...KICKERS, ...DEFENSES];
+
 export function getAllPlayers() {
-  return PLAYERS;
+  return ALL_PLAYERS;
 }
 
 export function getPlayerById(id) {
-  return PLAYERS.find((p) => p.id === id) || null;
+  return ALL_PLAYERS.find((p) => p.id === id) || null;
 }
 
 // The "best season" is computed dynamically from the current scoring
@@ -32,7 +38,10 @@ export function getBestSeason(player, rules) {
 
 // A player is either RETIRED (tag HOF or HOVG) or ACTIVE. This is the
 // grouping the draft's forced alternation (see draftEngine.js) cares
-// about -- HOF vs. HOVG only matters for display/filtering.
+// about -- HOF vs. HOVG only matters for display/filtering. Coaches,
+// kickers, and team defenses all carry a tag too (for the badge/filter)
+// but are exempt from the alternation itself; see SKILL_POSITIONS in
+// draftEngine.js.
 export function isRetired(player) {
   return player.tag === "HOF" || player.tag === "HOVG";
 }
@@ -46,7 +55,7 @@ export function isActive(player) {
 // yet enshrined), active players, or all of the above.
 export function searchPlayers({ query = "", position = "ALL", tagFilter = "ALL" } = {}, rules) {
   const q = query.trim().toLowerCase();
-  return PLAYERS.filter((p) => {
+  return ALL_PLAYERS.filter((p) => {
     if (position !== "ALL" && p.position !== position) return false;
     if (tagFilter !== "ALL" && p.tag !== tagFilter) return false;
     if (q && !p.name.toLowerCase().includes(q)) return false;
@@ -54,7 +63,17 @@ export function searchPlayers({ query = "", position = "ALL", tagFilter = "ALL" 
   }).map((p) => ({ player: p, best: getBestSeason(p, rules) }));
 }
 
+function formatCoachLine(player) {
+  const r = player.record;
+  const record = `${r.wins}-${r.losses}${r.ties ? `-${r.ties}` : ""}`;
+  const titleWord = r.titles === 1 ? "title" : "titles";
+  const apptWord = r.titleAppearances === 1 ? "appearance" : "appearances";
+  return `${record} career record - ${r.titles} ${titleWord}, ${r.titleAppearances} title-game ${apptWord}`;
+}
+
 export function formatSeasonLine(player, best) {
+  if (player.position === "COACH") return formatCoachLine(player);
+
   const { season, summary } = best;
   const parts = [];
   if (player.position === "QB") {
@@ -67,10 +86,19 @@ export function formatSeasonLine(player, best) {
     if (season.stats.rushTD) parts.push(`${season.stats.rushTD} rush TD`);
     if (season.stats.rec) parts.push(`${season.stats.rec} rec`);
     if (season.stats.recYds) parts.push(`${season.stats.recYds} rec yds`);
-  } else {
+  } else if (player.position === "WR" || player.position === "TE") {
     if (season.stats.rec) parts.push(`${season.stats.rec} rec`);
     if (season.stats.recYds) parts.push(`${season.stats.recYds} rec yds`);
     if (season.stats.recTD) parts.push(`${season.stats.recTD} rec TD`);
+  } else if (player.position === "K") {
+    if (season.stats.fgMade != null) parts.push(`${season.stats.fgMade} FG made`);
+    if (season.stats.xpMade != null) parts.push(`${season.stats.xpMade} XP made`);
+  } else if (player.position === "DEF") {
+    if (season.stats.sacks) parts.push(`${season.stats.sacks} sacks`);
+    if (season.stats.defInt) parts.push(`${season.stats.defInt} INT`);
+    if (season.stats.fumRec) parts.push(`${season.stats.fumRec} FR`);
+    if (season.stats.defTD) parts.push(`${season.stats.defTD} DEF TD`);
+    if (season.stats.ptsAllowed != null) parts.push(`${season.stats.ptsAllowed} pts allowed`);
   }
   const shortSeason = season.games < 16 ? ` (${season.games} gm season)` : "";
   const yearLabel = isActive(player) ? `${season.year} proj.` : `${season.year}`;

@@ -12,6 +12,9 @@ export const DEFAULT_ROSTER_SLOTS = [
   "WR",
   "TE",
   "FLEX",
+  "COACH",
+  "K",
+  "DEF",
   "BENCH",
   "BENCH",
   "BENCH",
@@ -20,6 +23,11 @@ export const DEFAULT_ROSTER_SLOTS = [
   "BENCH",
   "BENCH",
 ];
+
+// Offensive skill positions -- the only ones subject to the draft's
+// forced retired/active alternation (see getRequiredGroup below).
+// COACH/K/DEF are a different kind of pick entirely and are exempt.
+export const SKILL_POSITIONS = ["QB", "RB", "WR", "TE"];
 
 // Which player positions can fill each slot type. BENCH takes anyone;
 // FLEX takes the usual RB/WR/TE; SUPERFLEX (added when a league enables
@@ -31,7 +39,10 @@ export const SLOT_ELIGIBILITY = {
   TE: ["TE"],
   FLEX: ["RB", "WR", "TE"],
   SUPERFLEX: ["QB", "RB", "WR", "TE"],
-  BENCH: ["QB", "RB", "WR", "TE"],
+  COACH: ["COACH"],
+  K: ["K"],
+  DEF: ["DEF"],
+  BENCH: ["QB", "RB", "WR", "TE", "COACH", "K", "DEF"],
 };
 
 // Builds a roster-slot template from league format settings. Kept
@@ -103,19 +114,28 @@ export function teamHasOpenSlotFor(team, position) {
 
 // The draft forces alternation between retired (HOF/HOVG) and active
 // players -- per team, not by overall pick: each team's OWN sequence of
-// picks alternates, starting with retired on that team's 1st pick, then
-// active on their 2nd, retired on their 3rd, and so on. Computed from
-// how many picks this team has already made rather than stored, so
-// undo (which just removes the last pick) keeps it correct for free.
+// SKILL-POSITION picks alternates, starting with retired on their 1st
+// skill pick, then active on their 2nd, retired on their 3rd, and so
+// on. COACH/K/DEF picks don't count toward this and aren't restricted
+// by it (see playerMatchesGroup). Computed from how many qualifying
+// picks this team has already made rather than stored, so undo (which
+// just removes the last pick) keeps it correct for free.
 export function getRequiredGroup(draft) {
   if (draft.status === "complete") return null;
   const team = getCurrentTeam(draft);
   if (!team) return null;
-  const picksSoFar = draft.picks.filter((p) => p.teamId === team.id).length;
+  const picksSoFar = draft.picks.filter((p) => {
+    if (p.teamId !== team.id) return false;
+    const player = getPlayerById(p.playerId);
+    return player && SKILL_POSITIONS.includes(player.position);
+  }).length;
   return picksSoFar % 2 === 0 ? "RETIRED" : "ACTIVE";
 }
 
+// COACH/K/DEF aren't offensive skill players and sit outside the
+// retired/active alternation entirely -- always eligible group-wise.
 export function playerMatchesGroup(player, requiredGroup) {
+  if (!SKILL_POSITIONS.includes(player.position)) return true;
   if (!requiredGroup) return true;
   return requiredGroup === "RETIRED" ? isRetired(player) : isActive(player);
 }

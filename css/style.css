@@ -217,6 +217,9 @@ select {
 .pos-RB { color: #4fd6ff; border-color: #4fd6ff; }
 .pos-WR { color: #7dff4f; border-color: #7dff4f; }
 .pos-TE { color: #d38bff; border-color: #d38bff; }
+.pos-COACH { color: #ffd54f; border-color: #ffd54f; }
+.pos-K { color: #ff7dc4; border-color: #ff7dc4; }
+.pos-DEF { color: #9fb0d0; border-color: #9fb0d0; }
 
 .bye-badge {
   display: inline-block;
@@ -381,6 +384,9 @@ select {
 
 .week-panel summary {
   font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .nfl-week-games {
