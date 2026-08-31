@@ -285,8 +285,11 @@ const TAG_BADGE = {
 };
 
 function tagBadge(player) {
-  const { cls, title } = TAG_BADGE[player.tag];
-  return `<span class="tag-badge ${cls}" title="${title}">${player.tag}</span>`;
+  // Team defenses carry no tag (HOF/HOVG/ACTIVE don't apply to a unit
+  // rather than an individual) -- render nothing rather than crash.
+  const entry = TAG_BADGE[player.tag];
+  if (!entry) return "";
+  return `<span class="tag-badge ${entry.cls}" title="${entry.title}">${player.tag}</span>`;
 }
 
 function renderDraft() {
@@ -311,18 +314,20 @@ function renderDraft() {
   const rules = getRules();
   const requiredGroup = getRequiredGroup(draft);
   const requiredLabel = requiredGroup === "RETIRED" ? "RETIRED (HOF or HOVG)" : "ACTIVE";
-  // Players whose retired/active tag doesn't match this pick's required
-  // group are hidden entirely rather than shown disabled -- COACH/K/DEF
-  // are always exempt (playerMatchesGroup returns true for them), so
-  // this only ever hides QB/RB/WR/TE of the wrong group.
+  // Two kinds of ineligibility hide a player entirely rather than show
+  // them disabled: (1) a QB/RB/WR/TE of the wrong retired/active group
+  // for this pick (COACH/K/DEF are always exempt -- playerMatchesGroup
+  // returns true for them); (2) nowhere left on the roster for their
+  // position to go (every slot that could hold them, including BENCH,
+  // is already full). Anyone still shown is fully draftable.
   const results = searchPlayers(state.draftFilter, rules)
     .filter(({ player }) => !draft.draftedPlayerIds.includes(player.id))
     .filter(({ player }) => playerMatchesGroup(player, requiredGroup))
+    .filter(({ player }) => teamHasOpenSlotFor(currentTeam, player.position))
     .sort((a, b) => b.best.summary.pointsPerGame - a.best.summary.pointsPerGame);
 
   const rows = results
     .map(({ player, best }) => {
-      const slotOk = teamHasOpenSlotFor(currentTeam, player.position);
       return `
         <div class="player-card">
           <div class="player-main">
@@ -333,8 +338,8 @@ function renderDraft() {
           </div>
           <div class="player-season">${escapeHtml(formatSeasonLine(player, best))}</div>
           <div class="player-points">${best.summary.totalPoints} pts season &middot; ${best.summary.pointsPerGame} pts/gm</div>
-          <button class="btn btn-primary btn-small" data-action="draft-player" data-player="${player.id}" ${slotOk ? "" : "disabled"}>
-            ${slotOk ? "Draft" : "No Open Slot"}
+          <button class="btn btn-primary btn-small" data-action="draft-player" data-player="${player.id}">
+            Draft
           </button>
         </div>`;
     })
@@ -502,6 +507,57 @@ function handleTeamsChange(target) {
 
 // ------------------------------------------------------------- season
 
+// Per-starter box score for one team's side of a matchup. `breakdown`
+// is stored on the matchup itself (computeTeamWeekScore() at the time
+// that week was simulated), not recomputed live, so it stays an
+// accurate historical record even after a lineup is edited later.
+function renderPlayerBreakdown(breakdown) {
+  if (!breakdown.length) return `<p class="hint">No starters were set that week.</p>`;
+  const rows = breakdown
+    .map(
+      (b) => `
+      <tr>
+        <td><span class="pos-badge pos-${b.position}">${b.position}</span></td>
+        <td>${escapeHtml(b.name)}</td>
+        <td>${b.points.toFixed(2)}</td>
+      </tr>`
+    )
+    .join("");
+  return `
+    <table class="roster-table matchup-table">
+      <thead><tr><th>Pos</th><th>Player</th><th>Pts</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function renderMatchupBox(m, draft) {
+  const [aId, bId] = m.teamIds;
+  const aTeam = draft.teams.find((t) => t.id === aId);
+  const bTeam = draft.teams.find((t) => t.id === bId);
+  const aScore = m.scores[aId];
+  const bScore = m.scores[bId];
+  const aWin = m.winnerId === aId ? " win" : "";
+  const bWin = m.winnerId === bId ? " win" : "";
+  return `
+    <details class="panel matchup-panel">
+      <summary>
+        <span class="${aWin}">${escapeHtml(aTeam.name)} ${aScore.total.toFixed(2)}</span>
+        <span class="vs">vs</span>
+        <span class="${bWin}">${escapeHtml(bTeam.name)} ${bScore.total.toFixed(2)}</span>
+      </summary>
+      <div class="matchup-detail">
+        <div class="matchup-team">
+          <h5>${escapeHtml(aTeam.name)}</h5>
+          ${renderPlayerBreakdown(aScore.breakdown)}
+        </div>
+        <div class="matchup-team">
+          <h5>${escapeHtml(bTeam.name)}</h5>
+          ${renderPlayerBreakdown(bScore.breakdown)}
+        </div>
+      </div>
+    </details>`;
+}
+
 function renderNflSchedule(weeks) {
   const nflWeeks = getNflSchedule(weeks);
   const weekBlocks = nflWeeks
@@ -555,22 +611,7 @@ function renderSeason() {
   const history = [...season.weeklyResults]
     .reverse()
     .map((wk) => {
-      const matchups = wk.matchups
-        .map((m) => {
-          const [aId, bId] = m.teamIds;
-          const aName = draft.teams.find((t) => t.id === aId).name;
-          const bName = draft.teams.find((t) => t.id === bId).name;
-          const aScore = m.scores[aId].total;
-          const bScore = m.scores[bId].total;
-          const aWin = m.winnerId === aId ? " win" : "";
-          const bWin = m.winnerId === bId ? " win" : "";
-          return `<div class="matchup">
-            <span class="${aWin}">${escapeHtml(aName)} ${aScore.toFixed(2)}</span>
-            <span class="vs">vs</span>
-            <span class="${bWin}">${escapeHtml(bName)} ${bScore.toFixed(2)}</span>
-          </div>`;
-        })
-        .join("");
+      const matchups = wk.matchups.map((m) => renderMatchupBox(m, draft)).join("");
       const byes = wk.byeTeamIds.length
         ? `<div class="bye-note">Bye: ${wk.byeTeamIds
             .map((id) => escapeHtml(draft.teams.find((t) => t.id === id).name))
@@ -586,6 +627,7 @@ function renderSeason() {
     <button class="btn btn-primary" data-action="advance-week" ${complete ? "disabled" : ""}>
       ${complete ? "Season Finished" : "Advance Week"}
     </button>
+    <p class="hint">Set lineups any time from the <button class="link-btn" data-action="goto-teams-from-season">Teams tab</button> -- changes apply starting with the next week you advance; past weeks keep their own recorded lineup.</p>
 
     <h3>Standings</h3>
     <table class="roster-table standings-table">
@@ -594,6 +636,7 @@ function renderSeason() {
     </table>
 
     <h3>Weekly Results</h3>
+    <p class="hint">Click a matchup to see each starter's actual points that week.</p>
     <div class="week-history">${history}</div>
 
     ${renderNflSchedule(season.weeks)}
@@ -605,6 +648,8 @@ function handleSeasonClick(action) {
     advanceWeek(state.season, state.draft, getRules());
     persist();
     render();
+  } else if (action === "goto-teams-from-season") {
+    setScreen("teams");
   }
 }
 
@@ -613,7 +658,7 @@ function handleSeasonClick(action) {
 const FAQ_ITEMS = [
   {
     q: "How does the draft work?",
-    a: "It's a local, hot-seat snake draft: pick order reverses each round. Each team's own QB/RB/WR/TE picks also alternate between retired and active, starting with retired on their 1st skill pick, active on their 2nd, retired on their 3rd, and so on -- independently per team, not by overall pick order. Whichever group isn't currently eligible is hidden from the list entirely rather than shown disabled. Coach, K, and DEF picks aren't part of that alternation and are always shown. On your turn, search or filter the player pool and hit Draft. Each player auto-fills the most specific open roster slot (their exact position, then FLEX/SUPERFLEX, then BENCH).",
+    a: "It's a local, hot-seat snake draft: pick order reverses each round. Each team's own QB/RB/WR/TE picks also alternate between retired and active, starting with retired on their 1st skill pick, active on their 2nd, retired on their 3rd, and so on -- independently per team, not by overall pick order. Whichever group isn't currently eligible is hidden from the list entirely rather than shown disabled -- and so is anyone your team has nowhere left to roster (every slot that could hold their position, including BENCH, already full). Coach, K, and DEF picks aren't part of the retired/active alternation and are always shown, subject to that same roster-room check. On your turn, search or filter the player pool and hit Draft. Each player auto-fills the most specific open roster slot (their exact position, then FLEX/SUPERFLEX, then BENCH).",
   },
   {
     q: "What does the season line next to a player mean?",
@@ -625,7 +670,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What do the HOF / HOVG / ACTIVE badges mean, and why must picks alternate?",
-    a: "Every player, coach, kicker, and defense carries one tag: HOF (enshrined in the relevant Hall of Fame), HOVG (retired/former, statistically or historically great, not yet enshrined -- the 'Hall of Very Good'), or ACTIVE (currently playing/coaching). HOF and HOVG together count as 'retired' for the draft's alternating rule, which only applies to QB/RB/WR/TE. Filter to any one tag with the dropdown next to the position filter. Active players' rough draft order (and their projected points) approximates this year's fantasy ADP, assembled from multiple outlets and formulaically projected -- not a live feed, so expect some drift from any single site.",
+    a: "Every player and coach carries one tag: HOF (enshrined in the relevant Hall of Fame), HOVG (retired/former, statistically or historically great, not yet enshrined -- the 'Hall of Very Good'), or ACTIVE (currently playing/coaching). Kickers are tagged too, but defenses aren't -- a team defensive unit isn't an individual who can be personally enshrined, so no badge shows for DEF. HOF and HOVG together count as 'retired' for the draft's alternating rule, which only applies to QB/RB/WR/TE. Filter to any one tag with the dropdown next to the position filter. Active players' rough draft order (and their projected points) approximates this year's fantasy ADP, assembled from multiple outlets and formulaically projected -- not a live feed, so expect some drift from any single site.",
   },
   {
     q: "What are the Coach, K, and DEF roster spots?",
@@ -644,8 +689,12 @@ const FAQ_ITEMS = [
     a: "Each starter scores their career-best season's fantasy points per game, every week. For a real shortened season (a strike year, a wartime schedule, etc.), that per-game rate is simply repeated across all 16 simulated weeks rather than the season ending early. Bench players don't score.",
   },
   {
+    q: "Can I change my lineup as the season goes on?",
+    a: "Yes -- the Teams tab is editable at any point, including mid-season, and there's a shortcut to it right on the Season screen. A change only affects weeks you advance to afterward; every week already played keeps the lineup (and scores) it actually used, so past results never shift under you.",
+  },
+  {
     q: "How are weekly matchups and standings decided?",
-    a: "Teams play a round-robin schedule (with a bye if you have an odd number of teams) across 16 weeks. Higher total score wins the week; standings rank by wins, then losses, then total points.",
+    a: "Teams play a round-robin schedule (with a bye if you have an odd number of teams) across 16 weeks. Higher total score wins the week; standings rank by wins, then losses, then total points. Click any matchup in Weekly Results to see exactly what each starter scored that week.",
   },
   {
     q: "What's the BYE badge on the Draft screen, and the NFL Schedule on the Season screen?",

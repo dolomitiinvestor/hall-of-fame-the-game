@@ -21,30 +21,41 @@ and mobile browsers, including iPhone.
    Each team's own QB/RB/WR/TE picks also alternate between retired and
    active, starting with retired on their 1st skill pick, active on
    their 2nd, and so on — independently per team, not by overall pick
-   order — and the on-screen hint always says which is required; whichever
-   group isn't currently eligible is hidden from the list entirely (not
-   just disabled). Coach, K, and DEF picks aren't part of that alternation
-   and are always shown. On each turn, search/filter the player pool (by
-   name, position, and HOF/HOVG/ACTIVE tag) and draft a player; their best
-   (or projected) season — computed live from your league's scoring
-   settings — their team's bye week, and their tag badge are shown next to
-   their name. Players auto-fill the most specific open roster slot
-   (position → FLEX/SUPERFLEX → BENCH). If the clock hits zero, the best
-   available eligible player is auto-drafted for you. Undo is available if
-   you misclick.
+   order — and the on-screen hint always says which is required. Anyone
+   who isn't currently eligible is hidden from the list entirely, never
+   shown disabled: that covers both the wrong retired/active group for
+   this pick, and anyone your team has no roster room left for (every
+   slot that could hold their position, including BENCH, already full).
+   Coach, K, and DEF picks aren't part of the retired/active alternation
+   and are always shown, subject to that same roster-room check. On each
+   turn, search/filter the player pool (by name, position, and
+   HOF/HOVG/ACTIVE tag) and draft a player; their best (or projected)
+   season — computed live from your league's scoring settings — their
+   team's bye week, and their tag badge (defenses don't get one — see
+   Scoring below) are shown next to their name. Players auto-fill the
+   most specific open roster slot (position → FLEX/SUPERFLEX → BENCH).
+   If the clock hits zero, the best available eligible player is
+   auto-drafted for you. Undo is available if you misclick.
 3. **Teams** — set your starting lineup: QB, 2×RB, 2×WR, TE, FLEX (+
    SUPERFLEX if enabled), Coach, K, DEF, and 7 bench spots. Only
    non-BENCH slots score. Swapping a player into a slot swaps whoever was
    there back to where the new player came from, so the roster never ends
-   up in a broken state.
+   up in a broken state. Editable any time, including mid-season — see
+   Season below.
 4. **Season** — click "Advance Week" to sim a week. Each starter scores
    their best (or projected) season's fantasy points **per game**; short
    seasons (strike years, wartime schedules, etc.) have that rate repeated across
    all 16 simulated weeks rather than stopping early. Coaches don't score
    yet (see Scoring below). Standings track W-L-T and points for/against
-   across a round-robin schedule (byes when team count is odd). The
-   screen also shows the NFL schedule — Week 1 is the real announced 2026
-   slate, other weeks are generated pending more real data.
+   across a round-robin schedule (byes when team count is odd). Every
+   matchup in Weekly Results expands (click it) into a full box score —
+   each starter's actual points that week, for both teams. A shortcut
+   link on this screen jumps to the Teams tab so you can adjust a lineup
+   between weeks; the change only takes effect starting with the next
+   week you advance, since each played week keeps the lineup (and score)
+   it actually used. The screen also shows the NFL schedule — Week 1 is
+   the real announced 2026 slate, other weeks are generated pending more
+   real data.
 5. **FAQ** — an in-app explainer covering all of the above.
 
 Every time you open or refresh the site, a splash screen shows the logo
@@ -101,6 +112,11 @@ No build step needed — it's plain static files.
 | Defensive/return TD | +6 |
 | Safety | +2 |
 | Points allowed per game | tiered: 0→+10, 1-6→+7, 7-13→+4, 14-20→+1, 21-27→0, 28-34→-1, 35+→-4 |
+
+Defenses carry no HOF/HOVG/ACTIVE tag and show no badge in the draft
+list — a team defensive unit isn't an individual who can be personally
+enshrined, so that classification doesn't apply. It's still fully
+exempt from the retired/active alternation, same as Coach and K.
 
 **Coach**
 
@@ -165,7 +181,13 @@ the roadmap below doesn't require rewrites:
 - `js/season.js` — weekly simulation and standings. The one function that
   turns a roster into a week's score (`computeTeamWeekScore`) is the seam
   for real per-week game logs, matchup-based defense adjustments, and
-  random weekly variance.
+  random weekly variance. It's called fresh every `advanceWeek()` against
+  the team's *current* roster (a live reference, not a snapshot), and its
+  return value's `breakdown` (per-starter points) is stored on that
+  week's matchup — together this is why editing a lineup any time only
+  affects weeks simulated afterward, and why the Season screen's matchup
+  detail can show exactly what happened even after the lineup later
+  changes.
 - `js/data/nflTeams.js` — the 32 current NFL teams and a generated
   illustrative bye week per team (gameplay flavor, not a real calendar).
 - `js/data/realNflSchedule.js` / `js/nflSchedule.js` — real schedule data
