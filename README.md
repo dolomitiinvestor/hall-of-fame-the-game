@@ -1,8 +1,9 @@
 # Dynasty Hall of Fame
 
-A browser-based fantasy football prototype: draft any Pro Football Hall of
-Famer at their career-best season, build a roster, and simulate a 16-week
-season with matchups and standings.
+A browser-based fantasy football prototype: draft from a pool of Pro
+Football Hall of Famers plus statistically great retired players who
+aren't (yet) enshrined, each at their career-best season, build a roster,
+and simulate a 16-week season with matchups and standings.
 
 It's a static site (vanilla HTML/CSS/JS, ES modules, no build step, no
 backend) so it can be hosted directly on GitHub Pages and works on desktop
@@ -15,13 +16,13 @@ and mobile browsers, including iPhone.
    reception), and Superflex (an extra starting slot that also allows a
    QB).
 2. **Draft** — a local, hot-seat snake draft with a 60-second pick clock.
-   On each turn, search/filter the Hall of Fame pool and draft a player;
-   their career-best season (computed live from your league's scoring
-   settings) and their team's bye week are shown next to their name.
-   Players auto-fill the most specific open roster slot (position →
-   FLEX/SUPERFLEX → BENCH). If the clock hits zero, the best available
-   eligible player is auto-drafted for you. Undo is available if you
-   misclick.
+   On each turn, search/filter the player pool (by name, position, and
+   HOF status) and draft a player; their career-best season (computed
+   live from your league's scoring settings), their team's bye week, and
+   an HOF/NOT YET badge are shown next to their name. Players auto-fill
+   the most specific open roster slot (position → FLEX/SUPERFLEX →
+   BENCH). If the clock hits zero, the best available eligible player is
+   auto-drafted for you. Undo is available if you misclick.
 3. **Teams** — set your starting lineup. Only non-BENCH slots score.
    Swapping a player into a slot swaps whoever was there back to where the
    new player came from, so the roster never ends up in a broken state.
@@ -72,15 +73,16 @@ else.
 Each concern is its own module with a narrow interface, specifically so
 the roadmap below doesn't require rewrites:
 
-- `js/data/players.js` — raw player/season data. Hand-compiled
-  approximate stats for ~46 Hall of Famers for this prototype. This is
-  the file to replace with a real stats source, and the file to extend
-  with active/current players later — nothing downstream cares where the
-  data comes from.
-- `js/players.js` — data access layer (search, lookup, "best season"
-  calculation). "Best season" is computed dynamically from the current
-  scoring rules rather than hard-coded, so it stays correct if scoring
-  changes.
+- `js/data/players.js` — raw player/season data: ~46 enshrined Hall of
+  Famers (`hof: true`) plus ~101 statistically great retired players not
+  (yet) enshrined (`hof: false`, the "Hall of Very Good"). Hand-compiled
+  approximate stats for this prototype. This is the file to replace with
+  a real stats source, and the file to extend with active/current players
+  later — nothing downstream cares where the data comes from.
+- `js/players.js` — data access layer (search/filter by name, position,
+  and HOF status; "best season" calculation). "Best season" is computed
+  dynamically from the current scoring rules rather than hard-coded, so
+  it stays correct if scoring changes.
 - `js/scoring.js` — the fantasy scoring engine. `DEFAULT_SCORING_RULES` is
   the fixed part; `buildScoringRules({ pprValue, tePremium })` layers a
   league's Setup-screen choices on top, and `calculateFantasyPoints()`
@@ -139,3 +141,9 @@ the roadmap below doesn't require rewrites:
 - **Data accuracy**: stats are hand-compiled from memory for well-known
   record seasons and meant to be "close enough" for a prototype, not a
   verified statistical source.
+- **HOF status accuracy**: each player's `hof` flag reflects Hall of Fame
+  status as best known at the time this file was written. Recently
+  retired players whose induction timing was ambiguous at write time were
+  left out of the "Hall of Very Good" pool entirely rather than guessed
+  at; still, HOF voting happens annually, so a `false` flag can go stale.
+  Update it directly in `js/data/players.js` as induction news changes.

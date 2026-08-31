@@ -32,7 +32,7 @@ const state = {
   leagueSettings: { pprValue: 0.5, tePremium: 0, superflex: false },
   draft: null,
   season: null,
-  draftFilter: { query: "", position: "ALL" },
+  draftFilter: { query: "", position: "ALL", hofFilter: "ALL" },
 };
 
 function getRules() {
@@ -275,6 +275,12 @@ function byeBadge(teamCode) {
   return wk ? `<span class="bye-badge" title="${escapeHtml(NFL_TEAM_NAMES[teamCode] || teamCode)} bye week">BYE Wk ${wk}</span>` : "";
 }
 
+function hofBadge(player) {
+  return player.hof
+    ? `<span class="hof-badge hof-yes" title="Enshrined in the Pro Football Hall of Fame">HOF</span>`
+    : `<span class="hof-badge hof-no" title="Not (yet) in the Pro Football Hall of Fame">NOT YET</span>`;
+}
+
 function renderDraft() {
   const draft = state.draft;
   if (!draft) {
@@ -307,6 +313,7 @@ function renderDraft() {
           <div class="player-main">
             <span class="pos-badge pos-${player.position}">${player.position}</span>
             <span class="player-name">${escapeHtml(player.name)}</span>
+            ${hofBadge(player)}
             ${byeBadge(best.season.team)}
           </div>
           <div class="player-season">${escapeHtml(formatSeasonLine(player, best))}</div>
@@ -331,6 +338,15 @@ function renderDraft() {
       <select id="draft-position-filter">
         ${["ALL", "QB", "RB", "WR", "TE"]
           .map((p) => `<option value="${p}" ${state.draftFilter.position === p ? "selected" : ""}>${p}</option>`)
+          .join("")}
+      </select>
+      <select id="draft-hof-filter">
+        ${[
+          ["ALL", "All Players"],
+          ["HOF", "Hall of Famers"],
+          ["NOT_HOF", "Not Yet in HOF"],
+        ]
+          .map(([v, label]) => `<option value="${v}" ${state.draftFilter.hofFilter === v ? "selected" : ""}>${label}</option>`)
           .join("")}
       </select>
       <button class="btn" data-action="undo-pick" ${draft.picks.length ? "" : "disabled"}>Undo Last Pick</button>
@@ -588,6 +604,10 @@ const FAQ_ITEMS = [
     a: "Each pick has 60 seconds on the clock. If time runs out, the app auto-drafts the highest-scoring eligible player still available for whoever's on the clock, just like an autopick in a real draft room.",
   },
   {
+    q: "What does the HOF / NOT YET badge mean?",
+    a: "The player pool isn't limited to enshrined Hall of Famers. HOF marks a player actually inducted in Canton; NOT YET marks a statistically great retired player who hasn't been enshrined (yet, or possibly ever) -- a 'Hall of Very Good' pool alongside the Hall of Famers. Filter to one or the other with the dropdown next to the position filter.",
+  },
+  {
     q: "What do 0/0.5/1 PPR and TE Premium mean?",
     a: "PPR sets how many points a reception is worth (0 = standard, 0.5 = half-PPR, 1 = full PPR). TE Premium adds bonus points per reception specifically for tight ends, on top of the base PPR value -- a common way leagues make the TE position more valuable.",
   },
@@ -679,6 +699,9 @@ function wireEvents() {
       handleSetupChange(e.target);
     } else if (state.screen === "draft" && e.target.id === "draft-position-filter") {
       state.draftFilter.position = e.target.value;
+      render();
+    } else if (state.screen === "draft" && e.target.id === "draft-hof-filter") {
+      state.draftFilter.hofFilter = e.target.value;
       render();
     } else if (state.screen === "teams") {
       handleTeamsChange(e.target);

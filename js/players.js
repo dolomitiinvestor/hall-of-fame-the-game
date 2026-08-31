@@ -30,10 +30,15 @@ export function getBestSeason(player, rules) {
   return { season: best, summary: bestSummary };
 }
 
-export function searchPlayers({ query = "", position = "ALL" } = {}, rules) {
+// `hofFilter`: "ALL" | "HOF" | "NOT_HOF" -- lets the draft pool be
+// narrowed to enshrined Hall of Famers, the "Hall of Very Good" (not
+// yet enshrined), or both.
+export function searchPlayers({ query = "", position = "ALL", hofFilter = "ALL" } = {}, rules) {
   const q = query.trim().toLowerCase();
   return PLAYERS.filter((p) => {
     if (position !== "ALL" && p.position !== position) return false;
+    if (hofFilter === "HOF" && !p.hof) return false;
+    if (hofFilter === "NOT_HOF" && p.hof) return false;
     if (q && !p.name.toLowerCase().includes(q)) return false;
     return true;
   }).map((p) => ({ player: p, best: getBestSeason(p, rules) }));

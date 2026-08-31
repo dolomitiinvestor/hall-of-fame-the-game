@@ -229,6 +229,28 @@ select {
   color: var(--text-dim);
 }
 
+.hof-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.hof-badge.hof-yes {
+  color: #1a1206;
+  background: #e8b84f;
+  border-color: #e8b84f;
+}
+
+.hof-badge.hof-no {
+  color: var(--text-dim);
+  background: transparent;
+  border-style: dashed;
+}
+
 .on-the-clock {
   display: flex;
   align-items: center;
