@@ -788,6 +788,8 @@ function handleSeasonClick(action) {
     advanceWeek(state.season, state.draft, getRules());
     persist();
     render();
+    const justPlayed = state.season.weeklyResults[state.season.weeklyResults.length - 1];
+    showWeekCompleteSplash(justPlayed);
   } else if (action === "goto-teams-from-season") {
     setScreen("teams");
   }
@@ -855,6 +857,10 @@ const FAQ_ITEMS = [
   {
     q: "Is my league saved?",
     a: "Yes -- everything is saved to your browser's local storage automatically, so refreshing or closing the tab won't lose your draft or season. Reset League on the Setup screen clears it and starts over.",
+  },
+  {
+    q: "What are the splash screens?",
+    a: "The welcome splash (logo + theme song) shows every time you open or refresh the site. A second one -- logo again, no audio -- pops up after every 'Advance Week' to congratulate you and name the week (or playoff round) you just completed. Both close the same way: click the X, or press Escape.",
   },
   {
     q: "What's coming next?",
@@ -934,10 +940,42 @@ function wireEvents() {
   });
 }
 
-// Splash screen: shown on every page load/refresh, dismissed only by
-// its close button (never a timeout or backdrop click, so it's never
-// mistaken for a loading state). Plays the theme song on open, looped,
-// stopped when closed.
+// Splash screens: the welcome splash (shown on every page load/refresh)
+// and the post-week congratulations splash (shown after each "Advance
+// Week"). Both are dismissed by their own X button, or by Escape --
+// never a timeout or backdrop click, so neither is ever mistaken for a
+// loading state.
+
+function closeWelcomeSplash() {
+  const overlay = document.getElementById("splash-overlay");
+  if (!overlay || overlay.hidden) return;
+  overlay.hidden = true;
+  const audio = document.getElementById("splash-audio");
+  if (audio) {
+    audio.pause();
+    audio.currentTime = 0;
+  }
+}
+
+function closeWeekSplash() {
+  const overlay = document.getElementById("week-splash-overlay");
+  if (!overlay || overlay.hidden) return;
+  overlay.hidden = true;
+}
+
+// Escape closes whichever splash is currently showing. In practice at
+// most one is ever open at a time -- each overlay covers the full
+// viewport, so it blocks interaction with whatever might open the
+// other one while it's up.
+function closeOpenSplash() {
+  closeWelcomeSplash();
+  closeWeekSplash();
+}
+
+// Plays the theme song on open, looped, stopped when closed. Most
+// browsers block audible autoplay until the page has had a user
+// gesture; if that happens, play() rejects and we just stay silent
+// rather than throw.
 function initSplash() {
   const overlay = document.getElementById("splash-overlay");
   if (!overlay) return;
@@ -946,19 +984,27 @@ function initSplash() {
   const audio = document.getElementById("splash-audio");
   if (audio) {
     audio.currentTime = 0;
-    // Most browsers block audible autoplay until the page has had a
-    // user gesture; if that happens, play() rejects and we just stay
-    // silent rather than throw.
     audio.play().catch(() => {});
   }
 
-  document.getElementById("splash-close").addEventListener("click", () => {
-    overlay.hidden = true;
-    if (audio) {
-      audio.pause();
-      audio.currentTime = 0;
-    }
+  document.getElementById("splash-close").addEventListener("click", closeWelcomeSplash);
+  document.getElementById("week-splash-close").addEventListener("click", closeWeekSplash);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeOpenSplash();
   });
+}
+
+// Shown after each "Advance Week" -- congratulates the player, shows
+// the logo again, and names the week (and playoff round, if any) that
+// was just completed.
+function showWeekCompleteSplash(weekResult) {
+  const overlay = document.getElementById("week-splash-overlay");
+  const text = document.getElementById("week-splash-text");
+  if (!overlay || !text) return;
+  const label =
+    weekResult.round === "playoff" ? `Playoffs: ${weekResult.roundLabel} (Week ${weekResult.week})` : `Week ${weekResult.week}`;
+  text.textContent = `Congratulations! ${label} complete.`;
+  overlay.hidden = false;
 }
 
 function init() {

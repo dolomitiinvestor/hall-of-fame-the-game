@@ -71,10 +71,12 @@ and mobile browsers, including iPhone.
 
 Every time you open or refresh the site, a splash screen shows the logo
 (`img/main-logo.jpg`) and plays the theme song (`audio/time-to-rumble.mp3`,
-looped) until you close it with the X. Most browsers block audible
-autoplay until the page has had some user interaction, so the music may
-not start on a hard refresh with no prior interaction — that's a browser
-policy, not a bug.
+looped) until you close it — click the X or press Escape. Most browsers
+block audible autoplay until the page has had some user interaction, so
+the music may not start on a hard refresh with no prior interaction —
+that's a browser policy, not a bug. A second splash (logo again, no
+audio) pops up after every "Advance Week," congratulating you and naming
+the week (or playoff round) you just completed — same X/Escape to close.
 
 State is saved to `localStorage`, so progress survives a page refresh.
 "Reset League" on the Setup screen clears everything and starts over.

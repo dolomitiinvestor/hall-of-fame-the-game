@@ -58,6 +58,14 @@ body {
   border-radius: 6px;
 }
 
+.week-splash-text {
+  margin: 0.9rem 0 0;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
 .splash-close {
   position: absolute;
   top: 0.6rem;
