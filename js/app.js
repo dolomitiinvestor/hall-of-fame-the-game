@@ -21,7 +21,7 @@ import {
   getStandingsList,
   SEASON_WEEKS,
 } from "./season.js";
-import { saveState, loadState, clearState } from "./storage.js";
+import { saveState, loadState, clearState, hasSeenSplash, markSplashSeen } from "./storage.js";
 import { getByeWeek, NFL_TEAMS } from "./data/nflTeams.js";
 import { getNflSchedule, isRealWeek } from "./nflSchedule.js";
 
@@ -733,10 +733,26 @@ function wireEvents() {
   });
 }
 
+// First-visit splash screen. Shown once (tracked in localStorage,
+// independent of league state so Reset League doesn't bring it back);
+// dismissed only by its close button, never by a timeout or backdrop
+// click, so it's never mistaken for a loading state.
+function initSplash() {
+  if (hasSeenSplash()) return;
+  const overlay = document.getElementById("splash-overlay");
+  if (!overlay) return;
+  overlay.hidden = false;
+  document.getElementById("splash-close").addEventListener("click", () => {
+    overlay.hidden = true;
+    markSplashSeen();
+  });
+}
+
 function init() {
   restore();
   wireEvents();
   render();
+  initSplash();
   if (state.screen === "draft" && state.draft && state.draft.status !== "complete") {
     resetDraftTimer();
     startDraftTimer();

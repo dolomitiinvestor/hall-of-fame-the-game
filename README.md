@@ -47,6 +47,11 @@ and mobile browsers, including iPhone.
    slate, other weeks are generated pending more real data.
 5. **FAQ** — an in-app explainer covering all of the above.
 
+The first time you open the site, a splash screen shows the logo
+(`img/main-logo.jpg`); close it with the X. It won't show again on later
+visits (tracked separately from league state, so Reset League doesn't
+bring it back).
+
 State is saved to `localStorage`, so progress survives a page refresh.
 "Reset League" on the Setup screen clears everything and starts over.
 
