@@ -102,12 +102,17 @@ export function teamHasOpenSlotFor(team, position) {
 }
 
 // The draft forces alternation between retired (HOF/HOVG) and active
-// players, starting with retired on the very first overall pick. This
-// is purely a function of the overall pick counter, independent of
-// team/round, so it applies the same way regardless of league size.
+// players -- per team, not by overall pick: each team's OWN sequence of
+// picks alternates, starting with retired on that team's 1st pick, then
+// active on their 2nd, retired on their 3rd, and so on. Computed from
+// how many picks this team has already made rather than stored, so
+// undo (which just removes the last pick) keeps it correct for free.
 export function getRequiredGroup(draft) {
   if (draft.status === "complete") return null;
-  return draft.overallPick % 2 === 1 ? "RETIRED" : "ACTIVE";
+  const team = getCurrentTeam(draft);
+  if (!team) return null;
+  const picksSoFar = draft.picks.filter((p) => p.teamId === team.id).length;
+  return picksSoFar % 2 === 0 ? "RETIRED" : "ACTIVE";
 }
 
 export function playerMatchesGroup(player, requiredGroup) {

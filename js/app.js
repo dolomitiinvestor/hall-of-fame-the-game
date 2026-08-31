@@ -346,7 +346,7 @@ function renderDraft() {
       On the clock: <strong>${escapeHtml(currentTeam.name)}</strong>
       <span id="draft-timer" class="draft-timer ${draftTimerClass()}">${draftTimerSeconds}s</span>
     </p>
-    <p class="hint">This pick must be ${requiredLabel} -- retired and active picks alternate, starting with retired. Auto-picks the best available eligible player if the clock runs out.</p>
+    <p class="hint">This pick must be ${requiredLabel} -- each team's own picks alternate retired/active, starting with retired. Auto-picks the best available eligible player if the clock runs out.</p>
 
     <div class="draft-filters">
       <input type="text" id="draft-search" placeholder="Search players..." value="${escapeHtml(state.draftFilter.query)}" />
@@ -609,7 +609,7 @@ function handleSeasonClick(action) {
 const FAQ_ITEMS = [
   {
     q: "How does the draft work?",
-    a: "It's a local, hot-seat snake draft: pick order reverses each round. Picks also alternate between retired and active players leaguewide, starting with a retired player on the very first overall pick -- odd picks must be retired (HOF/HOVG), even picks must be active. On your turn, search or filter the player pool and hit Draft. Each player auto-fills the most specific open roster slot (their position, then FLEX/SUPERFLEX, then BENCH).",
+    a: "It's a local, hot-seat snake draft: pick order reverses each round. Each team's own picks also alternate between retired and active players, starting with retired on their 1st pick, active on their 2nd, retired on their 3rd, and so on -- independently per team, not by overall pick order. On your turn, search or filter the player pool and hit Draft. Each player auto-fills the most specific open roster slot (their position, then FLEX/SUPERFLEX, then BENCH).",
   },
   {
     q: "What does the season line next to a player mean?",

@@ -17,10 +17,10 @@ and mobile browsers, including iPhone.
    reception), and Superflex (an extra starting slot that also allows a
    QB).
 2. **Draft** — a local, hot-seat snake draft with a 60-second pick clock.
-   Picks also alternate leaguewide between retired and active players,
-   starting with a retired player on the very first overall pick (odd
-   picks must be HOF/HOVG, even picks must be ACTIVE) — the on-screen
-   hint always says which is required. On each turn, search/filter the
+   Each team's own picks also alternate between retired and active
+   players, starting with retired on their 1st pick, active on their
+   2nd, and so on — independently per team, not by overall pick order —
+   and the on-screen hint always says which is required. On each turn, search/filter the
    player pool (by name, position, and HOF/HOVG/ACTIVE tag) and draft a
    player; their best (or projected) season — computed live from your
    league's scoring settings — their team's bye week, and their tag badge
@@ -98,9 +98,10 @@ the roadmap below doesn't require rewrites:
 - `js/draftEngine.js` — pure state-machine snake draft (order, turns,
   roster-slot eligibility via `SLOT_ELIGIBILITY`, undo). `buildRosterSlots()`
   adds a SUPERFLEX slot when a league enables it. `getRequiredGroup()` /
-  `canDraftPlayer()` enforce the retired/active pick alternation, purely
-  from the overall pick counter. No DOM code, so it's ready to be driven
-  by network messages instead of local clicks for real multiplayer.
+  `canDraftPlayer()` enforce the retired/active pick alternation, per
+  team (from how many picks that team has made so far), not by overall
+  pick order. No DOM code, so it's ready to be driven by network
+  messages instead of local clicks for real multiplayer.
 - `js/schedule.js` — generic round-robin matchup generator (byes for odd
   counts), kept separate from scoring so the pairing algorithm (divisions,
   playoffs, etc.) can change independently. Reused by both the fantasy
