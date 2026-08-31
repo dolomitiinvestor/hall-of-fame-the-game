@@ -297,6 +297,86 @@ select {
   color: var(--text-dim);
 }
 
+.player-avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  flex-shrink: 0;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.player-avatar img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.injury-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.35rem;
+  border-radius: 6px;
+  border: 1px solid;
+}
+
+.injury-badge.injury-q {
+  color: #ffd54f;
+  border-color: #ffd54f;
+}
+
+.injury-badge.injury-d {
+  color: #ffb84f;
+  border-color: #ffb84f;
+}
+
+.injury-badge.injury-o,
+.injury-badge.injury-ir {
+  color: #ff6b5c;
+  border-color: #ff6b5c;
+}
+
+.coach-bonus-note {
+  margin-top: 0.4rem;
+  color: var(--win);
+}
+
+.champion-banner {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+}
+
+.playoff-seeds {
+  margin: 0.4rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.playoff-seeds li {
+  padding: 0.1rem 0;
+}
+
+.player-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.player-cell select {
+  flex: 1 1 auto;
+  min-width: 8rem;
+}
+
 .tag-badge {
   display: inline-block;
   font-size: 0.65rem;

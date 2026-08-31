@@ -30,10 +30,14 @@ export const DEFAULT_SCORING_RULES = {
   // Points-allowed bonus/penalty is tiered per game, not linear -- see
   // pointsAllowedBonus() below. Not exposed as a single "rule" number.
 
-  // Coach (position "COACH") intentionally has no scoring rule yet --
-  // every coach's stats are {} (see js/data/coaches.js), which already
-  // scores 0 through the formula below with no special-casing needed.
-  // This is the seam for the coach point-modifier planned later.
+  // Coach (position "COACH") has no individual scoring rule -- every
+  // coach's stats are {} (see js/data/coaches.js), which already scores
+  // 0 through the formula below with no special-casing needed. Instead
+  // a coach contributes a flat bonus to their *team's* week total when
+  // started in the COACH slot: see coachBonusRate and its use in
+  // computeTeamWeekScore() in season.js (a team-level effect, not a
+  // per-player stat, so it can't live in calculateFantasyPoints below).
+  coachBonusRate: 0.05,
 };
 
 // League-configurable knobs from the Setup screen, turned into a full

@@ -41,25 +41,32 @@ and mobile browsers, including iPhone.
    getting to a full league while testing Teams/Season -- not meant for
    normal play.
 3. **Teams** — set your starting lineup: QB, 2×RB, 2×WR, TE, FLEX (+
-   SUPERFLEX if enabled), Coach, K, DEF, and 7 bench spots. Only
-   non-BENCH slots score. Swapping a player into a slot swaps whoever was
-   there back to where the new player came from, so the roster never ends
-   up in a broken state. Editable any time, including mid-season — see
-   Season below.
-4. **Season** — click "Advance Week" to sim a week. Each starter scores
-   their best (or projected) season's fantasy points **per game**; short
-   seasons (strike years, wartime schedules, etc.) have that rate repeated across
-   all 16 simulated weeks rather than stopping early. Coaches don't score
-   yet (see Scoring below). Standings track W-L-T and points for/against
-   across a round-robin schedule (byes when team count is odd). Every
-   matchup in Weekly Results expands (click it) into a full box score —
-   each starter's actual points that week, for both teams. A shortcut
-   link on this screen jumps to the Teams tab so you can adjust a lineup
-   between weeks; the change only takes effect starting with the next
-   week you advance, since each played week keeps the lineup (and score)
-   it actually used. The screen also shows the NFL schedule — Week 1 is
-   the real announced 2026 slate, other weeks are generated pending more
-   real data.
+   SUPERFLEX if enabled), K, DEF, Coach (in that order), and 7 bench
+   spots. Only non-BENCH slots score. Swapping a player into a slot swaps
+   whoever was there back to where the new player came from, so the
+   roster never ends up in a broken state. Editable any time, including
+   mid-season — see Season below. A small circular avatar sits next to
+   each player — a blank headshot placeholder for now (see FAQ).
+4. **Season** — click "Advance Week" to sim a week. Each starter's best
+   (or projected) season's points **per game** is the baseline; on top of
+   that, each week applies a randomized-but-repeatable variance (so
+   scores actually differ week to week rather than repeating a flat
+   number) and zeroes out anyone marked Out/IR that week (see the injury
+   FAQ entry). A started Coach adds a flat 5% bonus to that team's week
+   total, shown in the box score. Standings track regular-season W-L-T
+   and points for/against across a round-robin schedule (byes when team
+   count is odd) and freeze once the playoffs start. The last 1-2 of the
+   16 weeks are playoffs — a 4-team bracket (leagues of 4+) or a single
+   championship game (2-3 teams) seeded by regular-season standings,
+   culminating in a champion banner; see the FAQ for the exact format.
+   Every matchup in Weekly Results expands (click it) into a full box
+   score — each starter's actual points that week, for both teams. A
+   shortcut link on this screen jumps to the Teams tab so you can adjust
+   a lineup between weeks; the change only takes effect starting with the
+   next week you advance, since each played week keeps the lineup (and
+   score) it actually used. The screen also shows the NFL schedule — Week
+   1 is the real announced 2026 slate, other weeks are generated (see the
+   FAQ and roadmap for why the rest isn't real too).
 5. **FAQ** — an in-app explainer covering all of the above.
 
 Every time you open or refresh the site, a splash screen shows the logo
@@ -124,15 +131,28 @@ exempt from the retired/active alternation, same as Coach and K.
 
 **Coach**
 
-No scoring yet — every coach's stat line is `{}`, which already scores
-0 through the normal formula with no special-casing. This is the seam
-for the point-modifier planned later.
+No individual scoring yet — every coach's stat line is `{}`, which
+already scores 0 through the normal formula with no special-casing.
+Instead, a Coach started in the COACH slot (not benched) adds a flat
+**+5%** to their team's whole week total (`coachBonusRate` in
+`DEFAULT_SCORING_RULES`) — the current placeholder for the point
+modifier planned later.
+
+**Injuries**
+
+A weekly Out/IR designation zeroes that player's points for the week;
+Questionable/Doubtful are a risk flag only, with no scoring effect. See
+`js/injuries.js` and the Roadmap below for how designations are decided
+and their real-data limitations.
 
 The fixed part of the rules lives in `DEFAULT_SCORING_RULES` in
 `js/scoring.js`; `buildScoringRules()` layers the Setup screen's PPR/TE
 Premium choices on top of it to produce the rules object used everywhere
-else. The points-allowed tier is a fixed table (`pointsAllowedBonus()`
-in `js/scoring.js`), not yet a Setup-screen toggle.
+else. The points-allowed tier and the coach bonus are both applied
+outside that per-player formula (points-allowed in
+`calculateFantasyPoints()` using the `games` param; the coach bonus in
+`computeTeamWeekScore()` in `js/season.js`, since it's a team-level
+effect) and aren't yet Setup-screen toggles.
 
 ## Architecture (built to be swapped out piece by piece)
 
@@ -167,8 +187,21 @@ the roadmap below doesn't require rewrites:
   per game via `pointsAllowedBonus()`, using the `games` param on
   `calculateFantasyPoints()`). `DEFAULT_SCORING_RULES` is the fixed part;
   `buildScoringRules({ pprValue, tePremium })` layers a league's
-  Setup-screen choices on top. Coaches score 0 today (empty stat lines) —
-  this is the seam for the coach point-modifier planned later.
+  Setup-screen choices on top. Coaches score 0 individually today (empty
+  stat lines) — `coachBonusRate` here is the current stand-in for a
+  richer coach point-modifier planned later, applied at the team level
+  in `season.js` rather than per-player here.
+- `js/rng.js` — deterministic seeded pseudo-random helpers
+  (`seededRandom`, `seededNormal`, `pickWeighted`). Same seed string
+  (always built from a player id + week number) always gives the same
+  result, so weekly variance and retired-player injury rolls are stable
+  across re-renders and reloads without persisting anything extra.
+- `js/injuries.js` — injury designations. ACTIVE players get a small,
+  best-effort real snapshot (`ACTIVE_INJURY_REPORT`); retired (HOF/HOVG)
+  players get a seeded-random weekly roll instead (no real per-week
+  injury history exists to pull for them). `isOutForWeek()` is what
+  `season.js` calls to zero a player's points; see the roadmap for real
+  data-coverage limits.
 - `js/draftEngine.js` — pure state-machine snake draft (order, turns,
   roster-slot eligibility via `SLOT_ELIGIBILITY`, undo). `buildRosterSlots()`
   adds a SUPERFLEX slot when a league enables it. `SKILL_POSITIONS`
@@ -182,16 +215,23 @@ the roadmap below doesn't require rewrites:
   counts), kept separate from scoring so the pairing algorithm (divisions,
   playoffs, etc.) can change independently. Reused by both the fantasy
   league schedule and the NFL schedule below.
-- `js/season.js` — weekly simulation and standings. The one function that
-  turns a roster into a week's score (`computeTeamWeekScore`) is the seam
-  for real per-week game logs, matchup-based defense adjustments, and
-  random weekly variance. It's called fresh every `advanceWeek()` against
-  the team's *current* roster (a live reference, not a snapshot), and its
-  return value's `breakdown` (per-starter points) is stored on that
-  week's matchup — together this is why editing a lineup any time only
-  affects weeks simulated afterward, and why the Season screen's matchup
-  detail can show exactly what happened even after the lineup later
-  changes.
+- `js/season.js` — weekly simulation, playoffs, and standings.
+  `computeTeamWeekScore()` is the seam for real per-week game logs and
+  matchup-based defense adjustments later; it already applies seeded
+  weekly variance (`weeklyVarianceMultiplier`), injury zero-outs
+  (`isOutForWeek`), and the coach bonus. It's called fresh every
+  `advanceWeek()` against the team's *current* roster (a live reference,
+  not a snapshot), and its return value's `breakdown` (per-starter
+  points) is stored on that week's matchup — together this is why
+  editing a lineup any time only affects weeks simulated afterward, and
+  why the Season screen's matchup detail can show exactly what happened
+  even after the lineup later changes. `getRegularSeasonWeeks()` decides
+  how many of the 16 weeks are regular season (14, or 15 for leagues
+  under 4 teams) versus playoffs; `advanceWeek()` branches to
+  `advancePlayoffWeek()` once the regular season ends, which seeds a
+  bracket from standings (`seedPlayoffs()`) and plays it out
+  (`playPlayoffMatchup()`) without touching the regular-season win/loss
+  record.
 - `js/data/nflTeams.js` — the 32 current NFL teams and a generated
   illustrative bye week per team (gameplay flavor, not a real calendar).
 - `js/data/realNflSchedule.js` / `js/nflSchedule.js` — real schedule data
@@ -214,9 +254,6 @@ the roadmap below doesn't require rewrites:
   draft engine is already headless/pure-data, so a real-time layer (e.g.
   WebSocket relay calling the same `draftPlayer()`/`undoLastPick()`
   functions) can sit on top without changing the engine.
-- **Weekly variance**: every week currently uses a flat points-per-game
-  rate. `weeklyPointsForPlayer()` in `season.js` is the single place to
-  add randomness (e.g. a normal distribution around the rate).
 - **Opponent-adjusted scoring**: e.g. Jerry Rice scoring less against a
   historically great pass defense that week. This needs (a) a defense
   strength rating per team/season and (b) the season schedule to know who
@@ -241,13 +278,38 @@ the roadmap below doesn't require rewrites:
   Season screen's NFL Schedule is real for Week 1 (confirmed complete —
   all 32 teams, sourced via web search in Aug 2026) and algorithmically
   generated for every other week, labeled REAL vs. GENERATED per week.
-  Most schedule-data sites (ESPN, NFL.com, Pro-Football-Reference,
-  RotoWire, Wikipedia, etc.) were unreachable from this environment
-  (blocked by network egress policy), and web search only surfaces
-  partial/fragmentary listings per query, so assembling a complete,
-  verified 18-week schedule wasn't achievable here — see
+  This was a deliberate scope call, not an oversight: every schedule-data
+  site tried (ESPN, NFL.com, Pro-Football-Reference, RotoWire, Wikipedia,
+  etc.) was unreachable from this environment (blocked by network egress
+  policy), and web search only ever surfaced a partial slate per
+  week-specific query — roughly a third to half the games, at best, on
+  the weeks tried beyond Week 1 — so assembling a complete, verified
+  18-week schedule wasn't achievable with the tools available here. See
   `js/data/realNflSchedule.js` for how to extend it as more weeks become
-  sourceable.
+  sourceable (e.g. pasting in real data directly).
+- **Weekly scores are simulated, not real historical box scores**: real
+  per-week game logs for ~150 HOF/HOVG players (thousands of individual
+  stat lines) aren't obtainable here for the same reason as the NFL
+  schedule above — the stats sites that would have them are unreachable,
+  and web search doesn't return structured historical tables. Instead,
+  `computeTeamWeekScore()` applies a seeded weekly variance multiplier
+  around each player's season average (`weeklyVarianceMultiplier()` in
+  `season.js`), so scores genuinely differ week to week rather than
+  repeating a flat number, without claiming to be real. Swapping in real
+  game logs later is a matter of replacing that function's output with
+  real per-week values; nothing else needs to change.
+- **Injury data coverage**: only one ACTIVE player designation
+  (`sam-laporta`: Questionable) could be confirmed with confidence from
+  web search when this was written — most search results for current
+  injury reports were too vague or contradictory (old-season articles
+  mixed into "current" results) to encode reliably. Everyone else
+  defaults to Healthy. This isn't a live feed; update
+  `ACTIVE_INJURY_REPORT` in `js/injuries.js` directly as better data
+  becomes available.
+- **Playoff ties**: a tied playoff game (winnerId would be null) is
+  broken toward the first team in the pairing so the bracket always has
+  someone to advance -- vanishingly rare given fractional point scoring,
+  but worth knowing about if you ever see it.
 - **Data accuracy (HOF/HOVG players, coaches, kickers, defenses)**: stats
   and records are hand-compiled from memory for well-known seasons/careers
   and meant to be "close enough" for a prototype, not a verified
@@ -270,7 +332,14 @@ the roadmap below doesn't require rewrites:
   so the same scoring engine and season sim work identically for retired
   and active players. Swap in a real projections feed by replacing those
   stat lines; nothing else needs to change.
-- **Coach scoring**: intentionally not implemented yet — every coach
-  scores 0 (see Scoring above). The `record` field (career W-L-T, titles,
-  title-game appearances) already carries the data a future point
-  modifier would use.
+- **Coach scoring**: individual coach scoring is intentionally not
+  implemented yet — every coach's own stat line scores 0 (see Scoring
+  above); only the flat team-level 5% bonus exists today. The `record`
+  field (career W-L-T, titles, title-game appearances) already carries
+  the data a future, more nuanced point modifier would use.
+- **Headshots**: `js/app.js`'s `playerAvatar()` renders every player's
+  avatar as a blank silhouette placeholder on purpose (no photo files
+  exist yet). Drop a matching image at `img/headshots/<player.id>.jpg`
+  (ids are the kebab-case ones in `js/data/*.js`, e.g.
+  `img/headshots/jerry-rice.jpg`) and it starts showing up automatically
+  everywhere that player appears — no code changes needed.
