@@ -121,6 +121,17 @@ function startDraftTimer() {
   }, 1000);
 }
 
+// Highest-scoring player currently eligible for whoever's on the
+// clock -- shared by the draft-clock auto-pick and the "Complete
+// Draft" testing shortcut below, so both pick the same way.
+function bestCandidateIdFor(draft, team) {
+  const candidates = searchPlayers({ query: "", position: "ALL" }, getRules())
+    .filter(({ player }) => !draft.draftedPlayerIds.includes(player.id))
+    .filter(({ player }) => canDraftPlayer(draft, team, player))
+    .sort((a, b) => b.best.summary.pointsPerGame - a.best.summary.pointsPerGame);
+  return candidates.length ? candidates[0].player.id : null;
+}
+
 // Time expired on someone's pick: auto-draft the highest-scoring
 // eligible player available, same as a real draft clock would.
 function autoDraftForCurrentTeam() {
@@ -130,25 +141,50 @@ function autoDraftForCurrentTeam() {
     return;
   }
   const team = getCurrentTeam(draft);
-  const candidates = searchPlayers({ query: "", position: "ALL" }, getRules())
-    .filter(({ player }) => !draft.draftedPlayerIds.includes(player.id))
-    .filter(({ player }) => canDraftPlayer(draft, team, player))
-    .sort((a, b) => b.best.summary.pointsPerGame - a.best.summary.pointsPerGame);
+  const playerId = bestCandidateIdFor(draft, team);
 
-  if (!candidates.length) {
+  if (!playerId) {
     // Player pool exhausted before rosters filled -- nothing left to
     // auto-draft. Stop the clock rather than loop forever.
     stopDraftTimer();
     return;
   }
 
-  draftPlayer(draft, candidates[0].player.id);
+  draftPlayer(draft, playerId);
   if (draft.status === "complete" && !state.season) {
     state.season = createSeason(draft, SEASON_WEEKS);
   }
   persist();
   if (draft.status === "complete") stopDraftTimer();
   else resetDraftTimer();
+  render();
+}
+
+// Testing shortcut: auto-draft every remaining pick instantly with the
+// same "best eligible player" logic as the clock auto-pick, looped
+// synchronously instead of one pick per timer tick. Not meant for
+// normal play -- it exists so a league can be filled fast while
+// testing Teams/Season without hand-drafting every roster.
+function completeDraftInstantly() {
+  const draft = state.draft;
+  if (!draft || draft.status === "complete") return;
+  stopDraftTimer();
+  let guard = 0;
+  const maxPicks = draft.teams.length * draft.totalRounds + 10;
+  while (draft.status !== "complete" && guard < maxPicks) {
+    const team = getCurrentTeam(draft);
+    const playerId = bestCandidateIdFor(draft, team);
+    if (!playerId) {
+      alert("Ran out of eligible players before every roster filled -- stopping here.");
+      break;
+    }
+    draftPlayer(draft, playerId);
+    guard++;
+  }
+  if (draft.status === "complete" && !state.season) {
+    state.season = createSeason(draft, SEASON_WEEKS);
+  }
+  persist();
   render();
 }
 
@@ -353,6 +389,10 @@ function renderDraft() {
     </p>
     <p class="hint">Your next QB/RB/WR/TE pick must be ${requiredLabel} -- each team's own skill-position picks alternate retired/active, starting with retired. Coach/K/DEF picks aren't restricted and are always shown. Auto-picks the best available eligible player if the clock runs out.</p>
 
+    <div class="testing-row">
+      <button class="btn btn-danger btn-small" data-action="complete-draft" title="Auto-drafts every remaining pick instantly. For testing only.">Complete Draft (Testing)</button>
+    </div>
+
     <div class="draft-filters">
       <input type="text" id="draft-search" placeholder="Search players..." value="${escapeHtml(state.draftFilter.query)}" />
       <select id="draft-position-filter">
@@ -421,6 +461,8 @@ function handleDraftClick(action, target) {
     persist();
     resetDraftTimer();
     render();
+  } else if (action === "complete-draft") {
+    completeDraftInstantly();
   } else if (action === "goto-teams") {
     stopDraftTimer();
     setScreen("teams");

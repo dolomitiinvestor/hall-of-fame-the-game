@@ -35,7 +35,11 @@ and mobile browsers, including iPhone.
    Scoring below) are shown next to their name. Players auto-fill the
    most specific open roster slot (position → FLEX/SUPERFLEX → BENCH).
    If the clock hits zero, the best available eligible player is
-   auto-drafted for you. Undo is available if you misclick.
+   auto-drafted for you. Undo is available if you misclick. A dashed
+   "Complete Draft (Testing)" button instantly auto-drafts every
+   remaining pick with that same best-available logic, for quickly
+   getting to a full league while testing Teams/Season -- not meant for
+   normal play.
 3. **Teams** — set your starting lineup: QB, 2×RB, 2×WR, TE, FLEX (+
    SUPERFLEX if enabled), Coach, K, DEF, and 7 bench spots. Only
    non-BENCH slots score. Swapping a player into a slot swaps whoever was

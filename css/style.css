@@ -207,6 +207,13 @@ select {
   font-size: 1.05rem;
 }
 
+.testing-row {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  border: 1px dashed var(--danger);
+  border-radius: var(--radius);
+}
+
 .draft-filters {
   display: flex;
   gap: 0.5rem;
