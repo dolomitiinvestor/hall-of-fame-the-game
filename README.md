@@ -13,10 +13,15 @@ and mobile browsers, including iPhone.
 
 ## Play it
 
-1. **Setup** — name your teams (2-12) and pick your league format: PPR
-   (0 / 0.5 / 1 points per reception), TE Premium (bonus points per TE
-   reception), and Superflex (an extra starting slot that also allows a
-   QB).
+1. **League Settings** — name your teams (2-12) and pick your league
+   format: PPR (0 / 0.5 / 1 points per reception), TE Premium (bonus
+   points per TE reception), Superflex (an extra starting slot that
+   also allows a QB), Kicker/Defense Slot (each can be switched off,
+   removing that position from the draft pool entirely), Bench Spots
+   (0-10), and Max Retired Players (caps how many HOF/HOVG skill-position
+   players a team may draft; once hit, the alternating rule requires
+   active for the rest of that team's skill picks). All locked in once
+   the draft starts.
 2. **Draft** — a local, hot-seat snake draft with a 60-second pick clock.
    Each team's own QB/RB/WR/TE picks also alternate between retired and
    active, starting with retired on their 1st skill pick, active on
@@ -41,12 +46,17 @@ and mobile browsers, including iPhone.
    getting to a full league while testing Teams/Season -- not meant for
    normal play.
 3. **Teams** — set your starting lineup: QB, 2×RB, 2×WR, TE, FLEX (+
-   SUPERFLEX if enabled), K, DEF, Coach (in that order), and 7 bench
-   spots. Only non-BENCH slots score. Swapping a player into a slot swaps
-   whoever was there back to where the new player came from, so the
-   roster never ends up in a broken state. Editable any time, including
-   mid-season — see Season below. A small circular avatar sits next to
-   each player — a blank headshot placeholder for now (see FAQ).
+   SUPERFLEX if enabled), K and/or DEF (if enabled), Coach, and however
+   many bench spots your league format set (0-10). Only non-BENCH slots
+   score. Swapping a player into a slot swaps whoever was there back to
+   where the new player came from, so the roster never ends up in a
+   broken state. Editable any time, including mid-season — see Season
+   below. A small circular avatar sits inline with each player's name —
+   click either to open that player's card (see FAQ) — a blank headshot
+   placeholder for now. Once the draft is complete, every rostered
+   player also gets a Drop button, and a Free Agency section below every
+   team lets you add any undrafted player to a team of your choice
+   (auto-filling the most specific open slot, same as the draft itself).
 4. **Players** — a read-only, filterable directory of every player,
    coach, kicker, and defense in the game (search, position, and
    HOF/HOVG/ACTIVE filters, same as the Draft screen), ranked by points
@@ -60,24 +70,32 @@ and mobile browsers, including iPhone.
    variance (so scores actually differ week to week rather than repeating
    a flat number) and zeroes out anyone marked Out/IR that week (see the
    injury FAQ entry). A started Coach adds a flat 5% bonus to that team's
-   week total, shown in the box score. Standings track regular-season
-   W-L-T and points for/against across a round-robin schedule (byes when
-   team count is odd) and freeze once the playoffs start. The last 1-2 of
-   the 16 weeks are playoffs — a 4-team bracket (leagues of 4+) or a
-   single championship game (2-3 teams) seeded by regular-season
-   standings, culminating in a champion banner; see the FAQ for the exact
-   format. A shortcut link jumps to the Teams tab so you can adjust a
-   lineup between weeks; the change only takes effect starting with the
+   week total. All scores round to 1 decimal place. Standings track
+   regular-season W-L-T and points for/against across a round-robin
+   schedule (byes when team count is odd) and freeze once the playoffs
+   start. A playoff bracket is always shown once the draft is complete:
+   **projected** (current standings, re-sorted every week) before the
+   regular season ends, then the actual seeded bracket after, with real
+   scores filled in as playoff games are played — the last 1-2 of the 16
+   weeks, a 4-team bracket (leagues of 4+) or a single championship game
+   (2-3 teams), culminating in a champion banner; see the FAQ for the
+   exact format. A shortcut link jumps to the Teams tab so you can adjust
+   a lineup between weeks; the change only takes effect starting with the
    next week you advance, since each played week keeps the lineup (and
    score) it actually used. Another shortcut jumps to Games.
-6. **Games** — every matchup played so far, in chronological order (week
-   1 first, not reverse-chronological). Each team's score is shown next
-   to a real, attributed quote from that team's started Coach (one per
-   team per game, picked deterministically — see the FAQ). Each matchup
-   also expands (click it) into a full box score — each starter's actual
-   points that week, for both teams. Also shows the NFL schedule — the
-   real 2026 regular-season slate for every week the fantasy season
-   uses (see the FAQ and roadmap).
+6. **Games** — one week at a time (left/right arrows to move between
+   weeks, defaulting to the most recent), every game that week stacked
+   vertically as a compact score line. Tap a game to open its full box
+   score full-screen (X or Escape to close): each starter's actual
+   points, plus a simulated integer box score (yards/TDs/receptions/
+   carries/fumbles, scaled from their season averages by that week's
+   same scoring variance — see the FAQ and roadmap) and, if one exists,
+   a quote (player quotes are an empty infrastructure seam for now). Each
+   team's score up top carries a real, attributed quote from that team's
+   started Coach (one per team per game, picked deterministically — see
+   the FAQ). Below the week's games, the NFL schedule — the real 2026
+   regular-season slate for every week the fantasy season uses (see the
+   FAQ and roadmap).
 7. **FAQ** — an in-app explainer covering all of the above.
 
 Every time you open or refresh the site, a splash screen shows the logo
@@ -90,7 +108,8 @@ audio) pops up after every "Advance Week," congratulating you and naming
 the week (or playoff round) you just completed — same X/Escape to close.
 
 State is saved to `localStorage`, so progress survives a page refresh.
-"Reset League" on the Setup screen clears everything and starts over.
+"Reset League" on the League Settings screen clears everything and
+starts over.
 
 ## Deploying to GitHub Pages
 
@@ -192,6 +211,10 @@ the roadmap below doesn't require rewrites:
   coach id. `coachQuoteForTeam()` in `js/app.js` picks one deterministically
   per team per week (seeded, like injuries/variance) for that team's
   started Coach, shown on the Games tab; display-only, no scoring effect.
+- `js/data/playerQuotes.js` — infrastructure twin of `coachQuotes.js`,
+  for individual player quotes on the Games tab. Empty seam for now (no
+  player quotes supplied yet); add entries keyed by player id and they
+  show automatically.
 - `js/players.js` — data access layer merging all four pools above into
   one list (search/filter by name, position, and tag; "best season"
   calculation; `isRetired()`/`isActive()` group helpers used by the
@@ -199,7 +222,10 @@ the roadmap below doesn't require rewrites:
   of line per position — stat line, kicking line, defensive line, or
   coach record). "Best season" is computed dynamically from the current
   scoring rules rather than hard-coded, so it stays correct if scoring
-  changes.
+  changes. `SEASON_SELECTION_STRATEGIES` / `selectSeason()` is a
+  pluggable seam for choosing among a player's multiple preloaded
+  seasons at season start (today only "best" is implemented, identical
+  to the above) — see season.js and the roadmap.
 - `js/scoring.js` — the fantasy scoring engine, covering offense, kicker,
   and defense stat categories (defense's points-allowed bonus is tiered
   per game via `pointsAllowedBonus()`, using the `games` param on
@@ -222,34 +248,53 @@ the roadmap below doesn't require rewrites:
   data-coverage limits.
 - `js/draftEngine.js` — pure state-machine snake draft (order, turns,
   roster-slot eligibility via `SLOT_ELIGIBILITY`, undo). `buildRosterSlots()`
-  adds a SUPERFLEX slot when a league enables it. `SKILL_POSITIONS`
-  (QB/RB/WR/TE) is the only group of positions subject to the
-  retired/active alternation; `getRequiredGroup()` / `playerMatchesGroup()`
-  / `canDraftPlayer()` enforce it per team (from how many *skill* picks
-  that team has made so far, not by overall pick order) and exempt
-  Coach/K/DEF entirely. No DOM code, so it's ready to be driven by
-  network messages instead of local clicks for real multiplayer.
+  builds the roster template from league format settings: SUPERFLEX
+  when enabled, K/DEF each omitted entirely when disabled, and however
+  many BENCH slots the league chose. `SKILL_POSITIONS` (QB/RB/WR/TE) is
+  the only group of positions subject to the retired/active alternation;
+  `getRequiredGroup()` / `playerMatchesGroup()` / `canDraftPlayer()`
+  enforce it per team (from how many *skill* picks that team has made so
+  far, not by overall pick order) and exempt Coach/K/DEF entirely --
+  `getRequiredGroup()` also forces ACTIVE once a team hits its
+  `maxRetiredSkillPlayers` cap (stored on the draft object, like
+  `rosterSlots`), regardless of the normal alternation count.
+  `dropPlayer()` / `addFreeAgent()` are the waiver-wire add/drop
+  primitives the Teams tab's Free Agency section uses post-draft. No DOM
+  code, so it's ready to be driven by network messages instead of local
+  clicks for real multiplayer.
 - `js/schedule.js` — generic round-robin matchup generator (byes for odd
   counts), kept separate from scoring so the pairing algorithm (divisions,
   playoffs, etc.) can change independently. Reused by both the fantasy
   league schedule and the NFL schedule below.
 - `js/season.js` — weekly simulation, playoffs, and standings.
+  `createSeason()` snapshots each rostered player's chosen season (year)
+  via `selectSeason()` into `season.selectedSeasons` -- see the
+  season-selection note under `players.js` above.
   `computeTeamWeekScore()` is the seam for real per-week game logs and
   matchup-based defense adjustments later; it already applies seeded
-  weekly variance (`weeklyVarianceMultiplier`), injury zero-outs
-  (`isOutForWeek`), and the coach bonus. It's called fresh every
-  `advanceWeek()` against the team's *current* roster (a live reference,
-  not a snapshot), and its return value's `breakdown` (per-starter
-  points) is stored on that week's matchup — together this is why
-  editing a lineup any time only affects weeks simulated afterward, and
-  why the Games screen's matchup detail can show exactly what happened
-  even after the lineup later changes. `getRegularSeasonWeeks()` decides
-  how many of the 16 weeks are regular season (14, or 15 for leagues
-  under 4 teams) versus playoffs; `advanceWeek()` branches to
-  `advancePlayoffWeek()` once the regular season ends, which seeds a
-  bracket from standings (`seedPlayoffs()`) and plays it out
-  (`playPlayoffMatchup()`) without touching the regular-season win/loss
-  record.
+  weekly variance (`weeklyVarianceMultiplier`, now exported), injury
+  zero-outs (`isOutForWeek`), the coach bonus, and (via
+  `js/boxScore.js`) a simulated per-starter box score. It's called fresh
+  every `advanceWeek()` against the team's *current* roster (a live
+  reference, not a snapshot), and its return value's `breakdown`
+  (per-starter points + box score) is stored on that week's matchup —
+  together this is why editing a lineup any time only affects weeks
+  simulated afterward, and why the Games tab's box score can show
+  exactly what happened even after the lineup later changes.
+  `getRegularSeasonWeeks()` decides how many of the 16 weeks are regular
+  season (14, or 15 for leagues under 4 teams) versus playoffs;
+  `advanceWeek()` branches to `advancePlayoffWeek()` once the regular
+  season ends, which seeds a bracket from standings (`seedPlayoffs()`)
+  and plays it out (`playPlayoffMatchup()`) without touching the
+  regular-season win/loss record. All scores round to 1 decimal
+  (`round1()` in `scoring.js`).
+- `js/boxScore.js` — simulated per-week integer box scores
+  (yards/TDs/receptions/carries/fumbles), scaled from a player's
+  selected-season averages by the same weekly variance multiplier
+  already applied to their points that week. `js/data/realBoxScores.js`
+  is the empty real-data seam checked first, keyed by player id then
+  week -- add entries there piecemeal as real game logs become
+  sourceable, and they override the simulated number automatically.
 - `js/data/nflTeams.js` — the 32 current NFL teams; `TEAM_BYE_WEEKS` is
   derived from `REAL_SCHEDULE` (whichever team doesn't appear in a given
   week's real games is on bye that week), not generated.
@@ -267,7 +312,14 @@ the roadmap below doesn't require rewrites:
   a backend/shared multiplayer state means replacing this file alone.
 - `js/app.js` — UI controller: renders screens from state and wires up
   events, including the 60-second draft-pick timer. No game logic lives
-  here.
+  here. `rerenderPreservingFocus()` is used by every live-filter search
+  box (Draft/Players/Free Agency) instead of a plain `render()`, so
+  typing doesn't kick focus out of the input on every keystroke (render()
+  otherwise replaces `#app`'s innerHTML, and the input, on every call).
+  `showPlayerCard()` builds the full-screen player card (avatar, badges,
+  season line, and — once a season exists — a week-by-week table from
+  `getPlayerWeeklyHistory()`), reachable via a `data-action="show-player"`
+  click handled once, globally, regardless of which screen is showing.
 
 ## Roadmap / known v1 limitations
 
@@ -309,17 +361,22 @@ the roadmap below doesn't require rewrites:
   teams at exactly 17 games) before being committed. See
   `js/data/realNflSchedule.js` for the seam to extend this to a future
   season once its schedule is known.
-- **Weekly scores are simulated, not real historical box scores**: real
-  per-week game logs for ~150 HOF/HOVG players (thousands of individual
-  stat lines) aren't obtainable here for the same reason as the NFL
-  schedule above — the stats sites that would have them are unreachable,
-  and web search doesn't return structured historical tables. Instead,
-  `computeTeamWeekScore()` applies a seeded weekly variance multiplier
-  around each player's season average (`weeklyVarianceMultiplier()` in
-  `season.js`), so scores genuinely differ week to week rather than
-  repeating a flat number, without claiming to be real. Swapping in real
-  game logs later is a matter of replacing that function's output with
-  real per-week values; nothing else needs to change.
+- **Weekly scores and box scores are simulated, not real historical game
+  logs**: real per-week box scores for ~150 HOF/HOVG players (thousands
+  of individual stat lines) aren't obtainable here for the same reason
+  as the NFL schedule above — the stats sites that would have them are
+  unreachable, and web search doesn't return structured historical
+  tables. Instead, `computeTeamWeekScore()` applies a seeded weekly
+  variance multiplier around each player's season average
+  (`weeklyVarianceMultiplier()` in `season.js`) for points, and
+  `js/boxScore.js` scales the same season average by that same
+  multiplier for the integer yards/TDs/receptions/carries/fumbles line
+  — so both genuinely differ week to week rather than repeating a flat
+  number, and stay internally consistent with each other, without
+  claiming to be real. `js/data/realBoxScores.js` is already wired as
+  the seam for adding real per-week data piecemeal (player by player,
+  week by week) as it becomes sourceable; any entry there is used
+  automatically instead of the simulated one.
 - **Injury data coverage**: only one ACTIVE player designation
   (`sam-laporta`: Questionable) could be confirmed with confidence from
   web search when this was written — most search results for current

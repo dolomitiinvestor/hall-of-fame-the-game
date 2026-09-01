@@ -45,19 +45,34 @@ export const SLOT_ELIGIBILITY = {
   BENCH: ["QB", "RB", "WR", "TE", "COACH", "K", "DEF"],
 };
 
-// Builds a roster-slot template from league format settings. Kept
-// separate from DEFAULT_ROSTER_SLOTS so the base template stays simple
-// and each format toggle (Superflex, future ones) is one clear insert.
-export function buildRosterSlots({ superflex = false } = {}) {
-  const slots = [...DEFAULT_ROSTER_SLOTS];
-  if (superflex) {
-    const flexIdx = slots.indexOf("FLEX");
-    slots.splice(flexIdx + 1, 0, "SUPERFLEX");
-  }
+export const DEFAULT_BENCH_SPOTS = 7;
+
+// Builds a roster-slot template from league format settings. Kicker
+// and Defense slots are each optional (omitting one means that
+// position is never draftable at all -- see the pool filtering in
+// app.js's Draft screen); bench size is configurable too.
+export function buildRosterSlots({
+  superflex = false,
+  enableKicker = true,
+  enableDefense = true,
+  benchSpots = DEFAULT_BENCH_SPOTS,
+} = {}) {
+  const slots = ["QB", "RB", "RB", "WR", "WR", "TE", "FLEX"];
+  if (superflex) slots.push("SUPERFLEX");
+  if (enableKicker) slots.push("K");
+  if (enableDefense) slots.push("DEF");
+  slots.push("COACH");
+  for (let i = 0; i < Math.max(0, benchSpots); i++) slots.push("BENCH");
   return slots;
 }
 
-export function createDraft(teamNames, rosterSlots = DEFAULT_ROSTER_SLOTS, order = null) {
+// `settings.maxRetiredSkillPlayers` (null/undefined = no limit) caps
+// how many retired (HOF/HOVG) QB/RB/WR/TE picks a team may make; once
+// hit, getRequiredGroup forces ACTIVE for the rest of that team's
+// skill picks regardless of the normal alternation count. Stored on
+// the draft object (like rosterSlots) so every function that needs it
+// only takes `draft`, not a separate settings param threaded through.
+export function createDraft(teamNames, rosterSlots = DEFAULT_ROSTER_SLOTS, order = null, settings = {}) {
   const teams = teamNames.map((name, i) => ({
     id: `team-${i + 1}`,
     name,
@@ -74,6 +89,7 @@ export function createDraft(teamNames, rosterSlots = DEFAULT_ROSTER_SLOTS, order
     picks: [],
     draftedPlayerIds: [],
     status: "in_progress",
+    maxRetiredSkillPlayers: settings.maxRetiredSkillPlayers ?? null,
   };
 }
 
@@ -124,12 +140,17 @@ export function getRequiredGroup(draft) {
   if (draft.status === "complete") return null;
   const team = getCurrentTeam(draft);
   if (!team) return null;
-  const picksSoFar = draft.picks.filter((p) => {
+  const skillPicks = draft.picks.filter((p) => {
     if (p.teamId !== team.id) return false;
     const player = getPlayerById(p.playerId);
     return player && SKILL_POSITIONS.includes(player.position);
-  }).length;
-  return picksSoFar % 2 === 0 ? "RETIRED" : "ACTIVE";
+  });
+  const maxRetired = draft.maxRetiredSkillPlayers;
+  if (maxRetired != null) {
+    const retiredSoFar = skillPicks.filter((p) => isRetired(getPlayerById(p.playerId))).length;
+    if (retiredSoFar >= maxRetired) return "ACTIVE";
+  }
+  return skillPicks.length % 2 === 0 ? "RETIRED" : "ACTIVE";
 }
 
 // COACH/K/DEF aren't offensive skill players and sit outside the
@@ -218,6 +239,33 @@ export function setSlotPlayer(team, slotIndex, newPlayerId) {
   if (sourceIndex >= 0) {
     team.roster[sourceIndex].playerId = oldPlayerId;
   }
+}
+
+// Waiver-wire style add/drop, usable once the draft is complete (see
+// the Teams tab's Free Agency section in app.js). Both re-use the same
+// draftedPlayerIds/roster invariants the draft itself maintains, so
+// nothing downstream (scoring, standings) needs to know a player
+// arrived via drop/add instead of a draft pick.
+export function dropPlayer(draft, teamId, playerId) {
+  const team = draft.teams.find((t) => t.id === teamId);
+  if (!team) throw new Error("Unknown team.");
+  const slot = team.roster.find((s) => s.playerId === playerId);
+  if (!slot) throw new Error("That player isn't on this team.");
+  slot.playerId = null;
+  draft.draftedPlayerIds = draft.draftedPlayerIds.filter((id) => id !== playerId);
+}
+
+export function addFreeAgent(draft, teamId, playerId) {
+  if (draft.draftedPlayerIds.includes(playerId)) throw new Error("That player is already rostered.");
+  const team = draft.teams.find((t) => t.id === teamId);
+  if (!team) throw new Error("Unknown team.");
+  const player = getPlayerById(playerId);
+  if (!player) throw new Error("Unknown player.");
+  const slot = findOpenSlotForPosition(team, player.position);
+  if (!slot) throw new Error(`${team.name} has no open roster spot for a ${player.position}. Drop someone first.`);
+  slot.playerId = playerId;
+  draft.draftedPlayerIds.push(playerId);
+  return team;
 }
 
 export function shuffle(array) {

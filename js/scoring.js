@@ -52,8 +52,10 @@ export function buildScoringRules({ pprValue = 0.5, tePremium = 0 } = {}) {
   };
 }
 
-export function round2(n) {
-  return Math.round(n * 100) / 100;
+// Scores round to 1 decimal place everywhere (computed, stored, and
+// displayed) -- e.g. 167.5, not 167.53.
+export function round1(n) {
+  return Math.round(n * 10) / 10;
 }
 
 // Standard tiered fantasy defense scoring: bonus/penalty based on
@@ -104,7 +106,7 @@ export function calculateFantasyPoints(stats, rules = DEFAULT_SCORING_RULES, pos
     pts += pointsAllowedBonus(avgPerGame) * games;
   }
 
-  return round2(pts);
+  return round1(pts);
 }
 
 // A "season summary" bundles the total points for the year alongside
@@ -114,6 +116,6 @@ export function calculateFantasyPoints(stats, rules = DEFAULT_SCORING_RULES, pos
 export function getSeasonSummary(season, rules = DEFAULT_SCORING_RULES, position = null) {
   const games = season.games || 1;
   const totalPoints = calculateFantasyPoints(season.stats, rules, position, games);
-  const pointsPerGame = round2(totalPoints / games);
+  const pointsPerGame = round1(totalPoints / games);
   return { totalPoints, pointsPerGame, games };
 }

@@ -10,6 +10,9 @@
   --win: #2fbf71;
   --danger: #e5533d;
   --radius: 10px;
+  --gold: #d4af37;
+  --gold-light: #f0cf7a;
+  --gold-dark: #8a6c1f;
 }
 
 * {
@@ -94,33 +97,56 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
+  background: linear-gradient(160deg, #0a0700 0%, #1a1206 30%, #2b1f08 55%, #1a1206 80%, #0a0700 100%);
+  border-bottom: 2px solid var(--gold);
+  box-shadow: 0 2px 14px rgba(212, 175, 55, 0.18);
   padding: 0.75rem 1rem;
 }
 
 .site-header h1 {
   margin: 0 0 0.5rem 0;
   font-size: 1.25rem;
+  background: linear-gradient(90deg, var(--gold-light), var(--gold) 45%, var(--gold-light) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: var(--gold-light);
+}
+
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .site-header h1 {
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 .main-nav {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.4rem;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.3rem;
+  overflow-x: auto;
 }
 
 .nav-btn {
+  flex: 1 1 0;
   min-width: 0;
-  padding-left: 0.3rem;
-  padding-right: 0.3rem;
-  font-size: 0.85rem;
+  padding: 0.4rem 0.25rem;
+  font-size: 0.72rem;
+  line-height: 1.15;
+  white-space: normal;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--gold-dark);
+  color: #e8d9a8;
+}
+
+.nav-btn:not(:disabled):hover {
+  border-color: var(--gold);
+  color: var(--gold-light);
 }
 
 .nav-btn.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
+  background: linear-gradient(180deg, var(--gold-light), var(--gold) 70%, var(--gold-dark));
+  border-color: var(--gold);
+  color: #1a1206;
+  font-weight: 700;
 }
 
 main#app {
@@ -378,12 +404,12 @@ select {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .player-cell select {
-  flex: 1 1 auto;
-  min-width: 8rem;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .tag-badge {
@@ -690,12 +716,197 @@ select {
   padding: 1rem;
 }
 
+/* Player avatar/name as a click target (player card) */
+
+.player-avatar[data-action] {
+  cursor: pointer;
+}
+
+.player-name[data-action] {
+  cursor: pointer;
+}
+
+.player-name[data-action]:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* Box scores + player quotes (matchup breakdown, player card) */
+
+.player-row-name {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.box-score-line {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  margin-top: 0.1rem;
+}
+
+.player-quote {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  font-style: italic;
+  margin-top: 0.1rem;
+}
+
+/* Playoff bracket results list (Season tab) */
+
+.playoff-results {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.playoff-results li {
+  padding: 0.15rem 0;
+}
+
+.win {
+  color: var(--win);
+  font-weight: 700;
+}
+
+/* Free Agency (Teams tab) */
+
+.free-agent-actions {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  align-self: center;
+}
+
+.free-agent-actions select {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.5rem;
+}
+
+.free-agent-actions button {
+  align-self: stretch;
+}
+
+/* Games tab: week navigator + compact game rows */
+
+.week-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.week-nav-label {
+  font-weight: 700;
+  font-size: 1.05rem;
+  min-width: 9rem;
+  text-align: center;
+}
+
+.game-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.game-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.7rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.game-row:hover {
+  border-color: var(--accent);
+}
+
+.game-row-team {
+  flex: 1 1 0;
+}
+
+.game-row-team.win {
+  color: var(--win);
+}
+
+/* Fullscreen overlays: player card, single-game detail */
+
+.fullscreen-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: var(--bg);
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.fullscreen-overlay[hidden] {
+  display: none;
+}
+
+.fullscreen-close {
+  position: sticky;
+  top: 0;
+  float: right;
+  z-index: 5;
+}
+
+.fullscreen-body {
+  clear: both;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.player-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.player-avatar-lg {
+  width: 3.5rem;
+  height: 3.5rem;
+  flex-shrink: 0;
+}
+
+.player-avatar-lg svg {
+  width: 28px;
+  height: 28px;
+}
+
+.player-card-badges {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin: 0.3rem 0;
+}
+
+.game-detail-header {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
 @media (max-width: 480px) {
   .site-header h1 {
     font-size: 1.05rem;
   }
   .nav-btn {
-    font-size: 0.85rem;
-    padding: 0.5rem 0.4rem;
+    font-size: 0.62rem;
+    padding: 0.35rem 0.15rem;
   }
 }

@@ -36,6 +36,27 @@ export function getBestSeason(player, rules) {
   return { season: best, summary: bestSummary };
 }
 
+// Which of a player's `seasons` entries gets used for an actual
+// fantasy season -- a pluggable seam. Only "best" (today's existing
+// behavior: highest-scoring season under current rules) is implemented;
+// this is the hook for later strategies (e.g. "random", "weighted by
+// recency") once more players carry multiple preloaded seasons.
+// createSeason() in season.js calls this once per rostered player when
+// a season starts and snapshots the chosen year, rather than always
+// dynamically re-picking "best" the way pre-season screens do.
+export const SEASON_SELECTION_STRATEGIES = {
+  best: (player, rules) => getBestSeason(player, rules).season,
+};
+
+export function selectSeason(player, rules, strategy = "best") {
+  const fn = SEASON_SELECTION_STRATEGIES[strategy] || SEASON_SELECTION_STRATEGIES.best;
+  return fn(player, rules) || player.seasons[0];
+}
+
+export function getSeasonByYear(player, year) {
+  return player.seasons.find((s) => s.year === year) || null;
+}
+
 // A player is either RETIRED (tag HOF or HOVG) or ACTIVE. This is the
 // grouping the draft's forced alternation (see draftEngine.js) cares
 // about -- HOF vs. HOVG only matters for display/filtering. Coaches,

@@ -12,11 +12,12 @@
 // (draft, standings, UI) only calls computeTeamWeekScore()/advanceWeek(),
 // so upgrading the model here is a self-contained change.
 
-import { getPlayerById, getBestSeason } from "./players.js";
-import { round2 } from "./scoring.js";
+import { getPlayerById, getBestSeason, selectSeason, getSeasonByYear } from "./players.js";
+import { round1, getSeasonSummary } from "./scoring.js";
 import { generateSchedule } from "./schedule.js";
 import { seededNormal } from "./rng.js";
 import { isOutForWeek, getInjuryStatusKey } from "./injuries.js";
+import { generateBoxScore } from "./boxScore.js";
 
 export const SEASON_WEEKS = 16;
 
@@ -27,7 +28,39 @@ export function getRegularSeasonWeeks(numTeams) {
   return numTeams >= 4 ? SEASON_WEEKS - 2 : SEASON_WEEKS - 1;
 }
 
-export function createSeason(draft, weeks = SEASON_WEEKS) {
+// At season creation, every rostered player's season is "chosen" once
+// via the pluggable selectSeason() strategy (players.js) and snapshotted
+// here by year -- today the only strategy is "best" (identical to what
+// the pre-season screens show live), but the seam exists so a future
+// strategy (or a player with real multiple preloaded seasons) can vary
+// without touching anything downstream. resolvePlayerSeason() below is
+// how the rest of this file reads it back, falling back to "best" for
+// any player missing from the map (e.g. an older saved season, or a
+// free-agent pickup added after the season started).
+function buildSelectedSeasons(draft, rules) {
+  const selected = {};
+  draft.teams.forEach((team) => {
+    team.roster.forEach((slot) => {
+      if (!slot.playerId || selected[slot.playerId]) return;
+      const player = getPlayerById(slot.playerId);
+      if (!player) return;
+      const season = selectSeason(player, rules, "best");
+      if (season) selected[slot.playerId] = season.year;
+    });
+  });
+  return selected;
+}
+
+function resolvePlayerSeason(playerId, rules, season) {
+  const player = getPlayerById(playerId);
+  if (!player) return null;
+  const year = season?.selectedSeasons?.[playerId];
+  const bySelected = year != null ? getSeasonByYear(player, year) : null;
+  if (bySelected) return { season: bySelected, summary: getSeasonSummary(bySelected, rules, player.position) };
+  return getBestSeason(player, rules);
+}
+
+export function createSeason(draft, weeks = SEASON_WEEKS, rules) {
   const teamIds = draft.teams.map((t) => t.id);
   const regularSeasonWeeks = getRegularSeasonWeeks(teamIds.length);
   return {
@@ -39,6 +72,7 @@ export function createSeason(draft, weeks = SEASON_WEEKS) {
     standings: initStandings(draft.teams),
     playoffs: null, // seeded lazily once the regular season ends
     championId: null,
+    selectedSeasons: buildSelectedSeasons(draft, rules),
   };
 }
 
@@ -65,7 +99,7 @@ const VARIANCE_STDDEV = 0.3;
 const VARIANCE_MIN = 0.35;
 const VARIANCE_MAX = 1.85;
 
-function weeklyVarianceMultiplier(playerId, week) {
+export function weeklyVarianceMultiplier(playerId, week) {
   const z = seededNormal(`variance:${playerId}:${week}`);
   const factor = 1 + VARIANCE_STDDEV * z;
   return Math.min(VARIANCE_MAX, Math.max(VARIANCE_MIN, factor));
@@ -75,32 +109,41 @@ function weeklyVarianceMultiplier(playerId, week) {
 // Draft/Teams screens showing a flat "expected" rate), returns the
 // season's plain points-per-game -- no variance, no injury effect,
 // since those only make sense once a specific week is being played.
-export function weeklyPointsForPlayer(playerId, rules, week) {
+// `season` (optional) is the in-progress fantasy season -- when given,
+// its selectedSeasons snapshot is used instead of always recomputing
+// "best" (see resolvePlayerSeason above).
+export function weeklyPointsForPlayer(playerId, rules, week, season) {
   const player = getPlayerById(playerId);
   if (!player) return 0;
-  const { summary } = getBestSeason(player, rules);
+  const { summary } = resolvePlayerSeason(playerId, rules, season) || getBestSeason(player, rules);
   if (week == null) return summary.pointsPerGame;
   if (isOutForWeek(player, week)) return 0;
-  return round2(summary.pointsPerGame * weeklyVarianceMultiplier(playerId, week));
+  return round1(summary.pointsPerGame * weeklyVarianceMultiplier(playerId, week));
 }
 
-export function computeTeamWeekScore(team, rules, week) {
+export function computeTeamWeekScore(team, rules, week, season) {
   const starterIds = getStarterIds(team);
   const breakdown = starterIds.map((pid) => {
     const player = getPlayerById(pid);
-    const points = weeklyPointsForPlayer(pid, rules, week);
+    const points = weeklyPointsForPlayer(pid, rules, week, season);
     const injury = week == null ? "HEALTHY" : getInjuryStatusKey(player, week);
-    return { playerId: pid, name: player.name, position: player.position, points, injury };
+    let boxScore = null;
+    if (week != null && !isOutForWeek(player, week)) {
+      const multiplier = weeklyVarianceMultiplier(pid, week);
+      const resolved = resolvePlayerSeason(pid, rules, season);
+      boxScore = generateBoxScore(player, resolved?.season, multiplier, pid, week);
+    }
+    return { playerId: pid, name: player.name, position: player.position, points, injury, boxScore };
   });
-  let total = round2(breakdown.reduce((sum, b) => sum + b.points, 0));
+  let total = round1(breakdown.reduce((sum, b) => sum + b.points, 0));
 
   const coachSlot = team.roster.find((s) => s.slot === "COACH" && s.playerId);
   let coachBonus = null;
   const rate = rules.coachBonusRate || 0;
   if (coachSlot && rate) {
     const coachPlayer = getPlayerById(coachSlot.playerId);
-    const amount = round2(total * rate);
-    total = round2(total + amount);
+    const amount = round1(total * rate);
+    total = round1(total + amount);
     coachBonus = { coachName: coachPlayer.name, amount, rate };
   }
 
@@ -110,10 +153,10 @@ export function computeTeamWeekScore(team, rules, week) {
 function updateStandings(standings, aId, bId, scoreA, scoreB, winnerId) {
   const sa = standings[aId];
   const sb = standings[bId];
-  sa.pointsFor = round2(sa.pointsFor + scoreA);
-  sa.pointsAgainst = round2(sa.pointsAgainst + scoreB);
-  sb.pointsFor = round2(sb.pointsFor + scoreB);
-  sb.pointsAgainst = round2(sb.pointsAgainst + scoreA);
+  sa.pointsFor = round1(sa.pointsFor + scoreA);
+  sa.pointsAgainst = round1(sa.pointsAgainst + scoreB);
+  sb.pointsFor = round1(sb.pointsFor + scoreB);
+  sb.pointsAgainst = round1(sb.pointsAgainst + scoreA);
   if (winnerId === aId) {
     sa.wins++;
     sb.losses++;
@@ -143,8 +186,8 @@ function advanceRegularSeasonWeek(season, draft, rules, weekIndex) {
     .filter((id) => !pairs.some((pair) => pair.includes(id)));
 
   const matchups = pairs.map(([aId, bId]) => {
-    const scoreA = computeTeamWeekScore(teamsById[aId], rules, week);
-    const scoreB = computeTeamWeekScore(teamsById[bId], rules, week);
+    const scoreA = computeTeamWeekScore(teamsById[aId], rules, week, season);
+    const scoreB = computeTeamWeekScore(teamsById[bId], rules, week, season);
     let winnerId = null;
     if (scoreA.total > scoreB.total) winnerId = aId;
     else if (scoreB.total > scoreA.total) winnerId = bId;
@@ -164,8 +207,8 @@ function advanceRegularSeasonWeek(season, draft, rules, weekIndex) {
 // regular-season win/loss record stays exactly as it was when the
 // regular season ended.
 function playPlayoffMatchup(season, teamsById, rules, week, aId, bId, resultKey) {
-  const scoreA = computeTeamWeekScore(teamsById[aId], rules, week);
-  const scoreB = computeTeamWeekScore(teamsById[bId], rules, week);
+  const scoreA = computeTeamWeekScore(teamsById[aId], rules, week, season);
+  const scoreB = computeTeamWeekScore(teamsById[bId], rules, week, season);
   const winnerId = scoreB.total > scoreA.total ? bId : aId;
   const loserId = winnerId === aId ? bId : aId;
   const result = { teamIds: [aId, bId], scores: { [aId]: scoreA, [bId]: scoreB }, winnerId, loserId };

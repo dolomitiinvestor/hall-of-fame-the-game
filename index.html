@@ -27,10 +27,20 @@
     </div>
   </div>
 
+  <div id="player-card-overlay" class="fullscreen-overlay" hidden>
+    <button class="splash-close fullscreen-close" id="player-card-close" aria-label="Close">&times;</button>
+    <div id="player-card-body" class="fullscreen-body"></div>
+  </div>
+
+  <div id="game-fullscreen-overlay" class="fullscreen-overlay" hidden>
+    <button class="splash-close fullscreen-close" id="game-fullscreen-close" aria-label="Close">&times;</button>
+    <div id="game-fullscreen-body" class="fullscreen-body"></div>
+  </div>
+
   <header class="site-header">
     <h1>🏈 Hall of Fame</h1>
     <nav class="main-nav">
-      <button class="nav-btn active" data-screen="setup">Setup</button>
+      <button class="nav-btn active" data-screen="setup">League Settings</button>
       <button class="nav-btn" data-screen="draft">Draft</button>
       <button class="nav-btn" data-screen="teams">Teams</button>
       <button class="nav-btn" data-screen="players">Players</button>
