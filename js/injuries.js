@@ -65,3 +65,16 @@ export function isOutForWeek(player, week) {
   const key = getInjuryStatusKey(player, week);
   return key === "OUT" || key === "IR";
 }
+
+// Whole-number "injury prone" percentage for a retired (HOF/HOVG)
+// player: the chance, in any given simulated week, that their weekly
+// roll (see getInjuryStatusKey above) comes back as anything other
+// than Healthy. Only meaningful for the retired weekly-roll model --
+// null for ACTIVE players (a fixed real-world snapshot, not a weekly
+// probability) and for ineligible positions/coaches/defenses.
+export function getInjuryPronePercent(player) {
+  if (!INJURY_ELIGIBLE_POSITIONS.includes(player.position)) return null;
+  if (player.tag !== "HOF" && player.tag !== "HOVG") return null;
+  const healthyWeight = RETIRED_INJURY_WEIGHTS.find(([key]) => key === "HEALTHY")[1];
+  return Math.round((1 - healthyWeight) * 100);
+}

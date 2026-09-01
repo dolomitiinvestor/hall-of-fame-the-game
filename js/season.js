@@ -127,8 +127,11 @@ export function computeTeamWeekScore(team, rules, week, season) {
     const player = getPlayerById(pid);
     const points = weeklyPointsForPlayer(pid, rules, week, season);
     const injury = week == null ? "HEALTHY" : getInjuryStatusKey(player, week);
+    // Generated regardless of injury status -- an OUT/IR starter still
+    // gets a box score (their fantasy points are zeroed separately,
+    // above; the box score isn't gated on whether they "played").
     let boxScore = null;
-    if (week != null && !isOutForWeek(player, week)) {
+    if (week != null) {
       const multiplier = weeklyVarianceMultiplier(pid, week);
       const resolved = resolvePlayerSeason(pid, rules, season);
       boxScore = generateBoxScore(player, resolved?.season, multiplier, pid, week);

@@ -103,7 +103,7 @@ export const PLAYER_QUOTES = {
     " ",
   ],
   "lamar-jackson": [
-    "Nobody cares about a backup quarterback until he has to start, and then everyone cares way too much.",'
+    "Nobody cares about a backup quarterback until he has to start, and then everyone cares way too much.",
     "I ain't answering that, man. Y'all trying to get me fined on a Tuesday.",
     "My momma told me if I don't have anything nice to say, just scramble for 40 yards instead.",
     "I thought about eating a whole pizza before the game once, but then I realized I like breathing when I run.",

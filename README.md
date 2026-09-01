@@ -9,7 +9,8 @@ and standings.
 
 It's a static site (vanilla HTML/CSS/JS, ES modules, no build step, no
 backend) so it can be hosted directly on GitHub Pages and works on desktop
-and mobile browsers, including iPhone.
+and mobile browsers, including iPhone. Black-and-gold color scheme
+throughout (`--gold`/`--gold-light`/`--gold-dark` in `css/style.css`).
 
 ## Play it
 
@@ -21,7 +22,9 @@ and mobile browsers, including iPhone.
    (0-10), and Max Retired Players (caps how many HOF/HOVG skill-position
    players a team may draft; once hit, the alternating rule requires
    active for the rest of that team's skill picks). All locked in once
-   the draft starts.
+   the draft starts -- though once a draft exists this screen switches
+   to just an editable name per team (renaming works any time,
+   including mid-season) since format and team count are fixed by then.
 2. **Draft** — a local, hot-seat snake draft with a 60-second pick clock.
    Each team's own QB/RB/WR/TE picks also alternate between retired and
    active, starting with retired on their 1st skill pick, active on
@@ -36,15 +39,17 @@ and mobile browsers, including iPhone.
    turn, search/filter the player pool (by name, position, and
    HOF/HOVG/ACTIVE tag) and draft a player; their best (or projected)
    season — computed live from your league's scoring settings — their
-   team's bye week, and their tag badge (defenses don't get one — see
-   Scoring below) are shown next to their name. Players auto-fill the
-   most specific open roster slot (position → FLEX/SUPERFLEX → BENCH).
-   If the clock hits zero, the best available eligible player is
-   auto-drafted for you. Undo is available if you misclick. A dashed
-   "Complete Draft (Testing)" button instantly auto-drafts every
-   remaining pick with that same best-available logic, for quickly
-   getting to a full league while testing Teams/Season -- not meant for
-   normal play.
+   team's bye week, their tag badge (defenses don't get one — see
+   Scoring below), and (retired players only) an injury-risk percentage
+   are shown next to their name. Players auto-fill the most specific
+   open roster slot (position → FLEX/SUPERFLEX → BENCH). If the clock
+   hits zero, the best available eligible player is auto-drafted for
+   you. Undo is available if you misclick. A dashed "Complete Draft
+   (Testing)" button instantly auto-drafts every remaining pick with
+   that same best-available logic, for quickly getting to a full league
+   while testing Teams/Season -- not meant for normal play. A scrollable
+   Draft Order table (pick #, clickable player name, team) records the
+   exact order everyone was taken in, live as the draft happens.
 3. **Teams** — set your starting lineup: QB, 2×RB, 2×WR, TE, FLEX (+
    SUPERFLEX if enabled), K and/or DEF (if enabled), Coach, and however
    many bench spots your league format set (0-10). Only non-BENCH slots
@@ -76,26 +81,45 @@ and mobile browsers, including iPhone.
    start. A playoff bracket is always shown once the draft is complete:
    **projected** (current standings, re-sorted every week) before the
    regular season ends, then the actual seeded bracket after, with real
-   scores filled in as playoff games are played — the last 1-2 of the 16
-   weeks, a 4-team bracket (leagues of 4+) or a single championship game
-   (2-3 teams), culminating in a champion banner; see the FAQ for the
-   exact format. A shortcut link jumps to the Teams tab so you can adjust
-   a lineup between weeks; the change only takes effect starting with the
-   next week you advance, since each played week keeps the lineup (and
+   scores filled in (and the winner's box glowing gold) as playoff games
+   are played — the last 1-2 of the 16 weeks, a 4-team bracket (leagues
+   of 4+, top seed always drawing the worst seed in the semifinals, not
+   the next-best one) or a single championship game (2-3 teams),
+   culminating in a champion banner. Below the seed list, a literal
+   bracket diagram lays out the actual matchups round by round
+   (semifinal boxes always show real team names since seeding alone
+   determines them; the championship/3rd-place boxes show TBD until
+   both semifinals are actually played, since only the winners/losers
+   determine who's in them); see the FAQ for the exact format. A
+   shortcut link jumps to the Teams tab so you can adjust a lineup
+   between weeks; the change only takes effect starting with the next
+   week you advance, since each played week keeps the lineup (and
    score) it actually used. Another shortcut jumps to Games.
 6. **Games** — one week at a time (left/right arrows to move between
-   weeks, defaulting to the most recent), every game that week stacked
-   vertically as a compact score line. Tap a game to open its full box
-   score full-screen (X or Escape to close): each starter's actual
-   points, plus a simulated integer box score (yards/TDs/receptions/
-   carries/fumbles, scaled from their season averages by that week's
-   same scoring variance — see the FAQ and roadmap) and, if one exists,
-   a quote (player quotes are an empty infrastructure seam for now). Each
-   team's score up top carries a real, attributed quote from that team's
-   started Coach (one per team per game, picked deterministically — see
-   the FAQ). Below the week's games, the NFL schedule — the real 2026
-   regular-season slate for every week the fantasy season uses (see the
-   FAQ and roadmap).
+   weeks, spanning the whole season from week 1 through the playoffs —
+   not just weeks already played), every game that week stacked
+   vertically as a compact 5-column row: team name, score, "vs", team
+   name, score. Scroll past the most recently played week and upcoming
+   matchups preview with blank scores instead of disappearing (playoff
+   pairings preview as TBD until they're actually determinable — see the
+   FAQ). Once a game is finalized, the winning team's name and score
+   glow gold. Tap a played game to open its full box score full-screen
+   (X or Escape to close): each starter's actual points, plus a
+   simulated integer box score (yards/TDs/receptions/carries/fumbles,
+   scaled from their season averages by that week's same scoring
+   variance — generated even for an Out/IR starter, not just healthy
+   ones; see the FAQ and roadmap) and, if one exists, a quote next to
+   that specific player (player quotes are an empty infrastructure seam
+   for now). A started Coach's bonus line sits right under their own row
+   (name suffixed "- coach bonus"), not as a separate note elsewhere.
+   Each team's score up top carries up to two quotes: a real, attributed
+   one from that team's started Coach, and one from an actual starter
+   that week (same empty seam as above) — both picked deterministically
+   (see the FAQ). A player's avatar/name is clickable from inside this
+   full-screen view too, and opens their player card stacked on top
+   rather than replacing the game view underneath. Below the week's
+   games, the NFL schedule — the real 2026 regular-season slate for
+   every week the fantasy season uses (see the FAQ and roadmap).
 7. **FAQ** — an in-app explainer covering all of the above.
 
 Every time you open or refresh the site, a splash screen shows the logo
