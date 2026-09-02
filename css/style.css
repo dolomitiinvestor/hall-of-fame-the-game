@@ -558,6 +558,21 @@ select {
   margin-top: 0.1rem;
 }
 
+.bench-header-row td {
+  padding-top: 0.6rem;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  border-bottom: none;
+}
+
+.bench-row {
+  opacity: 0.6;
+}
+
 .mini-roster h4 {
   margin: 0 0 0.4rem 0;
 }
@@ -717,25 +732,70 @@ select {
 }
 
 .matchup-detail {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
   margin-top: 0.6rem;
 }
 
-.matchup-team {
-  flex: 1 1 12rem;
-  min-width: 12rem;
+.matchup-team-names {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
-.matchup-team h5 {
+.matchup-team-names h5 {
   margin: 0 0 0.3rem 0;
   font-size: 0.85rem;
   color: var(--text-dim);
 }
 
+.matchup-team-names h5.mirrored {
+  text-align: right;
+}
+
+.matchup-table-scroll {
+  overflow-x: auto;
+  margin-top: 0.3rem;
+}
+
 .matchup-table {
   font-size: 0.85rem;
+  width: 100%;
+  min-width: 40rem;
+  table-layout: fixed;
+}
+
+.matchup-table .col-pos {
+  width: 8%;
+}
+
+.matchup-table .col-player {
+  width: 34%;
+}
+
+.matchup-table .col-pts {
+  width: 8%;
+}
+
+.matchup-table .pos-cell,
+.matchup-table .pts-cell {
+  text-align: center;
+}
+
+.matchup-table th:nth-child(4),
+.matchup-table th:nth-child(5),
+.matchup-table th:nth-child(6),
+.matchup-table td.player-cell.mirrored {
+  text-align: right;
+}
+
+.matchup-table .player-cell.mirrored .player-row-name {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.matchup-table .player-cell.mirrored .box-score-line,
+.matchup-table .player-cell.mirrored .player-quote,
+.matchup-table .player-cell.mirrored .coach-bonus-line {
+  text-align: right;
 }
 
 .link-btn {
@@ -1063,9 +1123,13 @@ select {
 .game-detail-header {
   display: flex;
   gap: 0.5rem;
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
   margin-bottom: 0.5rem;
+}
+
+.game-detail-header .vs {
+  margin-top: 0.15rem;
 }
 
 @media (max-width: 480px) {
