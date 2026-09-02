@@ -929,83 +929,119 @@ function playerQuoteFor(playerId, week) {
   return quotes[idx];
 }
 
-// Per-starter box score for one team's side of a matchup, plus the
-// coach bonus line if one applied. Everything comes straight off the
-// stored score object (computeTeamWeekScore() at the time that week
-// was simulated), not recomputed live, so this stays an accurate
-// historical record even after a lineup is edited later. `week` is
-// only needed for the deterministic player-quote pick. `team` (the
-// current roster, optional) is only used to list bench players below
-// the starters -- see renderBenchRows() below.
-function renderPlayerBreakdown(score, week, team) {
-  const { breakdown, coachBonus } = score;
-  if (!breakdown.length) return `<p class="hint">No starters were set that week.</p>`;
-  const rows = breakdown
-    .map((b) => {
-      const player = getPlayerById(b.playerId);
-      const badge = INJURY_STATUSES[b.injury]?.code
-        ? `<span class="injury-badge ${INJURY_BADGE_CLASS[b.injury]}" title="${escapeHtml(INJURY_STATUSES[b.injury].label)}">${INJURY_STATUSES[b.injury].code}</span>`
-        : "";
-      const boxLine = formatBoxScoreLine(b.boxScore);
-      const quote = playerQuoteFor(b.playerId, week);
-      // The started Coach's bonus line lives right under their own
-      // row (not as a separate paragraph after the whole table), and
-      // their name gets a " - coach bonus" suffix so it's obvious at a
-      // glance which row it belongs to.
-      const isCoachBonusRow = b.position === "COACH" && coachBonus && coachBonus.coachName === b.name;
-      const nameHtml = player ? playerNameLink(player) : escapeHtml(b.name);
-      const coachSuffix = isCoachBonusRow ? ` <span class="coach-bonus-suffix">- coach bonus</span>` : "";
-      const coachBonusLine = isCoachBonusRow
-        ? `<div class="coach-bonus-line">${coachBonus.amount >= 0 ? "+" : ""}${coachBonus.amount.toFixed(1)} (${(coachBonus.rate * 100).toFixed(0)}%)</div>`
-        : "";
-      // Coaches don't rack up their own box-score points -- their Pts
-      // column shows the bonus they generated instead of a flat 0.0,
-      // so the row reads as "the coach scored this."
-      const displayPoints = isCoachBonusRow ? coachBonus.amount : b.points;
-      return `
-      <tr>
-        <td><span class="pos-badge pos-${b.position}">${b.position}</span></td>
-        <td>
-          <div class="player-row-name">${player ? playerAvatar(player) : ""}${nameHtml}${coachSuffix} ${badge}</div>
-          ${boxLine ? `<div class="box-score-line">${escapeHtml(boxLine)}</div>` : ""}
-          ${quote ? `<div class="player-quote">&ldquo;${escapeHtml(quote)}&rdquo;</div>` : ""}
-          ${coachBonusLine}
-        </td>
-        <td>${displayPoints.toFixed(1)}</td>
-      </tr>`;
-    })
-    .join("");
-  return `
-    <table class="roster-table matchup-table">
-      <thead><tr><th>Pos</th><th>Player</th><th>Pts</th></tr></thead>
-      <tbody>${rows}${renderBenchRows(team, week)}</tbody>
-    </table>`;
-}
-
-// Bench players don't count toward the score, but showing what they
-// would have scored -- same deterministic weekly formula as starters
-// -- lets you second-guess your lineup. Pulled from the team's
-// *current* roster (like coachQuoteForTeam() above), not a historical
-// snapshot, since bench assignments aren't stored per week.
-function renderBenchRows(team, week) {
-  if (!team) return "";
-  const benchSlots = team.roster.filter((s) => s.slot === "BENCH" && s.playerId);
-  if (!benchSlots.length) return "";
+// A team's bench players (current roster, not a historical snapshot --
+// bench assignments aren't stored per week), reshaped into the same
+// { playerId, name, position, points, injury } shape as a starter row
+// in score.breakdown, so both can render through matchupRowCells()
+// below. `isBench: true` skips the per-player quote that starters get.
+function benchEntries(team, week) {
+  if (!team) return [];
   const rules = getRules();
-  const rows = benchSlots
+  return team.roster
+    .filter((s) => s.slot === "BENCH" && s.playerId)
     .map((s) => {
       const player = getPlayerById(s.playerId);
-      if (!player) return "";
-      const points = weeklyPointsForPlayer(s.playerId, rules, week, state.season);
-      return `
-      <tr class="bench-row">
-        <td><span class="pos-badge pos-${player.position}">${player.position}</span></td>
-        <td><div class="player-row-name">${playerAvatar(player)}${playerNameLink(player)} ${injuryBadge(player, week)}</div></td>
-        <td>${points.toFixed(1)}</td>
-      </tr>`;
+      if (!player) return null;
+      return {
+        playerId: s.playerId,
+        name: player.name,
+        position: player.position,
+        points: weeklyPointsForPlayer(s.playerId, rules, week, state.season),
+        injury: getInjuryStatusKey(player, week),
+        isBench: true,
+      };
     })
-    .join("");
-  return `<tr class="bench-header-row"><td colspan="3">Bench</td></tr>${rows}`;
+    .filter(Boolean);
+}
+
+// The Pos/Player/Pts cells for one entry (a starter or a bench
+// player). `mirrored` right-aligns the player cell so it reads
+// correctly on the right-hand side of the combined matchup table --
+// see buildMatchupTableHtml() below. `entry` may be null when one
+// side has fewer rows than the other (e.g. uneven bench counts); that
+// renders as three empty cells so the table stays rectangular.
+function matchupRowCells(entry, coachBonus, week, mirrored) {
+  if (!entry) return { pos: "<td></td>", player: "<td></td>", pts: "<td></td>" };
+  const player = getPlayerById(entry.playerId);
+  const badge = INJURY_STATUSES[entry.injury]?.code
+    ? `<span class="injury-badge ${INJURY_BADGE_CLASS[entry.injury]}" title="${escapeHtml(INJURY_STATUSES[entry.injury].label)}">${INJURY_STATUSES[entry.injury].code}</span>`
+    : "";
+  const boxLine = formatBoxScoreLine(entry.boxScore);
+  const quote = entry.isBench ? null : playerQuoteFor(entry.playerId, week);
+  // The started Coach's bonus line lives right under their own row
+  // (not as a separate paragraph after the whole table), and their
+  // name gets a " - coach bonus" suffix so it's obvious at a glance
+  // which row it belongs to.
+  const isCoachBonusRow = entry.position === "COACH" && coachBonus && coachBonus.coachName === entry.name;
+  const nameHtml = player ? playerNameLink(player) : escapeHtml(entry.name);
+  const coachSuffix = isCoachBonusRow ? ` <span class="coach-bonus-suffix">- coach bonus</span>` : "";
+  const coachBonusLine = isCoachBonusRow
+    ? `<div class="coach-bonus-line">${coachBonus.amount >= 0 ? "+" : ""}${coachBonus.amount.toFixed(1)} (${(coachBonus.rate * 100).toFixed(0)}%)</div>`
+    : "";
+  // Coaches don't rack up their own box-score points -- their Pts
+  // column shows the bonus they generated instead of a flat 0.0, so
+  // the row reads as "the coach scored this."
+  const displayPoints = isCoachBonusRow ? coachBonus.amount : entry.points;
+  return {
+    pos: `<td class="pos-cell"><span class="pos-badge pos-${entry.position}">${entry.position}</span></td>`,
+    player: `<td class="player-cell${mirrored ? " mirrored" : ""}">
+        <div class="player-row-name">${player ? playerAvatar(player) : ""}${nameHtml}${coachSuffix} ${badge}</div>
+        ${boxLine ? `<div class="box-score-line">${escapeHtml(boxLine)}</div>` : ""}
+        ${quote ? `<div class="player-quote">&ldquo;${escapeHtml(quote)}&rdquo;</div>` : ""}
+        ${coachBonusLine}
+      </td>`,
+    pts: `<td class="pts-cell">${displayPoints.toFixed(1)}</td>`,
+  };
+}
+
+// One <tr> with team A's entry read outward from the left edge (Pos,
+// Player, Pts) and team B's entry read outward from the right edge
+// (Pts, Player, Pos) -- a mirror image across the table's center, so
+// both teams' points sit next to each other in the middle columns.
+function renderMirroredRow(entryA, entryB, aCoachBonus, bCoachBonus, week, rowClass) {
+  const a = matchupRowCells(entryA, aCoachBonus, week, false);
+  const b = matchupRowCells(entryB, bCoachBonus, week, true);
+  return `<tr${rowClass ? ` class="${rowClass}"` : ""}>${a.pos}${a.player}${a.pts}${b.pts}${b.player}${b.pos}</tr>`;
+}
+
+// The full mirrored box score for a matchup: both teams' starters
+// (from the stored score's breakdown -- an accurate historical record
+// even after a lineup is edited later, since it's computed once at
+// simulation time) row-for-row by roster slot, then both teams'
+// bench players (computed live off the *current* roster, like
+// coachQuoteForTeam() below -- bench assignments aren't stored per
+// week) under a shared "Bench" divider. Slot order is identical for
+// every team (see buildRosterSlots()), so index-for-index pairing
+// keeps each row lined up between the two sides.
+function buildMatchupTableHtml(aTeam, aScore, bTeam, bScore, week) {
+  if (!aScore.breakdown.length && !bScore.breakdown.length) {
+    return `<p class="hint">No starters were set that week.</p>`;
+  }
+  let rows = "";
+  const starterLen = Math.max(aScore.breakdown.length, bScore.breakdown.length);
+  for (let i = 0; i < starterLen; i++) {
+    rows += renderMirroredRow(aScore.breakdown[i] || null, bScore.breakdown[i] || null, aScore.coachBonus, bScore.coachBonus, week);
+  }
+  const aBench = benchEntries(aTeam, week);
+  const bBench = benchEntries(bTeam, week);
+  if (aBench.length || bBench.length) {
+    rows += `<tr class="bench-header-row"><td colspan="6">Bench</td></tr>`;
+    const benchLen = Math.max(aBench.length, bBench.length);
+    for (let i = 0; i < benchLen; i++) {
+      rows += renderMirroredRow(aBench[i] || null, bBench[i] || null, null, null, week, "bench-row");
+    }
+  }
+  return `
+    <div class="matchup-table-scroll">
+      <table class="roster-table matchup-table mirrored-matchup-table">
+        <colgroup>
+          <col class="col-pos" /><col class="col-player" /><col class="col-pts" />
+          <col class="col-pts" /><col class="col-player" /><col class="col-pos" />
+        </colgroup>
+        <thead><tr><th>Pos</th><th>Player</th><th>Pts</th><th>Pts</th><th>Player</th><th>Pos</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
 }
 
 // A deterministic quote from a team's started Coach (COACH slot, not
@@ -1023,45 +1059,26 @@ function coachQuoteForTeam(team, week) {
   return { coachName: coach.name, text: quotes[idx] };
 }
 
-// A deterministic quote from one of the team's actual starters that
-// week (whoever has a quote available in PLAYER_QUOTES -- empty seam
-// today, see js/data/playerQuotes.js), shown under the team's total
-// score alongside the coach quote. Distinct from playerQuoteFor()
-// above, which picks per-row next to that specific player in the box
-// score -- this one represents "the team," picked from among everyone
-// who played.
-function teamPlayerQuoteFor(team, score, week) {
-  const candidates = score.breakdown.filter((b) => PLAYER_QUOTES[b.playerId]?.length);
-  if (!candidates.length) return null;
-  const idx = Math.floor(seededRandom(`teamplayerquote:${team.id}:${week}`) * candidates.length);
-  const chosen = candidates[idx];
-  const quotes = PLAYER_QUOTES[chosen.playerId];
-  const qIdx = Math.floor(seededRandom(`playerquote:${chosen.playerId}:${week}`) * quotes.length);
-  return { playerName: chosen.name, text: quotes[qIdx] };
-}
-
+// Score + coach quote for one team's side of the matchup header.
+// Coach-only (no team/player quote below it), so both sides show at
+// most one quote line and the team-name row above them lines up
+// regardless of whether either coach has a quote that week.
 function renderScoreBlock(team, score, win, week) {
   const coachQuote = coachQuoteForTeam(team, week);
   const coachQuoteHtml = coachQuote
     ? `<p class="coach-quote">&ldquo;${escapeHtml(coachQuote.text)}&rdquo; <span class="coach-quote-author">&mdash; ${escapeHtml(coachQuote.coachName)}</span></p>`
     : "";
-  const playerQuote = teamPlayerQuoteFor(team, score, week);
-  const playerQuoteHtml = playerQuote
-    ? `<p class="coach-quote">&ldquo;${escapeHtml(playerQuote.text)}&rdquo; <span class="coach-quote-author">&mdash; ${escapeHtml(playerQuote.playerName)}</span></p>`
-    : "";
   return `
     <div class="matchup-score-block">
       <span class="${win}">${escapeHtml(team.name)} ${score.total.toFixed(1)}</span>
       ${coachQuoteHtml}
-      ${playerQuoteHtml}
     </div>`;
 }
 
 // Full game detail: header (both teams' scores + coach quotes) and the
-// full per-starter box score for both sides. Used by the Games tab's
-// fullscreen game view (see openGameFullscreen()) -- clicking a
-// compact game row opens exactly this, full-screen, rather than
-// expanding in place.
+// mirrored box score below it. Used by the Games tab's fullscreen
+// game view (see openGameFullscreen()) -- clicking a compact game row
+// opens exactly this, full-screen, rather than expanding in place.
 function buildGameDetailHtml(m, draft, label, week) {
   const [aId, bId] = m.teamIds;
   const aTeam = draft.teams.find((t) => t.id === aId);
@@ -1079,14 +1096,11 @@ function buildGameDetailHtml(m, draft, label, week) {
       ${renderScoreBlock(bTeam, bScore, bWin, week)}
     </div>
     <div class="matchup-detail">
-      <div class="matchup-team">
+      <div class="matchup-team-names">
         <h5>${escapeHtml(aTeam.name)}</h5>
-        ${renderPlayerBreakdown(aScore, week, aTeam)}
+        <h5 class="mirrored">${escapeHtml(bTeam.name)}</h5>
       </div>
-      <div class="matchup-team">
-        <h5>${escapeHtml(bTeam.name)}</h5>
-        ${renderPlayerBreakdown(bScore, week, bTeam)}
-      </div>
+      ${buildMatchupTableHtml(aTeam, aScore, bTeam, bScore, week)}
     </div>`;
 }
 
