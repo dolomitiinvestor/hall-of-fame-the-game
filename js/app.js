@@ -22,6 +22,7 @@ import {
   isSeasonComplete,
   isRegularSeasonComplete,
   getStandingsList,
+  weeklyPointsForPlayer,
   SEASON_WEEKS,
 } from "./season.js";
 import { saveState, loadState, clearState } from "./storage.js";
@@ -933,8 +934,10 @@ function playerQuoteFor(playerId, week) {
 // stored score object (computeTeamWeekScore() at the time that week
 // was simulated), not recomputed live, so this stays an accurate
 // historical record even after a lineup is edited later. `week` is
-// only needed for the deterministic player-quote pick.
-function renderPlayerBreakdown(score, week) {
+// only needed for the deterministic player-quote pick. `team` (the
+// current roster, optional) is only used to list bench players below
+// the starters -- see renderBenchRows() below.
+function renderPlayerBreakdown(score, week, team) {
   const { breakdown, coachBonus } = score;
   if (!breakdown.length) return `<p class="hint">No starters were set that week.</p>`;
   const rows = breakdown
@@ -955,6 +958,10 @@ function renderPlayerBreakdown(score, week) {
       const coachBonusLine = isCoachBonusRow
         ? `<div class="coach-bonus-line">${coachBonus.amount >= 0 ? "+" : ""}${coachBonus.amount.toFixed(1)} (${(coachBonus.rate * 100).toFixed(0)}%)</div>`
         : "";
+      // Coaches don't rack up their own box-score points -- their Pts
+      // column shows the bonus they generated instead of a flat 0.0,
+      // so the row reads as "the coach scored this."
+      const displayPoints = isCoachBonusRow ? coachBonus.amount : b.points;
       return `
       <tr>
         <td><span class="pos-badge pos-${b.position}">${b.position}</span></td>
@@ -964,15 +971,41 @@ function renderPlayerBreakdown(score, week) {
           ${quote ? `<div class="player-quote">&ldquo;${escapeHtml(quote)}&rdquo;</div>` : ""}
           ${coachBonusLine}
         </td>
-        <td>${b.points.toFixed(1)}</td>
+        <td>${displayPoints.toFixed(1)}</td>
       </tr>`;
     })
     .join("");
   return `
     <table class="roster-table matchup-table">
       <thead><tr><th>Pos</th><th>Player</th><th>Pts</th></tr></thead>
-      <tbody>${rows}</tbody>
+      <tbody>${rows}${renderBenchRows(team, week)}</tbody>
     </table>`;
+}
+
+// Bench players don't count toward the score, but showing what they
+// would have scored -- same deterministic weekly formula as starters
+// -- lets you second-guess your lineup. Pulled from the team's
+// *current* roster (like coachQuoteForTeam() above), not a historical
+// snapshot, since bench assignments aren't stored per week.
+function renderBenchRows(team, week) {
+  if (!team) return "";
+  const benchSlots = team.roster.filter((s) => s.slot === "BENCH" && s.playerId);
+  if (!benchSlots.length) return "";
+  const rules = getRules();
+  const rows = benchSlots
+    .map((s) => {
+      const player = getPlayerById(s.playerId);
+      if (!player) return "";
+      const points = weeklyPointsForPlayer(s.playerId, rules, week, state.season);
+      return `
+      <tr class="bench-row">
+        <td><span class="pos-badge pos-${player.position}">${player.position}</span></td>
+        <td><div class="player-row-name">${playerAvatar(player)}${playerNameLink(player)} ${injuryBadge(player, week)}</div></td>
+        <td>${points.toFixed(1)}</td>
+      </tr>`;
+    })
+    .join("");
+  return `<tr class="bench-header-row"><td colspan="3">Bench</td></tr>${rows}`;
 }
 
 // A deterministic quote from a team's started Coach (COACH slot, not
@@ -1048,11 +1081,11 @@ function buildGameDetailHtml(m, draft, label, week) {
     <div class="matchup-detail">
       <div class="matchup-team">
         <h5>${escapeHtml(aTeam.name)}</h5>
-        ${renderPlayerBreakdown(aScore, week)}
+        ${renderPlayerBreakdown(aScore, week, aTeam)}
       </div>
       <div class="matchup-team">
         <h5>${escapeHtml(bTeam.name)}</h5>
-        ${renderPlayerBreakdown(bScore, week)}
+        ${renderPlayerBreakdown(bScore, week, bTeam)}
       </div>
     </div>`;
 }

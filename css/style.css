@@ -558,6 +558,20 @@ select {
   margin-top: 0.1rem;
 }
 
+.bench-header-row td {
+  padding-top: 0.6rem;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-top: 1px solid var(--border);
+  border-bottom: none;
+}
+
+.bench-row {
+  opacity: 0.6;
+}
+
 .mini-roster h4 {
   margin: 0 0 0.4rem 0;
 }
