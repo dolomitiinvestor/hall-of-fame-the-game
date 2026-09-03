@@ -2,25 +2,24 @@
 // fumbles) for skill-position starters, shown on the Games tab and the
 // player card.
 //
-// Two sources, real taking priority:
-//   1. js/data/realBoxScores.js -- an empty seam for now. Add real
-//      per-week game logs here piecemeal (keyed by playerId, then
-//      week) as they become sourceable, and they take over
-//      automatically -- nothing else needs to change.
-//   2. Otherwise, a simulated box score: the player's selected
-//      season's per-game averages, scaled by the SAME weekly variance
-//      multiplier already applied to their fantasy points that week
-//      (see weeklyVarianceMultiplier() in season.js), then rounded to
-//      whole numbers. Using the same multiplier is what makes the box
-//      score "correspond to" that week's score -- a big scoring week
-//      shows big yardage/TD numbers, not independently-random ones.
+// Two sources:
+//   1. realGameBoxScore() below -- a real archived game (see
+//      js/data/realBoxScores.js and resolveRealGame() in season.js),
+//      used as-is with no scaling.
+//   2. generateBoxScore() -- a simulated box score for everyone else:
+//      the player's selected season's per-game averages, scaled by the
+//      SAME weekly variance multiplier already applied to their
+//      fantasy points that week (see weeklyVarianceMultiplier() in
+//      season.js), then rounded to whole numbers. Using the same
+//      multiplier is what makes the box score "correspond to" that
+//      week's score -- a big scoring week shows big yardage/TD
+//      numbers, not independently-random ones.
 //
 // "Carries" isn't a stored stat (season data only has rushing yards/
 // TDs) -- it's estimated from rushing yards at a fixed yards-per-carry
 // rate, same as the rest of this simulated model: a reasonable
-// stand-in, not real data.
-
-import { REAL_BOX_SCORES } from "./data/realBoxScores.js";
+// stand-in, not real data. A real game log can supply an exact
+// `rushAtt` instead (see realGameBoxScore()).
 
 const RUSH_YARDS_PER_CARRY = 4.3;
 
@@ -29,18 +28,36 @@ function scaledInt(seasonTotal, games, multiplier) {
   return Math.max(0, Math.round(perGame * multiplier));
 }
 
-function carriesFor(rushYds) {
+function carriesFor(rushYds, rushAtt) {
+  if (rushAtt != null) return rushAtt;
   return rushYds ? Math.max(1, Math.round(rushYds / RUSH_YARDS_PER_CARRY)) : 0;
+}
+
+// Turns one archived real game (see js/data/realBoxScores.js) into the
+// same box-score shape generateBoxScore() below produces, so the Games
+// tab and player card render either one identically.
+export function realGameBoxScore(game) {
+  const g = game || {};
+  return {
+    isReal: true,
+    passYds: g.passYds || 0,
+    passTD: g.passTD || 0,
+    passInt: g.passInt || 0,
+    carries: carriesFor(g.rushYds, g.rushAtt),
+    rushYds: g.rushYds || 0,
+    rushTD: g.rushTD || 0,
+    receptions: g.rec || 0,
+    recYds: g.recYds || 0,
+    recTD: g.recTD || 0,
+    fumbles: g.fumblesLost || 0,
+  };
 }
 
 // `season` is the specific season object (already resolved by the
 // caller -- see resolvePlayerSeason() in season.js) to scale from, not
 // necessarily always "best": this stays correct automatically as the
 // season-selection seam (players.js) grows beyond "best" later.
-export function generateBoxScore(player, season, multiplier, playerId, week) {
-  const real = REAL_BOX_SCORES[playerId]?.[week];
-  if (real) return { ...real, isReal: true };
-
+export function generateBoxScore(player, season, multiplier) {
   if (!["QB", "RB", "WR", "TE"].includes(player.position)) return null;
   if (!season) return null;
 

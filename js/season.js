@@ -1,23 +1,27 @@
 // Weekly season simulation, playoffs, and standings.
 //
-// Scoring model: every drafted player's weekly score starts from their
-// best season's fantasy points *per game* (a shortened season's rate
-// "repeated" across weeks), then two adjustments apply before it's
-// used: a seeded per-player-per-week variance multiplier (so weeks
-// actually differ rather than repeating a flat average -- see rng.js),
-// and a zero-out if that player is marked OUT/IR for the week (see
-// injuries.js). A started COACH adds a flat percentage bonus to the
-// team's total. This is the seam where real per-week game logs and
-// matchup-based defense adjustments plug in later -- everything else
-// (draft, standings, UI) only calls computeTeamWeekScore()/advanceWeek(),
-// so upgrading the model here is a self-contained change.
+// Scoring model: a player with an archived real game log (see
+// js/data/realBoxScores.js) scores off their *actual* stats for a
+// randomly-shuffled real game that week -- see resolveRealGame()
+// below. Everyone else's weekly score starts from their best season's
+// fantasy points *per game* (a shortened season's rate "repeated"
+// across weeks), then two adjustments apply before it's used: a seeded
+// per-player-per-week variance multiplier (so weeks actually differ
+// rather than repeating a flat average -- see rng.js), and a zero-out
+// if that player is marked OUT/IR for the week (see injuries.js). A
+// started COACH adds a flat percentage bonus to the team's total.
+// Everything else (draft, standings, UI) only calls
+// computeTeamWeekScore()/advanceWeek(), so upgrading either model here
+// is a self-contained change.
 
 import { getPlayerById, getBestSeason, selectSeason, getSeasonByYear } from "./players.js";
-import { round1, getSeasonSummary } from "./scoring.js";
+import { round1, getSeasonSummary, calculateFantasyPoints } from "./scoring.js";
 import { generateSchedule } from "./schedule.js";
 import { seededNormal } from "./rng.js";
 import { isOutForWeek, getInjuryStatusKey } from "./injuries.js";
-import { generateBoxScore } from "./boxScore.js";
+import { generateBoxScore, realGameBoxScore } from "./boxScore.js";
+import { shuffle } from "./draftEngine.js";
+import { REAL_GAME_LOGS } from "./data/realBoxScores.js";
 
 export const SEASON_WEEKS = 16;
 
@@ -29,13 +33,15 @@ export function getRegularSeasonWeeks(numTeams) {
 }
 
 // At season creation, every rostered player's season is "chosen" once
-// via the pluggable selectSeason() strategy (players.js) and snapshotted
-// here by year -- today the only strategy is "best" (identical to what
-// the pre-season screens show live), but the seam exists so a future
-// strategy (or a player with real multiple preloaded seasons) can vary
-// without touching anything downstream. resolvePlayerSeason() below is
-// how the rest of this file reads it back, falling back to "best" for
-// any player missing from the map (e.g. an older saved season, or a
+// and snapshotted here, keyed by playerId. A player with an archived
+// real game log (REAL_GAME_LOGS, js/data/realBoxScores.js) gets one of
+// their archived years picked at random and that year's games shuffled
+// into a fantasy-week order (`gameOrder`, an index permutation into
+// the archive array) -- see resolveRealGame() below. Everyone else
+// keeps today's "best" strategy (selectSeason(), players.js), snapshot
+// as just `{ year }`. resolvePlayerSeason() below is how the rest of
+// this file reads either shape back, falling back to "best" for any
+// player missing from the map (e.g. an older saved season, or a
 // free-agent pickup added after the season started).
 function buildSelectedSeasons(draft, rules) {
   const selected = {};
@@ -44,17 +50,40 @@ function buildSelectedSeasons(draft, rules) {
       if (!slot.playerId || selected[slot.playerId]) return;
       const player = getPlayerById(slot.playerId);
       if (!player) return;
+      const archiveYears = Object.keys(REAL_GAME_LOGS[slot.playerId] || {});
+      if (archiveYears.length) {
+        const year = Number(archiveYears[Math.floor(Math.random() * archiveYears.length)]);
+        const games = REAL_GAME_LOGS[slot.playerId][year];
+        const gameOrder = shuffle(games.map((_, i) => i));
+        selected[slot.playerId] = { year, gameOrder };
+        return;
+      }
       const season = selectSeason(player, rules, "best");
-      if (season) selected[slot.playerId] = season.year;
+      if (season) selected[slot.playerId] = { year: season.year };
     });
   });
   return selected;
 }
 
+// The archived real game (see REAL_GAME_LOGS, js/data/realBoxScores.js)
+// standing in for a player's box score/points this fantasy week, or
+// null if this player has no archived year selected. `gameOrder` (set
+// once at season creation, see buildSelectedSeasons() above) maps
+// fantasy weeks onto the shuffled archive in order; wraps around via
+// modulo if the archived season ran shorter than the fantasy season.
+function resolveRealGame(playerId, season, week) {
+  const sel = season?.selectedSeasons?.[playerId];
+  if (!sel?.gameOrder?.length) return null;
+  const games = REAL_GAME_LOGS[playerId]?.[sel.year];
+  if (!games?.length) return null;
+  const idx = sel.gameOrder[(week - 1) % sel.gameOrder.length];
+  return games[idx] || null;
+}
+
 function resolvePlayerSeason(playerId, rules, season) {
   const player = getPlayerById(playerId);
   if (!player) return null;
-  const year = season?.selectedSeasons?.[playerId];
+  const year = season?.selectedSeasons?.[playerId]?.year;
   const bySelected = year != null ? getSeasonByYear(player, year) : null;
   if (bySelected) return { season: bySelected, summary: getSeasonSummary(bySelected, rules, player.position) };
   return getBestSeason(player, rules);
@@ -111,13 +140,22 @@ export function weeklyVarianceMultiplier(playerId, week) {
 // since those only make sense once a specific week is being played.
 // `season` (optional) is the in-progress fantasy season -- when given,
 // its selectedSeasons snapshot is used instead of always recomputing
-// "best" (see resolvePlayerSeason above).
+// "best" (see resolvePlayerSeason above). A player with an archived
+// real game for this week (see resolveRealGame() above) scores off
+// their actual stats that game instead of the season-rate/variance
+// model -- still zeroed out by the OUT/IR check below like anyone
+// else, since injury status is a gameplay layer on top of history, not
+// part of it.
 export function weeklyPointsForPlayer(playerId, rules, week, season) {
   const player = getPlayerById(playerId);
   if (!player) return 0;
+  if (week != null && isOutForWeek(player, week)) return 0;
+  if (week != null) {
+    const realGame = resolveRealGame(playerId, season, week);
+    if (realGame) return calculateFantasyPoints(realGame, rules, player.position);
+  }
   const { summary } = resolvePlayerSeason(playerId, rules, season) || getBestSeason(player, rules);
   if (week == null) return summary.pointsPerGame;
-  if (isOutForWeek(player, week)) return 0;
   return round1(summary.pointsPerGame * weeklyVarianceMultiplier(playerId, week));
 }
 
@@ -132,9 +170,14 @@ export function computeTeamWeekScore(team, rules, week, season) {
     // above; the box score isn't gated on whether they "played").
     let boxScore = null;
     if (week != null) {
-      const multiplier = weeklyVarianceMultiplier(pid, week);
-      const resolved = resolvePlayerSeason(pid, rules, season);
-      boxScore = generateBoxScore(player, resolved?.season, multiplier, pid, week);
+      const realGame = resolveRealGame(pid, season, week);
+      if (realGame) {
+        boxScore = realGameBoxScore(realGame);
+      } else {
+        const multiplier = weeklyVarianceMultiplier(pid, week);
+        const resolved = resolvePlayerSeason(pid, rules, season);
+        boxScore = generateBoxScore(player, resolved?.season, multiplier);
+      }
     }
     return { playerId: pid, name: player.name, position: player.position, points, injury, boxScore };
   });
