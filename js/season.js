@@ -18,7 +18,7 @@ import { getPlayerById, getBestSeason, selectSeason, getSeasonByYear } from "./p
 import { round1, getSeasonSummary, calculateFantasyPoints } from "./scoring.js";
 import { generateSchedule } from "./schedule.js";
 import { seededNormal } from "./rng.js";
-import { isOutForWeek, getInjuryStatusKey } from "./injuries.js";
+import { isOutForWeek, getInjuryStatusKey, rollSeasonEndingInjury } from "./injuries.js";
 import { generateBoxScore, realGameBoxScore, boxScoreToStats } from "./boxScore.js";
 import { shuffle } from "./draftEngine.js";
 import { REAL_GAME_LOGS } from "./data/realBoxScores.js";
@@ -89,6 +89,40 @@ function resolvePlayerSeason(playerId, rules, season) {
   return getBestSeason(player, rules);
 }
 
+// At season creation, every rostered player also gets a one-shot roll
+// (rollSeasonEndingInjury(), injuries.js) for a season-ending injury --
+// a rate depending on position, and if it hits, a random week (1..
+// weeks) it happens in. Snapshotted here (playerId -> { week, reason })
+// rather than recomputed on demand, same reasoning as
+// buildSelectedSeasons() above: it has to persist once it happens.
+// getInjuryStatusKey() (injuries.js) reads this back to turn on IR from
+// that week through the rest of the season.
+function buildSeasonEndingInjuries(draft, weeks) {
+  const injuries = {};
+  draft.teams.forEach((team) => {
+    team.roster.forEach((slot) => {
+      if (!slot.playerId || injuries[slot.playerId]) return;
+      const player = getPlayerById(slot.playerId);
+      if (!player) return;
+      const injury = rollSeasonEndingInjury(player, weeks);
+      if (injury) injuries[slot.playerId] = injury;
+    });
+  });
+  return injuries;
+}
+
+// Every season-ending injury (see buildSeasonEndingInjuries() above)
+// that first takes effect in exactly `week` -- i.e. newly announced
+// this week, not just "still out" from an earlier week -- paired with
+// the player's name. Used to pop up the injury news right when that
+// week's score is first shown (see showWeekCompleteSplash() in
+// app.js).
+export function getNewSeasonEndingInjuriesForWeek(season, week) {
+  return Object.entries(season.seasonEndingInjuries || {})
+    .filter(([, injury]) => injury.week === week)
+    .map(([playerId, injury]) => ({ playerId, reason: injury.reason }));
+}
+
 export function createSeason(draft, weeks = SEASON_WEEKS, rules) {
   const teamIds = draft.teams.map((t) => t.id);
   const regularSeasonWeeks = getRegularSeasonWeeks(teamIds.length);
@@ -102,6 +136,7 @@ export function createSeason(draft, weeks = SEASON_WEEKS, rules) {
     playoffs: null, // seeded lazily once the regular season ends
     championId: null,
     selectedSeasons: buildSelectedSeasons(draft, rules),
+    seasonEndingInjuries: buildSeasonEndingInjuries(draft, weeks),
   };
 }
 
@@ -149,7 +184,7 @@ export function weeklyVarianceMultiplier(playerId, week) {
 export function weeklyPointsForPlayer(playerId, rules, week, season) {
   const player = getPlayerById(playerId);
   if (!player) return 0;
-  if (week != null && isOutForWeek(player, week)) return 0;
+  if (week != null && isOutForWeek(player, week, season?.seasonEndingInjuries)) return 0;
   if (week != null) {
     const realGame = resolveRealGame(playerId, season, week);
     if (realGame) return calculateFantasyPoints(realGame, rules, player.position);
@@ -163,7 +198,7 @@ export function computeTeamWeekScore(team, rules, week, season) {
   const starterIds = getStarterIds(team);
   const breakdown = starterIds.map((pid) => {
     const player = getPlayerById(pid);
-    const injury = week == null ? "HEALTHY" : getInjuryStatusKey(player, week);
+    const injury = week == null ? "HEALTHY" : getInjuryStatusKey(player, week, season?.seasonEndingInjuries);
     let points = weeklyPointsForPlayer(pid, rules, week, season);
     // Generated regardless of injury status -- an OUT/IR starter still
     // gets a box score (their fantasy points are zeroed separately,
@@ -184,7 +219,7 @@ export function computeTeamWeekScore(team, rules, week, season) {
         // than a 0-TD one. OUT/IR stays zeroed (still shows what the
         // statline *would* have been -- see the box score comment
         // above) and a real archived game already corresponds exactly.
-        if (boxScore && !isOutForWeek(player, week)) {
+        if (boxScore && !isOutForWeek(player, week, season?.seasonEndingInjuries)) {
           points = calculateFantasyPoints(boxScoreToStats(boxScore), rules, player.position);
         }
       }

@@ -1,7 +1,6 @@
 // Real player quotes, shown on the Games tab next to a player after
 // they've played that week -- same infrastructure and pattern as
-// js/data/coachQuotes.js (COACH_QUOTES). Empty for now: no player
-// quote data has been supplied yet.
+// js/data/coachQuotes.js (COACH_QUOTES).
 //
 // Add quotes here keyed by player id (array of real, attributed quote
 // strings, like COACH_QUOTES) and they start showing automatically --
@@ -159,7 +158,7 @@ export const PLAYER_QUOTES = {
     "I think every year you have something to prove.",
     "It's not about what kind of car you drive, or how much ice you have. That's not important. It's about the type of person you are.",
     "I know how to rebuild a team. I know how to step in and work hard."
-  ]
+  ],
 "marshall-faulk": [
   "If you're going to start something—if it's worth starting—then it's worth finishing.",
   "Once the game begins, I play to that song in my head. I run to rhythm, and that allows my mind to be free.",
@@ -177,7 +176,7 @@ export const PLAYER_QUOTES = {
   "Some of us have been here before, and some of us haven't.",
   "I control myself real good, shift my weight, and run real low.",
   "You try to take the most of it and learn from it and hope others learn from it. That's what it is about."
-]
+],
 "emmitt-smith": [
   "All men are created equal; some work harder in preseason.",
   "I may win and I may lose, but I will never be defeated.",
@@ -199,7 +198,7 @@ export const PLAYER_QUOTES = {
   "Football is a team sport, and there is no one individual who is bigger than the next person.",
   "How you begin life is not nearly as important as how you end up.",
   "You can rise above whatever tries to hold you down as long as you stay focused on your dreams."
-]
+],
 "josh-allen": [
   "I don't really care about the stats. I just want to win football games.",
   "You've got to trust your guys, and sometimes you've got to put it in a spot where only they can make a play.",
@@ -221,7 +220,7 @@ export const PLAYER_QUOTES = {
   "When things break down, that's when you just have to trust your instincts and make something happen.",
   "You work your whole life for moments like this, so you might as well enjoy them.",
   "We're just going to keep chopping wood and grinding until we reach our ultimate goal."
-]
+],
 "priest-holmes": [
   "Chess is a time game, it's a game of patience. That pretty much defines how I run the ball.",
   "My strength is breaking people down. I may not outrun or outsize you, but I will make you miss.",
@@ -231,7 +230,7 @@ export const PLAYER_QUOTES = {
   "I hope this serves as a light for others who come into the league as undrafted players.",
   "I really like defensive players. I've never played defense so I often wonder how they think.",
   "The bishop is a lot like me...just when you think you have me, I'm already behind you."
-]
+],
 "don-hutson": [
   "All I did was run down the field and catch the ball.",
   "I wasn't fast, but I could fake a guy out of his shoes.",
@@ -241,7 +240,7 @@ export const PLAYER_QUOTES = {
   "The game has changed, but the objective remains the exact same: get open and secure the catch.",
   "I always wanted the ball when the game was on the line.",
   "A receiver's best friend is a quarterback who trusts him in tight coverage."
-]
+],
 "daunte-culpepper": [
   "I'm just going to go out there and lead my team, have fun, and let my game speak for itself.",
   "When you have weapons like that around you, it makes your job as a quarterback a whole lot easier.",
@@ -259,7 +258,7 @@ export const PLAYER_QUOTES = {
   "You play this game because you love it, and you embrace the big moments when they come.",
   "It takes every single guy in that locker room to win a championship.",
   "I'm just looking forward to the opportunity to go out there and compete."
-]   
+]   ,
 "shaun-alexander": [
   "Time heals all wounds, unless you pick at them.",
   "I am a better running back every time I step on the field. I try to get better each game, each summer, each season.",
@@ -277,7 +276,7 @@ export const PLAYER_QUOTES = {
   "Medicine's good for some people. Not for me.",
   "I am ready. I'm in great shape. My workouts have been great. I'm ready to get back and help a team get to the Super Bowl.",
   "We were going to win anyway."
-]
+],
 "terrell-davis": [
   "There is no such thing as sportsmanship.",
   "You can be the best person in the league but if you don't win championships, something's missing.",
@@ -295,7 +294,7 @@ export const PLAYER_QUOTES = {
   "I'm just trying to keep my mind and my body active. The tough part about it is that physically I'm sort of limited.",
   "It is hot in Tokyo, it's humid, I'm tired, all of these backs are in front of you, I'm not going to make the team anyway so screw it.",
   "We [analysts] can sit here all day and we can say, 'Hey the Broncos are down, they're four point underdogs and they should lose this game,' but there's a lot of reasons you could make a case they could win this game."
-]
+],
 "chris-johnson": [
   "You've got to believe in yourself when nobody else does.",
   "I'm just trying to be the best player I can possibly be every time I step on the field.",
@@ -313,7 +312,7 @@ export const PLAYER_QUOTES = {
   "Hard work beats talent when talent doesn't work hard.",
   "I love the bright lights and the big moments; that's what you dream about as a kid.",
   "You can't dwell on a bad play; you just have to focus on the next one and make it count."
-]    
+]    ,
 "ahman-green": [
   "I've always been a physical runner. I like to get downhill and make defenders pay for trying to tackle me.",
   "You have to take care of your body if you want to last in this league, especially playing the running back position.",
@@ -331,7 +330,7 @@ export const PLAYER_QUOTES = {
   "Leadership is about leading by example and showing your teammates that you're willing to do the dirty work.",
   "When you find a rhythm out there on the field, everything just slows down and you react on instinct.",
   "I love this game, and I'm going to leave everything I have out on that field every single snap."
-]
+],
 "walter-payton": [
   "When you're good at something, you'll tell everyone. When you're great at something, they'll tell you.",
   "Never die easy.",
@@ -349,7 +348,7 @@ export const PLAYER_QUOTES = {
   "Running out of bounds is a waste of a play. You might as well make them feel you.",
   "I didn't care about the records; I just wanted to win and make my teammates proud.",
   "You learn more from losing than you do from winning. Losing forces you to look in the mirror."
-]
+],
 "steven-jackson": [
   "You've got to put your body on the line every single week, and that's just the price of admission in this league.",
   "I've always taken pride in being a complete back—running, blocking, catching out of the backfield, doing whatever it takes.",
@@ -367,7 +366,7 @@ export const PLAYER_QUOTES = {
   "Every season is a marathon, and the guys who take care of their bodies in November and December are the ones standing at the end.",
   "Football is the ultimate test of character because it strips away all your excuses.",
   "I want my legacy to be that I gave everything I had to the game, every single snap, no matter what the scoreboard said."
-]
+],
 "dan-marino": [
   "The will to prepare, the guts to risk, and the desire to be the best. These are trademarks of champions.",
   "You can do more, you can always do more.",
@@ -385,7 +384,7 @@ export const PLAYER_QUOTES = {
   "I think positive. I always think we're going to score. Two minutes is a lot of time if you have timeouts and you're throwing every down.",
   "I know I've got to just keep throwing the ball. That's what I do best.",
   "As a team, you need to come from behind every once in awhile just to do it. Good for the attitude. It makes it exciting."
-]
+],
 "jim-brown": [
   "Make sure when anyone tackles you he remembers how much it hurts.",
   "Showing weakness will encourage your opponents. It inspires them. It encourages them to hit harder. To come faster.",
@@ -403,7 +402,7 @@ export const PLAYER_QUOTES = {
   "The power is between your ears. The power is in your heart.",
   "I loved the game. We played because we loved it.",
   "I think of my life as a journey, and I'm still on it."
-]
+],
 "drake-maye": [
   "I'm a big man, I can take it. I'm always going to get back up.",
   "It's football. I'm supposed to get hit, you know? I didn't sign up for this sport to not get hit.",
@@ -421,7 +420,7 @@ export const PLAYER_QUOTES = {
   "Take no naps, not let plays throughout the game that can affect the game.",
   "You have to stay humble, keep working, and let your preparation show on the field.",
   "Being able to shine a light on others and get them to follow Jesus Christ is what I'm here for."
-]
+],
 "randall-cunningham": [
   "I've always believed that you have to play the game with a certain amount of flair and freedom, but it has to be backed up by hard work.",
   "When things break down, that's when you have to rely on your instincts and let your God-given ability take over.",
@@ -439,7 +438,7 @@ export const PLAYER_QUOTES = {
   "You have to play with joy. If you lose the love and the fun that you had playing as a kid, the game becomes a burden.",
   "Every game is a new chapter, and you can't let the mistakes of last week dictate how you perform today.",
   "When you step away from the game, you realize that the bonds you formed in the locker room are what truly matter most."
-]
+],
 "herschel-walker": [
   "If you train hard, you'll not only be hard, you'll be hard to beat.",
   "I never get tired of running. The ball ain't that heavy.",
@@ -457,7 +456,7 @@ export const PLAYER_QUOTES = {
   "I'm not one to make excuses, so I'll play by their rules and not even count the USFL stats.",
   "You should not be ashamed. We all have problems. That is why I am standing and saying 'Look at me, I have problems.'",
   "If you look at my combined yards and catches, those stats are good enough to be in the Hall of Fame. That's what people need to look at."
-]
+],
 "steve-young": [
   "The secret to success is to be ready when your opportunity comes.",
   "You've got to be willing to fail in order to succeed. If you're afraid of failing, you'll never do what's necessary to be great.",
@@ -475,7 +474,7 @@ export const PLAYER_QUOTES = {
   "Confidence comes from preparation, not from hope.",
   "You have to stay grounded through the highs and the lows, because the game will humble you very quickly.",
   "The greatest moments in sports come when a group of individuals completely sacrifice their personal egos for the team."
-]
+],
 "marcus-allen": [
   "You're never a loser until you quit trying.",
   "There may be people that have more talent than you, but there's no excuse for anyone to work harder than you do.",
@@ -493,7 +492,7 @@ export const PLAYER_QUOTES = {
   "Hard work beats talent when talent doesn't work hard.",
   "You can't control every circumstance on the football field, but you can control your effort and your focus.",
   "Football is a game of inches and seconds, and the players who focus on the details are the ones who raise the trophy at the end."
-]
+],
 "larry-johnson": [
   "You've got to trust your vision, let your blocks develop, and then hit the hole with everything you have.",
   "When a team gives you the ball 30 or 35 times a game, you take that responsibility personally and you wear the defense down.",
@@ -511,7 +510,7 @@ export const PLAYER_QUOTES = {
   "You embrace the heavy workload because that's what your team relies on you to carry.",
   "Football strips away all your excuses and tells the absolute truth about who you are as a competitor.",
   "I want to leave it all out on the grass every snap so there's never any doubt about the effort I gave."
-]
+],
 "edgerrin-james": [
   "Football was easy for me. I'm not gonna lie to you. It ain't a complicated game. It's just work.",
   "To be the best of all time, you have to do it over and over. I want to keep it up, and then the numbers will speak for themselves.",
@@ -529,7 +528,7 @@ export const PLAYER_QUOTES = {
   "I just want to live like a full-time tourist, to show up at the airport, pick a destination, walk up to the counter and say, 'Do you have any first-class seats?'",
   "I want to be remembered as a person who kept it real, who did what he wanted to do, but never did nothing stupid and never tried to offend nobody else.",
   "My career started with gold teeth and ended with this gold jacket."
-]
+],
 "roger-craig": [
   "I never wanted to just be a runner. I wanted to be a complete offensive weapon that defensive coordinators had to account for every single snap.",
   "When you play for Bill Walsh, preparation isn't just a part of the week—it's an absolute obsession.",
@@ -547,7 +546,7 @@ export const PLAYER_QUOTES = {
   "Mental toughness is what separates the guys who have a good season from the guys who have a legendary career.",
   "I wanted every opponent walking off the field knowing they had just been in an absolute war for 60 minutes.",
   "Being part of a dynasty means sacrificing your individual statistics for the ultimate team goal."
-]
+],
 "jalen-hurts": [
   "You can either let adversity break you or it can build you. I choose to let it build me.",
   "I never really looked at myself as an underdog. I just worked.",
@@ -565,7 +564,7 @@ export const PLAYER_QUOTES = {
   "Every setback is just a setup for a comeback.",
   "You have to be willing to do the hard work when nobody is watching.",
   "My mindset is simple: handle what you can control and leave everything else out there."
-]
+],
 "demarco-murray": [
   "You either find the way or get out of the way, because no one is going to hand you an extra yard in this league.",
   "Football has become a vehicle for me to meet great people and learn invaluable life lessons.",
@@ -583,7 +582,7 @@ export const PLAYER_QUOTES = {
   "The camaraderie in the locker room and the bonds you build with your teammates are what you miss the most when it's over.",
   "You keep your head down, block out the noise, and let your performance speak for itself.",
   "When you step onto the grass, you leave everything you have out there so there are never any regrets."
-]
+],
 "jerry-rice": [
   "Today I will do what others won't, so tomorrow I can accomplish what others can't.",
   "To me it was never about what I accomplished on the football field, it was about the way I played the game.",
@@ -601,7 +600,7 @@ export const PLAYER_QUOTES = {
   "I think my secret is that there are no shortcuts for hard work, determination, and having that 'don't give up' attitude.",
   "Champions are made in the offseason, when nobody is watching and you're pushing your body to the limit.",
   "I went out there to play my game for the fun of it and never based my career around individual records."
-]
+],
 "randy-moss": [
   "Straight cash, homie.",
   "I play when I want to play.",
@@ -619,7 +618,7 @@ export const PLAYER_QUOTES = {
   "You can't teach speed, and you can't teach concentration when the ball is in the air.",
   "Football is a game of emotions, and I play with my heart on my sleeve.",
   "When I look back on my career, I want people to say Randy Moss changed the way the game was played."
-]
+],
 "matt-ryan": [
   "Get us back to the line of scrimmage, we'll get a completion, we'll get it closer.",
   "You've got to be even-keel. You can't get too high with the highs or too low with the lows in this league.",
@@ -637,7 +636,7 @@ export const PLAYER_QUOTES = {
   "Hard work isn't a sometimes thing; it has to be your standard every single day.",
   "You can't control what the defense throws at you, but you can control your preparation and your response.",
   "When you walk away from the game, you want to know that you gave everything you had to your teammates and your organization."
-]
+],
 "ricky-williams": [
   "Football is my job, not my life, but it's a job I'm going to give my all for as long as I'm in it.",
   "If you identify yourself as a great football player, anytime anyone challenges that, you're going to have some kind of problem.",
@@ -655,7 +654,7 @@ export const PLAYER_QUOTES = {
   "A team takes on the personality of the head coach.",
   "The moment I started treating my social anxiety disorder, I started feeling better, and now I find pleasure in fans approaching me.",
   "I don't think people change. I think they definitely mature. I've become a healthier, fuller expression of who I've always been."
-]
+],
 "tiki-barber": [
   "I've always believed that hard work is the great equalizer. If you out-prepare everyone else, the results will take care of themselves.",
   "You can't achieve greatness by just doing what's expected of you. You have to be willing to push past your comfort zone every single day.",
@@ -673,7 +672,7 @@ export const PLAYER_QUOTES = {
   "Resilience isn't just about bouncing back; it's about learning how to use failure as fuel for the next challenge.",
   "Football is a game of details, and the players who pay attention to the little things are the ones holding the trophy at the end.",
   "When you step away from the sport, you realize that the deep bonds you forged in the huddle are what you cherish most."
-]
+],
 "brian-westbrook": [
   "You don't need to be the biggest guy on the field if you understand leverage, angles, and how to make people miss in space.",
   "Catching the ball out of the backfield is all about creating a mismatch against linebackers and safeties who can't match your speed.",
@@ -691,7 +690,7 @@ export const PLAYER_QUOTES = {
   "You have to play with a relentless competitive fire, no matter what the score is or how tired your legs feel.",
   "Success isn't about individual statistics; it's about hoisting that Lombardi trophy at the end of the year.",
   "When you walk away from the game, you cherish the brotherhood and the shared battles more than anything else."
-]
+],
 "caleb-williams": [
   "We understand that it's 60 minutes of football. We understand and know who we are. So you keep going, keep going, keep fighting. And when the clock hits zero, you'll look up and see who wins.",
   "Money's not a motivating factor for me in that sense. Winning, winning, winning handles everything... so that's where my mind's at.",
@@ -709,7 +708,7 @@ export const PLAYER_QUOTES = {
   "You take the lessons from every tight game, win or lose, and you use them to elevate your standard moving forward.",
   "Trusting your playmakers means giving them a chance to make a play even when the window looks completely closed.",
   "You stay even-keeled through the highs and lows of a 17-game season because emotional consistency is what builds a winner."
-]
+],
 "barry-sanders": [
   "When you go out there to play, you owe it to your teammates and to yourself to play hard, to give everything you've got.",
   "I don't think about the records. I just want to go out and play the game and have fun.",
@@ -727,7 +726,7 @@ export const PLAYER_QUOTES = {
   "You leave the game with your head held high when you know you gave 100 percent effort on every single snap.",
   "Milestones and individual accolades are nice to look back on, but the shared battles in the locker room are what matter most.",
   "I never played for the records; I played because I loved the competition and the challenge of the game."
-]
+],
 "eric-dickerson": [
   "I've always believed that if you look good, you feel good, and if you feel good, you play good.",
   "Breaking records is great, but winning a championship is what truly defines a legendary career.",
@@ -745,7 +744,7 @@ export const PLAYER_QUOTES = {
   "Every single yard in the NFL is a battle of inches and execution.",
   "When you step onto the grass, you leave everything you have out there so there are never any regrets.",
   "Records are meant to be chased, but the brotherhood and the memories in that locker room are what stay with you forever."
-]
+],
 "oj-simpson": [
   "I'm not black, I'm O.J.",
   "Look at me, you know me. You know I didn't do it.",
@@ -763,7 +762,7 @@ export const PLAYER_QUOTES = {
   "You learn a lot about yourself when you face severe adversity and have to fight your way through it.",
   "The fans expect greatness every Sunday, and as a competitor, you expect it from yourself just as much.",
   "When all is said and done, your legacy is shaped by how you handle both your triumphs and your trials."
-]
+],
 "leveon-bell": [
   "Patience is everything as a runner. You let your blocks develop, let the defense overcommit, and then you explode through the hole.",
   "I don't just run where the play is blocked; I run where I see the space opening up.",
@@ -781,7 +780,7 @@ export const PLAYER_QUOTES = {
   "You want to leave the field knowing you gave every single ounce of energy you had for the guys in that locker room.",
   "Success isn't about individual statistics or accolades; it's about doing whatever it takes to help your team win championships.",
   "When you look back on your career, you appreciate every single moment because the window to play this game is so short."
-]
+],
 "jamal-lewis": [
   "You have to run with a mindset that you're going to punish the defender before he has a chance to bring you down.",
   "When you rush for two thousand yards, it's not just about one back; it's a testament to ten guys up front blocking their hearts out every single snap.",
@@ -799,7 +798,7 @@ export const PLAYER_QUOTES = {
   "You learn how to take care of your body because the physical toll of playing running back at a high level is immense.",
   "Records and milestones are great to reflect on later in life, but hoisting that Lombardi trophy is the ultimate goal.",
   "When you walk off the field after a punishing win, you want every opponent to feel the physical impact of playing against you."
-]
+],
 "lance-alworth": [
   "They called me 'Bambi' because of how I ran, but out on that field, you couldn't worry about getting hit—you just had to focus on the ball and the open grass ahead.",
   "When you play in Sid Gillman's offense, the entire field opens up because we were attacking vertically on every single play.",
@@ -817,7 +816,7 @@ export const PLAYER_QUOTES = {
   "You learn how to play through pain and exhaustion because your team is counting on you to convert on third down.",
   "Excellence isn't a sometimes thing; it requires a relentless commitment to your craft every single day in practice.",
   "When you look back on your playing days, you just hope that you played the game the right way and left everything you had on the field."
-]
+],
 "jahmyr-gibbs": [
   "I'm good off the individual stuff—I'm trying to win a Super Bowl.",
   "When effort is the baseline, greatness follows.",
@@ -835,7 +834,7 @@ export const PLAYER_QUOTES = {
   "You learn a lot from every game, whether it's a blowout win or a tough battle down to the final minute.",
   "The goal when you step onto the turf is simple: impose your will and leave no doubt who the more physical team is.",
   "When you look at the journey, you realize hard work and quiet confidence will always take you further than talking ever will."
-]
+],
 "isaac-bruce": [
   "Your feet can't take you where your mind has never been.",
   "Route running is an art form; it’s about precision, selling the fake, and making the defensive back guess wrong every single time.",
@@ -853,7 +852,7 @@ export const PLAYER_QUOTES = {
   "Greatness isn't a flash in the pan; it's about showing up with elite execution year after year, sixteen seasons deep.",
   "When the ball is in the air, it doesn't belong to the defensive back; it belongs to the receiver who wants it more.",
   "You walk away from the game with peace of mind only when you know you left every single ounce of yourself on the turf."
-]
+],
 "herman-moore": [
   "You succeed when you set your egos aside and focus on the collective goal, understanding that every role is vital to the team.",
   "When you step onto the field, you don't own the uniform or the franchise—you only own your character and the effort you bring.",
@@ -871,7 +870,7 @@ export const PLAYER_QUOTES = {
   "You respect every opponent, but you step onto the gridiron believing that nobody can cover you one-on-one.",
   "Milestones are nice to look back on, but the true reward of a career is the lasting bond you share with your teammates.",
   "When your playing days are over, you want people to remember that you played the game with passion, integrity, and toughness."
-]
+],
 "kurt-warner": [
   "Whether I'm a Super Bowl Champion or a regular guy stocking shelves at a grocery store, my faith and my core values never change.",
   "I got my career started late, so I appreciated every single snap and every moment I got to spend on that football field.",
@@ -889,7 +888,7 @@ export const PLAYER_QUOTES = {
   "I wanted my faith to look the same to everyone else and to be the same for me regardless of what was going on—whether I was on the Super Bowl podium or struggling on the bench.",
   "Every single yard in the NFL is earned through intense focus, precise timing, and total commitment from the entire unit.",
   "When you walk away from the game, you want to know that you played with integrity, maxed out your potential, and left everything out on the turf."
-]
+],
 "antonio-brown": [
   "Business is boomin.",
   "You gotta manifest your reality. Nobody is going to believe in your vision harder than you do.",
@@ -907,7 +906,7 @@ export const PLAYER_QUOTES = {
   "You don't achieve historic numbers without an obsession for perfection on every single route and every single catch.",
   "Keep your circle tight, stay focused on your goals, and let your explosive play on the turf do all the talking.",
   "No matter what happens around you, your ultimate focus has to be on greatness and leaving a legendary mark on the game."
-]
+],
 "joe-burrow": [
   "No matter what level you're playing at, you have to prepare like you're the guy. When your number is called, there can't be any drop-off.",
   "You've got to have an unwavering belief in yourself and your preparation, especially when external expectations or doubts are high.",
@@ -925,7 +924,7 @@ export const PLAYER_QUOTES = {
   "When you find a rhythm with your playmakers, football becomes fun, but maintaining that edge requires constant focus.",
   "You respect every opponent in this league, but when you step between those white lines, your only focus is execution and domination.",
   "At the end of the day, your legacy is defined by how many games you win and whether you can hoist that Lombardi trophy."
-]
+],
 "gale-sayers": [
   "You can be awfully good if you want to be.",
   "The most important thing is for us to find a common ground, to pull together, to make this country what it ought to be.",
@@ -943,7 +942,7 @@ export const PLAYER_QUOTES = {
   "I always wanted the defense to feel like they had to tackle me for four full quarters, no matter how tired my legs felt.",
   "Respect is earned through action, integrity, and how you treat your teammates when the lights go out.",
   "When you look back on your career, what matters most is knowing you left everything you had out there for the guys wearing the same jersey."
-]
+],
 "bijan-robinson": [
   "When you play with joy, everything else just flows naturally. Football is a game we've all been playing since we were kids, so you have to keep that same passion alive.",
   "You put God first in everything you do, and the rest will take care of itself. That's my foundation.",
@@ -961,7 +960,7 @@ export const PLAYER_QUOTES = {
   "God has blessed me with incredible abilities, and I want to use every single snap to glorify Him and inspire others.",
   "You want to leave the field knowing you gave every ounce of energy for your brothers, your coaches, and the fans who support you.",
   "Individual accolades and stats are nice, but hoisting that championship trophy at the end of the year is the only goal that truly matters."
-]
+],
 "ben-roethlisberger": [
   "It's not about how pretty it looks or how many yards you throw; at the end of the day, winning is the only stat that matters.",
   "When the pocket breaks down and chaos ensues, that's usually when our offense is at its most dangerous.",
@@ -979,7 +978,7 @@ export const PLAYER_QUOTES = {
   "Trust between a quarterback and his receivers is forged through countless hours of throwing routes in the offseason heat.",
   "When you walk off the field for the final time, you want your teammates to know you gave every last ounce of competitive fire you had.",
   "The standard in Pittsburgh is always championships, and anything less than competing for a Lombardi trophy falls short."
-]
+],
 "thurman-thomas": [
   "When you run the no-huddle offense, you don't just dictate the pace of the game; you take away the defense's ability to substitute and breathe.",
   "As an all-purpose back, catching the ball out of the backfield is just as important as running between the tackles because it stretches the defense sideline to sideline.",
@@ -997,7 +996,7 @@ export const PLAYER_QUOTES = {
   "You respect every opponent in the AFC, but when you step onto the turf, your mindset is to dominate the line of scrimmage.",
   "The grind of an NFL season tests your body and your mind, but your competitive fire is what gets you through the grueling stretch.",
   "When you look back on your career, you want people to remember that you played every single snap with passion, pride, and total commitment."
-]
+],
 "carson-palmer": [
   "When you have elite wide receivers on the outside, your job as a quarterback is simply to give them a chance to make a play downfield.",
   "You can't let a devastating knee injury or a major setback change your love for the game; it only deepens your appreciation for every snap.",
@@ -1015,7 +1014,7 @@ export const PLAYER_QUOTES = {
   "Trust between a quarterback and his target is built through thousands of precise, repetitive throws in practice when nobody is watching.",
   "You don't back down from a shootout; you embrace the challenge of matching the opposing offense score for score.",
   "At the end of the day, your legacy isn't about regular-season statistics; it's about whether you elevated your team to championship contention."
-]
+],
 "jayden-daniels": [
   "Keep the main thing, the main thing.",
   "I always bet on myself, because if you don't believe in your own preparation, nobody else will.",
@@ -1033,7 +1032,7 @@ export const PLAYER_QUOTES = {
   "Preparation during the week is what allows the game to slow down when the bullets are flying on game day.",
   "You never want an easy path; you want a path that challenges you and forces you to elevate to the next level.",
   "At the end of the day, it's about fighting for your teammates and leaving every single ounce of energy out on that field."
-]
+],
 "donovan-mcnabb": [
   "They can boo all they want, but at the end of the day, I'm going to go out there and lead this football team to a victory.",
   "You have to have thick skin to play quarterback in Philadelphia; if you let the critics get to you, you won't survive a single quarter.",
@@ -1051,7 +1050,7 @@ export const PLAYER_QUOTES = {
   "When the pocket breaks down, you rely on your athleticism and your vision to turn a broken play into a game-changing positive gain.",
   "The bonds and friendships you forge in the locker room with your brothers are what you cherish long after the stadium lights go out.",
   "At the end of the day, your legacy is defined by how many games you win and whether you left every single ounce of yourself on the field."
-]
+],
 "matt-forte": [
   "They used to say catching out of the backfield was just a bonus, but being a true dual-threat weapon is what keeps defensive coordinators up at night.",
   "Patience is everything for a running back; you let your offensive line work, trust your keys, and then hit the hole with absolute conviction.",
@@ -1069,7 +1068,7 @@ export const PLAYER_QUOTES = {
   "The grind of an NFL season tests your body every single day, but your mental toughness is what gets you through the pain.",
   "When you walk away from the game, you want people to remember that you played every single snap with integrity, toughness, and class.",
   "At the end of the day, individual stats don't mean a thing unless they help your team secure a victory and chase a championship."
-]
+],
 "cris-carter": [
   "All I do is catch touchdowns.",
   "You don't get 1,100 catches in this league by accident; you get them through a relentless, obsessive commitment to the craft of route running.",
@@ -1087,7 +1086,7 @@ export const PLAYER_QUOTES = {
   "Fame and individual milestones are nice, but the ultimate validation is knowing you dominated your era through sheer preparation.",
   "You learn how to handle adversity by turning your lowest moments into the greatest lessons of your life and career.",
   "When you walk off the turf for the final time, you want your legacy to be that nobody outworked you and nobody caught the ball better."
-]
+],
 "jamal-anderson": [
   "When you score a touchdown, you don't just celebrate—you break out the Dirty Bird and let the whole stadium feel the energy.",
   "That 1998 season in Atlanta was magical because we had a brotherhood that believed we could beat anybody, anywhere, anytime.",
@@ -1105,7 +1104,7 @@ export const PLAYER_QUOTES = {
   "You don't achieve a two-thousand-yard rushing season without total synchronization between the back, the line, and the scheme.",
   "The grind of an NFL season tests your body every single day, but your competitive fire is what gets you through December.",
   "When your playing days are over, you want people to remember that you played with passion, toughness, and unwavering heart."
-]
+],
 "torry-holt": [
   "When you play in the Greatest Show on Turf, you don't just run routes; you execute with a speed and precision that overwhelms the defense.",
   "You set the standard every single day on the practice field, because how you work during the week determines how you perform on Sunday.",
@@ -1123,7 +1122,7 @@ export const PLAYER_QUOTES = {
   "You play through the minor injuries, the soreness, and the fatigue because your brothers in the huddle are counting on you.",
   "Milestones like consecutive 1,000-yard seasons are wonderful, but they are built on the back of total team execution.",
   "When your career is over, you want your legacy to be that you played every single down with maximum effort, toughness, and class."
-]
+],
 "christian-mccaffrey": [
   "Versatility is your greatest weapon; when you can line up in the backfield, split out wide, or run intermediate routes like a receiver, you give defensive coordinators sleepless nights.",
   "Preparation isn't just about what you do during the week on the practice field; it's a 24-hour commitment to nutrition, recovery, and film study.",
@@ -1141,7 +1140,7 @@ export const PLAYER_QUOTES = {
   "Individual accolades and offensive player of the year awards are nice, but hoisting that Lombardi trophy is the only goal that truly matters.",
   "Trust between a quarterback and his running back comes from thousands of reps in practice so you're always on the exact same page.",
   "When your playing days are over, you want your legacy to be that you played every single snap with maximum effort, toughness, and class."
-]
+],
 "jonathan-taylor": [
   "Speed kills, but patience and vision are what allow you to find the seam before you turn on the jets.",
   "When you get into the open field, you don't look back; you just trust your acceleration and outrun the angle.",
@@ -1159,7 +1158,7 @@ export const PLAYER_QUOTES = {
   "When you find a rhythm with your blocks, running the football feels less like a collision and more like pure, synchronized flow.",
   "Trust between a runner and his blockers is built through sweat in training camp and thousands of handoffs in the practice bubble.",
   "At the end of the day, your legacy is built on how many games you win and whether you delivered when your team needed you most."
-]
+],
 "deangelo-williams": [
   "When you share a backfield with another elite back, you don't worry about splitting carries; you worry about making the absolute most of every single touch you get.",
   "Patience behind the line of scrimmage allows your blocks to develop, and once you see that seam, you have to hit it with full acceleration.",
@@ -1177,7 +1176,7 @@ export const PLAYER_QUOTES = {
   "When you find a rhythm with your blockers, running the football feels effortless, like a dance where everyone knows their exact assignment.",
   "Trust between a runner and his blockers is forged through sweat in the summer heat and thousands of practice reps.",
   "When your playing days are over, you want your legacy to be that you played every single snap with maximum effort, toughness, and class."
-]
+],
 "dan-fouts": [
   "Football is a game of confidence, and that confidence is built by meticulous preparation and relentless practice.",
   "When you run the Air Coryell offense, you don't just test the defense vertically; you use the entire field and force them to cover every blade of grass.",
@@ -1195,7 +1194,7 @@ export const PLAYER_QUOTES = {
   "The bonds and shared battles with your offensive linemen—the guys who sacrificed their bodies to keep you upright—are what you cherish most when your career is over.",
   "When the game is on the line in the fourth quarter, that is the exact moment you dream about as a kid throwing passes in the backyard.",
   "At the end of the day, your legacy is built on whether you changed the way the game was played and left everything you had on the turf."
-]
+],
 "james-cook-iii": [
   "When you have speed in open space, your job is to find one sliver of daylight, turn on the jets, and never look back.",
   "As a modern running back, being a weapon in the passing game is just as important as running between the tackles because it creates mismatches the defense can't cover.",
@@ -1213,7 +1212,7 @@ export const PLAYER_QUOTES = {
   "Individual milestones are great, but the ultimate goal is hoisting that championship trophy for the city and your teammates.",
   "Trust between a runner and his blockers is forged through sweat in training camp and thousands of handoffs in the practice bubble.",
   "When your career is over, you want people to remember that you brought electric playmaking, toughness, and heart to every single snap."
-]
+],
 "brett-favre": [
   "Football is meant to be played like a kid in the backyard, with joy, instinct, and a absolute love for competing.",
   "When things break down and chaos takes over, that's when a gunslinger has to trust his arm and make something happen.",
@@ -1231,7 +1230,7 @@ export const PLAYER_QUOTES = {
   "You never want to play scared; you have to play with a fearless competitive fire that forces the defense to react to you.",
   "The grind of an NFL season tests your body and soul, but your love for the game is what gets you through the fourth quarter.",
   "At the end of the day, your legacy isn't about perfection; it's about how hard you fought and how much fun you had playing the game."
-]
+],
 "muhsin-muhammad": [
   "When you play wide receiver with a physical edge, you don't just run past defensive backs; you block them into the turf and impose your will.",
   "That 85-yard touchdown in Super Bowl XXXVIII was the culmination of a lifelong dream, but our ultimate goal was always to hoist the trophy.",
@@ -1249,7 +1248,7 @@ export const PLAYER_QUOTES = {
   "Leadership isn't about giving speeches; it's about running the hard slant over the middle knowing a safety is waiting to hit you.",
   "The bonds you forge with your offensive teammates in the trenches and the huddle create a brotherhood that lasts long after retirement.",
   "When your career is over, you want people to remember that you played every single down with grit, class, and absolute toughness."
-]
+],
 "muhsin-muhammad": [
   "When you play wide receiver with a physical edge, you don't just run past defensive backs; you block them into the turf and impose your will.",
   "That 85-yard touchdown in Super Bowl XXXVIII was the culmination of a lifelong dream, but our ultimate goal was always to hoist the trophy.",
@@ -1267,7 +1266,7 @@ export const PLAYER_QUOTES = {
   "Leadership isn't about giving speeches; it's about running the hard slant over the middle knowing a safety is waiting to hit you.",
   "The bonds you forge with your offensive teammates in the trenches and the huddle create a brotherhood that lasts long after retirement.",
   "When your career is over, you want people to remember that you played every single down with grit, class, and absolute toughness."
-]
+],
 "michael-turner": [
   "They called me 'The Burner,' but my entire game was built on patience, reading the leverage of my blocks, and then exploding through the hole.",
   "When you carry the football 30 times a game, you aren't just running for yards; you're breaking the opponent's will in the fourth quarter.",
@@ -1285,7 +1284,7 @@ export const PLAYER_QUOTES = {
   "When you find a rhythm with your fullback and your guards, running the football feels less like a collision and more like a synchronized wave.",
   "Trust between a runner and his blockers is forged through sweat in the summer heat and thousands of practice reps in the bubble.",
   "When your playing days are over, you want people to remember that you brought unmatched power, durability, and heart to every single snap."
-]
+],
 "arian-foster": [
   "When you run in a zone scheme, you don't just pick a hole and run; you read the defensive front, let your blockers establish leverage, and cut off the backside.",
   "As an undrafted free agent, you carry a chip on your shoulder that never goes away, forcing you to prove yourself on every single snap.",
@@ -1303,7 +1302,7 @@ export const PLAYER_QUOTES = {
   "When you find a rhythm with your blockers, running the football feels less like a chaotic collision and more like smooth choreography.",
   "You play this game with passion, poetry, and a deep appreciation for the craft, because window of opportunity in the NFL is so short.",
   "When your career is over, you want people to remember that you played the game on your own terms with style, intelligence, and unmatched heart."
-]
+],
 "steve-smith-sr": [
   "They told me I was too small to play in this league, so I spent my entire career proving every single doubter wrong with a chip on my shoulder.",
   "When you play wide receiver with an aggressive, fierce mentality, you don't just run routes—you physically impose your will on the defensive back.",
@@ -1321,7 +1320,7 @@ export const PLAYER_QUOTES = {
   "The bonds you form with your brothers in the huddle and the offensive room create a lifelong brotherhood built on sweat and sacrifice.",
   "You never back down from a trash-talk battle because it keeps you locked into the intensity required to survive on Sunday.",
   "When your career is over, you want your legacy to be that you played every single snap with unmatched passion, grit, and fearlessness."
-]
+],
 "rob-gronkowski": [
   "When you run a seam route against Cover-2, you don't just run fast—you find the soft spot, body up the safety, and prepare for a collision.",
   "As a tight end, you have to block like an offensive tackle on first down and run like a deep-threat wide receiver on third down.",
@@ -1339,7 +1338,7 @@ export const PLAYER_QUOTES = {
   "When you find a rhythm with your quarterback, it feels telepathic—you just know where he's going to put the ball before you even make your cut.",
   "You don't need to overcomplicate the game; you just outwork your opponent, win your matchup, and let your physical toughness take over.",
   "When your career is over, you want people to remember that you redefined the tight end position and brought unmatched passion to every single snap."
-]
+],
 "earl-campbell": [
   "When you carry the football thirty times a game, you aren't just trying to gain yards; you're trying to make the tackler feel every ounce of your presence.",
   "You don't need a lot of fancy moves in the backfield when your entire philosophy is to lower your shoulder and punish the man trying to stop you.",
@@ -1357,7 +1356,7 @@ export const PLAYER_QUOTES = {
   "When you find a rhythm with your blockers, running the football feels less like a chaotic collision and more like pure, unadulterated force.",
   "You never back down from physical contact; you invite it, because breaking a tackle sets the tone for the entire offensive unit.",
   "When your career is over, you want people to remember that you played every single snap with maximum effort, relentless toughness, and total heart."
-]
+],
 "eddie-george": [
   "When you carry the football thirty-five times in an afternoon, you aren't just gaining yardage—you're breaking the opponent's spirit one collision at a time.",
   "As a workhorse running back under Jeff Fisher, you embrace the physical brutality of AFC Central football because toughness is our identity.",
@@ -1375,7 +1374,7 @@ export const PLAYER_QUOTES = {
   "Trust between a runner and his blockers is forged through grueling training camp practices and thousands of handoffs in the summer heat.",
   "You never back down from physical contact; you invite it, because setting a tone early changes how the defense plays you the rest of the game.",
   "When your playing days are over, you want people to remember that you played every single down with uncompromising toughness, dignity, and heart."
-]
+],
 "sterling-sharpe": [
   "When you run a route, you don't just run to a spot—you dictate terms to the defensive back until he has no idea which way you're breaking.",
   "That 1989 season when we connected for over 90 catches wasn't luck; it was the product of relentless, obsessive route precision.",
@@ -1393,7 +1392,7 @@ export const PLAYER_QUOTES = {
   "When you find a rhythm with your quarterback, it feels telepathic—you know where he's looking before he even begins his dropback.",
   "You never back down from a physical challenge; you embrace the battle against elite press coverage because that's where greatness is proven.",
   "When your career is cut short, you want your legacy to be that while you were on the field, nobody played the position with more intensity or skill."
-]
+],
 "matt-schaub": [
   "Playing the quarterback position in Gary Kubiak's offense means mastering the play-action pass and making lightning-fast decisions on bootlegs.",
   "When you lead the league in passing yards, it's a testament to the precise timing between you, your receivers, and an elite offensive line.",
@@ -1411,7 +1410,7 @@ export const PLAYER_QUOTES = {
   "Individual Pro Bowl honors are special, but they only happen when eleven guys on the offensive unit are executing at a high level.",
   "When you find a rhythm with your play-caller, running the offense feels effortless, like a chess match where you're always one step ahead.",
   "When your career is over, you want people to remember that you prepared like a true professional and led your team with unwavering poise."
-]
+],
 "devon-achane": [
   "When you have track-star speed, your entire goal is to find one tiny crease, hit the accelerator, and outrun the entire angle of the defense.",
   "Playing in Mike McDaniel's dynamic offense means using your explosive acceleration to stress every single level of the opposing defense.",
@@ -1429,7 +1428,7 @@ export const PLAYER_QUOTES = {
   "When you find a rhythm with your blockers and your quarterback on a pitch or toss, running into open space feels effortless.",
   "You embrace the physical nature of the game despite your size, knowing that toughness and heart are what earn you respect in the locker room.",
   "When your career is finished, you want people to remember that you brought unmatched explosive speed, playmaking, and excitement to every single snap."
-]
+],
 "michael-irvin": [
   "When you step onto that football field, you don't just want to beat the man across from you; you want to break his will and take his soul.",
   "That Playmaker persona wasn't just a nickname or a show—it was a standard of excellence I demanded of myself every single day.",
@@ -1447,7 +1446,7 @@ export const PLAYER_QUOTES = {
   "Winning three Super Bowl rings validates every drop of sweat, every torn ligament, and every high-stakes battle you fought in the trenches.",
   "When you look back at your career, you want people to know that when the stakes were highest, The Playmaker always delivered.",
   "At the end of the day, your legacy isn't just about statistics; it's about how fearlessly you played and how fiercely you wanted to win."
-]
+],
 "tony-romo": [
   "Playing quarterback in the NFL is about processing complex coverages in milliseconds and trusting your instincts when the protection breaks down.",
   "When you scramble outside the pocket and keep a play alive, you're not playing recklessly—you're manipulating the defense until a window opens downfield.",
@@ -1465,7 +1464,7 @@ export const PLAYER_QUOTES = {
   "You never play scared; you have to attack aggressive coverages with anticipation, throwing receivers open before they even make their breaks.",
   "When you find a rhythm with your play-caller, running a two-minute drill feels like a synchronized jazz performance where everyone is on the exact same note.",
   "When your playing days are over, you want people to remember that you played the game with fierce competitiveness, intelligence, and joy."
-]
+],
 "brandon-marshall": [
   "When you line up on the outside against elite press coverage, your job is to physically dictate the terms of the route and win the leverage battle immediately.",
   "That 21-catch game against the Colts wasn't just about catching footballs; it was about unrelenting stamina and demanding the ball when your team needs a spark.",
@@ -1483,7 +1482,7 @@ export const PLAYER_QUOTES = {
   "Individual Pro Bowl honors and breaking franchise records are incredible milestones, but ultimate fulfillment only comes from winning championships with your brothers.",
   "When you find a synchronized rhythm with your quarterback, running a complex option route feels less like a guess and more like telepathy.",
   "When your career is over, you want your legacy to be that you played with unmatched passion, overcame immense adversity, and left every drop of sweat on the field."
-]
+],
 "mark-brunell": [
   "Playing quarterback as a left-hander in the NFL means you see the backside pass rush differently, requiring elite pocket awareness and a quick release.",
   "That magical 1996 run with the expansion Jaguars taught us that belief, discipline, and a physical running game can shock the entire football world.",
@@ -1501,7 +1500,7 @@ export const PLAYER_QUOTES = {
   "You never play scared; you have to attack aggressive coverages with anticipation, throwing your receivers open before they even make their breaks.",
   "The grueling mental grind of playing quarterback tests your resilience every single week, but your competitive fire keeps you locked into the details.",
   "When your playing days are over, you want people to remember that you prepared like a true professional and led your teams with grit and integrity."
-]
+],
 "terrell-owens": [
   "They said a small-school guy from Tennessee Chattanooga couldn't make it in the NFL, so I turned every single doubt into fuel to become one of the best.",
   "When you step onto that football field, your job isn't just to beat the cornerback; it's to completely demoralize him and make him dread every single snap.",
@@ -1519,7 +1518,7 @@ export const PLAYER_QUOTES = {
   "The physical pounding of a long NFL career tests your body to its absolute limits, but your mental resilience and pride keep you answering the bell.",
   "Individual accolades are nice, but the ultimate validation comes from knowing you dominated every era, every scheme, and every defense put in front of you.",
   "When your career is over, you want your legacy to be that nobody ever worked harder, played tougher, or left more passion on the football field."
-]
+],
 "wes-welker": [
   "Playing the slot receiver position means you have to be fearless over the middle, willing to absorb a massive hit from a linebacker to secure a critical third-down catch.",
   "When you run a option route against zone coverage, it's all about reading the leverage of the safety and finding that tiny window of space in the seam.",
@@ -1537,7 +1536,7 @@ export const PLAYER_QUOTES = {
   "When you find a rhythm with your play-caller, running option routes feels less like guessing and more like a synchronized language shared with the quarterback.",
   "You never back down from a competitive battle, knowing that toughness and mental resilience are what earn you the respect of your teammates in the locker room.",
   "When your playing days are over, you want people to remember that you revolutionized the slot position with grit, precision, and absolute dependability."
-]
+],
 "justin-herbert": [
   "When you stand tall in the pocket against an aggressive blitz, you have to keep your eyes downfield, trust your protection, and deliver an accurate ball under heavy pressure.",
   "That cannon for an arm isn't just about throwing it fifty yards downfield; it's about driving the ball into tight windows on a line-drive out route against Cover-2.",
@@ -1555,7 +1554,7 @@ export const PLAYER_QUOTES = {
   "You never play scared; you have to attack aggressive coverages with anticipation, throwing your wide receivers open before they even make their final breaks.",
   "When you find a synchronized rhythm with your play-caller, running an up-tempo offense feels effortless, like a chess match where you're always one step ahead.",
   "When your career is finally written, you want people to remember that you competed with everything you had, played with ultimate integrity, and left it all on the field."
-]
+],
 "steve-mcnair": [
   "When you play quarterback with a dual-threat mentality, your job is to extend plays with your legs, absorb the contact, and make the throw anyway.",
   "That 1999 AFC Championship run and the final yard short against St. Louis taught us that heart and resilience define a football team more than anything else.",
@@ -1573,7 +1572,7 @@ export const PLAYER_QUOTES = {
   "Individual accolades are nice, but the only standard that truly matters in this league is leading your franchise to the brink of a championship.",
   "When you find a rhythm with your play-caller, running a gritty, ball-control offense feels like a physical chess match where you wear down the defense.",
   "When your career is over, you want people to remember that you played the game with unmatched toughness, dignity, and a relentless will to win."
-]
+],
 "chase-brown": [
   "When you run in a modern zone scheme, you don't just put your head down; you read the leverage of the defensive tackle, trust your track, and accelerate through the cut.",
   "As a running back out of Illinois, you carry an underdog mindset every single day, knowing that explosive playmaking earns you the right to stay on the field.",
@@ -1591,7 +1590,7 @@ export const PLAYER_QUOTES = {
   "When you find a rhythm with your blockers, running the football feels less like a chaotic collision and more like smooth, high-speed choreography.",
   "You play this game with passion and an appreciation for the grind, knowing that the window of opportunity in the NFL requires you to maximize every single snap.",
   "When your career is over, you want people to remember that you played the game with unyielding toughness, explosive speed, and absolute dedication to your team."
-]
+],
 "derrick-henry": [
   "When you reach the fourth quarter and the defense has taken thirty hits, that's when you feel them start to hesitate in the hole.",
   "You don't need fancy moves when your entire philosophy is to run downhill, punish the first tackler, and make them bring you down with numbers.",
@@ -1609,7 +1608,7 @@ export const PLAYER_QUOTES = {
   "When you find a rhythm with your fullback and blockers, running the football feels less like a chaotic collision and more like pure, unstoppable momentum.",
   "You never back down from physical contact; you invite it, because breaking a tackle sets the tone for the entire offensive unit.",
   "When your career is over, you want people to remember that you played every single snap with maximum effort, relentless toughness, and total heart."
-]
+],
 "1985-chicago-bears": [
   "When you run Buddy Ryan's 46 defense, you aren't just trying to stop the offense; you're trying to inflict maximum physical punishment on every single snap.",
   "That Super Bowl XX blowout wasn't just a win; it was the ultimate exclamation point on a season where we dominated every opponent that stepped on the field.",
@@ -1627,7 +1626,7 @@ export const PLAYER_QUOTES = {
   "Individual accolades like Defensive Player of the Year honors are incredible, but they are entirely a byproduct of eleven guys playing as one destructive unit.",
   "When you find a rhythm with your pass rushers and linebackers, flying to the football feels less like a scheme and more like a synchronized hunt.",
   "When our career is over, we want people to remember the 1985 Chicago Bears as the most ferocious, dominant defense in the history of professional football."
-]
+],
 "curtis-martin": [
   "I'm up here in the Hall of Fame because of how many yards I ran, but everyone who knows me knows that I hate to run.",
   "When Bill Parcells told me he wanted to draft me, I told him I didn't even know if I wanted to play football.",
@@ -1645,7 +1644,7 @@ export const PLAYER_QUOTES = {
   "When the game is on the line in the fourth quarter, you just want the ball, block out the noise, and let your legs do the worrying.",
   "Individual Hall of Fame jackets are nice, but the real reward is waking up on Monday morning without needing a forklift to get out of bed.",
   "When your career is finally over, you want people to remember that you played hard, took care of your business, and somehow survived twenty-two surgeries."
-]
+],
 "braylon-edwards": [
   "I could make the most insane, gravity-defying, one-handed circus catch you've ever seen, and then completely miss a three-yard slant that hit me square in the facemask.",
   "When people say there's nothing going on in Cleveland, they haven't tried catching a spiral in a howling Lake Erie windstorm.",
@@ -1663,7 +1662,7 @@ export const PLAYER_QUOTES = {
   "Individual Pro Bowl nods are amazing, but nothing quite matches the unique humbling experience of hearing your home crowd groan before you even turn around.",
   "When you find a rhythm with your offense, things click so smoothly it feels like magic; when you don't, it feels like your gloves are made of Teflon.",
   "When your career is finally over, you want people to remember that you played with total flash, caught some of the most unbelievable balls in league history, and kept everyone thoroughly entertained."
-]
+],
 "clinton-portis": [
   "If y'all see me in the news, and I make the news for something that I ain't got no business making it for, don't bash me. Say it was a young guy living.",
   "I didn't get my hair styled today. I actually stuck my hand in a socket and this is the way it turned out.",
@@ -1681,7 +1680,7 @@ export const PLAYER_QUOTES = {
   "I don't feel like there should have been three running backs taken ahead of me in the draft, but at least Denver traded me so I could eventually invent ten new personalities in Washington.",
   "You can game-plan for my cutbacks all week long, but you definitely can't game-plan for whatever bizarre outfit I'm walking into the stadium wearing on Sunday.",
   "When my career is over, I want people to remember that I rushed for thousands of yards, laid out linebackers in pass protection, and kept the media completely bewildered for a decade."
-]
+],
 "jimmy-smith": [
   "When you start your career as a throw-in guy with the Cowboys and end up catching passes in Jacksonville, you realize the NFL is basically a chaotic travel agency.",
   "People talk about shutdown corners like Deion Sanders, but my biggest challenge every week was convincing Tom Coughlin to smile just once.",
@@ -1699,7 +1698,7 @@ export const PLAYER_QUOTES = {
   "When you find a synchronized rhythm with your offense, running option routes feels less like a playbook and more like telepathy.",
   "You never played scared of physical contact, though dodging team fines for missing curfew was occasionally a lot harder than beating a Cover-2 zone.",
   "When your career is finally over, you want people to remember that you played with fierce intensity, ran the cleanest routes in football, and left everything on the field."
-]
+],
 "hines-ward": [
   "Guys always ask me, 'Why are you always smiling?' Are you kidding? I'm getting paid millions to legally blindside linebackers, that's why!",
   "I was never the fastest or tallest receiver on the field, but I was definitely the one the defensive backs hated seeing line up against them.",
@@ -1717,7 +1716,7 @@ export const PLAYER_QUOTES = {
   "Individual Pro Bowl nods are nice, but the real badge of honor is hearing opposing defensive coordinators screaming at their safeties to watch out for number 86.",
   "When you play wide receiver like a guard trapped in a pass-catcher's body, every single block feels better than a twenty-yard reception.",
   "When your career is finally over, you want people to remember that you caught everything thrown your way and left a trail of stunned linebackers in your wake."
-]
+],
 "jimmy-graham": [
   "When I walked into my college basketball coach's office and told him I might play football, he just started chuckling and asked, 'Jimmy, can you even catch?'",
   "They literally had to write a brand new rulebook entry banning goalpost dunks just because I treated the crossbar like a playground basketball hoop.",
@@ -1735,7 +1734,7 @@ export const PLAYER_QUOTES = {
   "The physical toll of an NFL career is brutal on your joints, but trading it all for the gridiron was the best gamble I ever took.",
   "Individual Pro Bowl nods are nice, but nothing quite beats the pure satisfaction of forcing the league office to alter their celebration rules.",
   "When your career is finally over, you want people to remember that you brought high-flying hoops swagger to the tight end position and left every goalpost slightly crooked."
-]
+],
 "trevor-lawrence": [
   "We suck right now, plain and simple.",
   "I was just going to throw it out of bounds to stop the clock and then there was really no one around me.",
@@ -1753,7 +1752,7 @@ export const PLAYER_QUOTES = {
   "People forget that before I was a number one draft pick, I was just a kid trying to find a hairband that wouldn't snap mid-play.",
   "When things go sideways, you can either panic or just stand at the podium and tell the absolute truth about how bad it looked.",
   "At the end of the day, whether we win by thirty or lose in overtime, I still have to go home and walk my dog."
-]
+],
 "franco-harris": [
   "People ask me every single day what I was thinking during the Immaculate Reception, and the honest truth is I was just running so I wouldn't get yelled at by Chuck Noll.",
   "Jack Lambert is mean and relentless wherever he goes, on and off the field; I do remember many times he would chase me in practice but no way would I let him catch me.",
@@ -1771,7 +1770,7 @@ export const PLAYER_QUOTES = {
   "I really don't look at comparing eras that way because every decade has guys trying to separate your shoulder pads from your body.",
   "All I wanted to be was a player who could walk into the stadium, put on a helmet, and run through a wall for his teammates.",
   "When your career is finally over, you want people to remember that you played hard, respected the game, and maybe caught one or two lucky bounces along the way."
-]
+],
 "tony-dorsett": [
   "I'm me. I can't put on airs. I'm not a phony.",
   "I was pretty hot-tempered all through school. I remember my high school basketball coach telling me: 'Boy, if you don't learn to control that temper, you're gonna kill somebody.'",
@@ -1789,7 +1788,7 @@ export const PLAYER_QUOTES = {
   "People talk about the Triplets like we invented football, but mostly we just tried not to drop the handoff.",
   "You don't rush for over 12,000 yards without taking a few hits that make you question your career choices on Monday morning.",
   "When your career is finally over, you just want to look back and know you outran everybody who ever tried to put you in a box."
-]
+],
 "victor-cruz": [
   "They told me I was too small, went to an FCS school, and wouldn't get drafted—so I decided to show up at Giants training camp and make Tom Coughlin remember my name.",
   "When you catch a short slant, break three tackles, and take it 99 yards to the house against the Jets, life changes pretty fast.",
@@ -1807,7 +1806,7 @@ export const PLAYER_QUOTES = {
   "When you find a synchronized rhythm with your offense, running option routes feels less like a playbook and more like effortless choreography.",
   "You never back down from physical contact over the middle, even when you know a middle linebacker is waiting to rearrange your ribs.",
   "When your career is finally over, you want people to remember that you played with flash, clutched up on the biggest stage, and brought the salsa to Sunday afternoons."
-]
+],
 "kenneth-walker-iii": [
   "I don't need twenty carries to find a rhythm; sometimes you just need one crack of daylight and fifty yards of empty grass.",
   "When you make a guy miss in the backfield so badly he looks like he's trying to tackle a ghost, that's just Michigan State instincts kicking in.",
@@ -1825,7 +1824,7 @@ export const PLAYER_QUOTES = {
   "Individual rushing milestones are awesome, but they're mostly a reward for an offensive coordinator who dials up the right play at the right time.",
   "When you find a synchronized rhythm with your blockers, running the football feels less like a collision sport and more like high-speed geometry.",
   "When your career is finally over, you want people to remember that you played with explosive speed, relentless cutbacks, and a knack for the big play."
-]
+],
 "jay-cutler": [
   "People ask me if I cared about throwing interceptions, and honestly, if you're not willing to throw into triple coverage just to see if your arm can pull it off, are you even living?",
   "When you've got a cigarette lit in your mind at all times, every fourth-quarter comeback feels like a mild inconvenience.",
@@ -1843,7 +1842,7 @@ export const PLAYER_QUOTES = {
   "Winning feels great, losing happens, but not caring what anyone thinks about either of them is the real superpower.",
   "You respect every hard-hitting linebacker in the NFC North, but you also know they were exhausted from chasing you out of bounds when you refused to slide.",
   "When your career is finally over, you want people to remember that you had one of the strongest arms in football and you literally never, ever panicked."
-]
+],
 "santana-moss": [
   "Big-time players make big-time plays in big-time games.",
   "When you're down by two touchdowns in the fourth quarter against Dallas, you don't panic—you just catch two deep bombs from Mark Brunell and silence the entire stadium.",
@@ -1861,7 +1860,7 @@ export const PLAYER_QUOTES = {
   "I was always told I was too small to play big-weight football, so I just decided to run past everyone who doubted me.",
   "Taking pride in your route running means making a cornerback look like he's running backward while you glide toward the end zone.",
   "When your career is finally over, you want people to remember that you played with fierce heart, clutched up when it mattered most, and owned Monday nights in Dallas."
-]
+],
 "dak-prescott": [
   "When you play quarterback for the Dallas Cowboys, you quickly learn there's no middle ground: you're either going to the Hall of Fame on Monday morning or you should be cut by halftime.",
   "People love to talk about my contract extension like I'm personally writing the checks, but my only real job is trying not to throw a pick-six against the Eagles.",
@@ -1879,7 +1878,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about my career you could possibly invent, which is why I stopped reading headlines somewhere around my rookie year.",
   "Taking a huge hit in the pocket hurts, but hearing skip bayless analyze your interception on television the next morning hurts way worse.",
   "When your career is finally over, you want people to remember that you led the team with grit, handled the circus with class, and gave everything you had for the star."
-]
+],
 "dak-prescott": [
   "When you play quarterback for the Dallas Cowboys, you quickly learn there's no middle ground: you're either going to the Hall of Fame on Monday morning or you should be cut by halftime.",
   "People love to talk about my contract extension like I'm personally writing the checks, but my only real job is trying not to throw a pick-six against the Eagles.",
@@ -1897,7 +1896,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about my career you could possibly invent, which is why I stopped reading headlines somewhere around my rookie year.",
   "Taking a huge hit in the pocket hurts, but hearing skip bayless analyze your interception on television the next morning hurts way worse.",
   "When your career is finally over, you want people to remember that you led the team with grit, handled the circus with class, and gave everything you had for the star."
-]
+],
 "jeremiyah-love": [
   "When you rush for 1,372 yards and score 21 touchdowns in a single season at Notre Dame, you quickly realize why half the defensive coordinators in the country spend sleepless nights drawing up blitzes.",
   "They talked all week about how hard it is to run against a playoff defense, and then you just find a sliver of daylight and take it 98 yards straight to the house.",
@@ -1915,7 +1914,7 @@ export const PLAYER_QUOTES = {
   "Individual rushing milestones are awesome, but they're mostly a reward for an offensive coordinator who dials up the right play at the right time.",
   "When you find a synchronized rhythm with your blockers, running the football feels less like a collision sport and more like high-speed geometry.",
   "When your career is finally over, you want people to remember that you played with explosive speed, relentless cutbacks, and a knack for the big play."
-]
+],
 "warren-moon": [
   "When every single NFL scout tells you that you're too smart to play quarterback and tries to move you to defensive back, winning five straight Grey Cups in Canada is a pretty solid way to prove them wrong.",
   "Throwing the prettiest deep ball in professional football history means your wideouts spend half their time sprinting under a rainbow and the other half bragging about their stats.",
@@ -1933,7 +1932,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about my journey to the pros, which is why I let my right arm do all the talking on game day.",
   "Taking a massive hit from a 270-pound linebacker hurts, but waking up on Monday morning knowing you threw for 400 yards makes the ice bath worth it.",
   "When your career is finally over, you want people to remember that you played with ultimate poise, threw the cleanest deep ball in the game, and paved the way for a whole generation."
-]
+],
 "chad-johnson": [
   "When you send your business card to every single defensive back in the NFL before game day with your exact stats and a promise that you're going to burn them, that's just good customer service.",
   "People talk about fine limits in the NFL, but handing a referee a dollar bill after scoring a touchdown is a bargain for the greatest celebration in football history.",
@@ -1951,7 +1950,7 @@ export const PLAYER_QUOTES = {
   "Individual Pro Bowl selections are great, but the real badge of honor is knowing the opposing defensive coordinator spent three sleepless nights losing his mind over your presnap motion.",
   "When you find a synchronized rhythm with your offense, running option routes feels less like a playbook and more like choreography on ice.",
   "When your career is finally over, you want people to remember that you played with unmatched joy, backed up every single piece of trash talk, and left every cornerback exhausted."
-]
+],
 "anquan-boldin": [
   "When you debut with a 217-yard receiving game as a rookie, you immediately set a standard where every defensive back in the league thinks you're going to break their ribs.",
   "They used to say I lacked elite speed, which was always hilarious because it's hard to chase a guy down when he's using your own body as a shield over the middle.",
@@ -1969,7 +1968,7 @@ export const PLAYER_QUOTES = {
   "Individual Pro Bowl nods are cool, but winning the Walter Payton Man of the Year award reminds you that what you do off the field lasts way longer than any catch.",
   "When you find a synchronized rhythm with your offense, carving up a Cover-3 zone feels less like a playbook and more like brutal efficiency.",
   "When your career is finally over, you want people to remember that you played with unmatched physical grit, caught everything thrown near you, and never backed down from anyone."
-]
+],
 "jared-goff": [
   "When people wrote you off after a cold exit from Los Angeles, walking into Detroit and helping turn a historically cursed franchise into a contender is the ultimate plot twist.",
   "They used to make jokes about my arm strength or how I read a defense, and then we just started dropping forty points on people every single Sunday.",
@@ -1987,7 +1986,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative and meme about my career you could possibly invent, which is why I stopped reading headlines somewhere around my first NFC championship appearance.",
   "Taking a massive hit in the pocket hurts, but hearing the broadcast crew debate your trade value for the thousandth time on Monday morning hurts worse.",
   "When your career is finally over, you want people to remember that you proved the doubters wrong, embraced the culture of the Midwest, and led a legendary turnaround."
-]
+],
 "omarion-hampton": [
   "When you rush for over sixteen hundred yards and bulldoze through half the ACC on a weekly basis, you quickly realize why defensive coordinators hate seeing a six-foot, two-hundred-and-twenty-pound back heading downhill.",
   "They talked all week about how modern defenses can shut down a power runner, and then you just find a sliver of daylight between the guards and carry three linebackers for twelve extra yards.",
@@ -2005,7 +2004,7 @@ export const PLAYER_QUOTES = {
   "Individual rushing milestones are awesome, but they're mostly a reward for an offensive coordinator who trusts you to grind out the clock.",
   "When you find a synchronized rhythm with your blockers, running the football feels less like a collision sport and more like high-speed geometry.",
   "When your career is finally over, you want people to remember that you played with relentless power, punished every tackler, and carried your team on every single snap."
-]
+],
 "bo-nix": [
   "When you spend five years starting college football games across two different time zones, you pretty much stop getting rattled by exotic blitz packages.",
   "They said I threw too many short passes at Oregon, so we just completed seventy-five percent of them and let the yards rack up by themselves.",
@@ -2023,7 +2022,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about my college career and draft stock, which is why I stopped reading headlines somewhere around my second year at Oregon.",
   "Taking a massive hit from a blitzing linebacker hurts, but hearing the broadcast crew debate your arm strength for the hundredth time on Monday morning hurts worse.",
   "When your career is finally over, you want people to remember that you played with fierce efficiency, handled the pressure of the position, and won a lot of football games."
-]
+],
 "matt-hasselbeck": [
   "When you walk into the coin toss, look the referee dead in the eye, and confidently announce that you want the ball and you're going to score, you better hope your offensive line doesn't let you down immediately.",
   "They used to make jokes about my lack of blazing speed, which was entirely fair considering I ran like a refrigerator trying to catch a bus.",
@@ -2041,7 +2040,7 @@ export const PLAYER_QUOTES = {
   "I've heard every joke about my overtime coin toss guarantee, which is why I've learned to laugh about it right along with everybody else.",
   "Taking a massive hit from a blitzing safety hurts, but walking back to the huddle to face your offensive line after an interception hurts your pride worse.",
   "When your career is finally over, you want people to remember that you played with grit, humor, intelligence, and just enough arm talent to win a lot of football games."
-]
+],
 "joe-montana": [
   "When you're down by fourteen points in the fourth quarter of a Super Bowl, walking back to the huddle and calmly pointing out John Candy sitting in the stands is the ultimate way to settle everybody down.",
   "They used to say I didn't have the strongest arm in the league, which was true, but it's hard for a cornerback to care about arm strength when the ball is already resting in your receiver's hands.",
@@ -2059,7 +2058,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about my career and the system, which is why I let the four championship rings do all the talking.",
   "Taking a hit from a 260-pound pass rusher hurts, but walking back to the sideline knowing you left points on the board hurts your pride way worse.",
   "When your career is finally over, you want people to remember that you played with unmatched clutch composure, won when the lights were brightest, and earned the title of Joe Cool."
-]
+],
 "desean-jackson": [
   "When you can run a 4.35 forty-yard dash, you don't need a complex route tree—you just tell the quarterback to throw it fifty yards downfield and let you run under it.",
   "Dropping the football right before crossing the goal line against the Cowboys because you wanted to celebrate early is a mistake you only make once in your life.",
@@ -2077,7 +2076,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about my size and durability, which is why I let my game-breaking speed do all the talking on Sunday afternoons.",
   "Taking a massive hit across the middle hurts, but burning a shutdown corner for an 80-yard score makes the entire afternoon worth it.",
   "When your career is finally over, you want people to remember that you were the most explosive deep threat and punt returner the game had ever seen."
-]
+],
 "puka-nacua": [
   "When you break the NFL rookie receptions and receiving yards records all in one season, people stop asking how a fifth-round draft pick from BYU managed to find a starting job.",
   "They used to say I wasn't fast enough to be a deep threat, which is hilarious because it's hard to care about forty times when you're dragging three defensive backs for ten extra yards after the catch.",
@@ -2095,7 +2094,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about my draft stock and sliding past thirty-one other teams, which is why I let my blocking and physical style do all the talking.",
   "Taking a massive hit across the middle hurts, but hearing the crowd roar after you convert a crucial third-and-long makes the ice bath completely worth it.",
   "When your career is finally over, you want people to remember that you played with fearless grit, broke records as a rookie, and blocked linebackers like an extra lineman."
-]
+],
 "kellen-winslow": [
   "When Don Coryell first put you on the field, tight ends were basically extra offensive linemen who occasionally jogged out for a three-yard hitch, which made changing the entire geometry of the passing game a fun little weekend project.",
   "People talk about the Epic in Miami like it was a normal football game, but playing through dehydration, cramps, and exhaustion just to block a field goal and catch 13 passes is peak postseason madness.",
@@ -2113,7 +2112,7 @@ export const PLAYER_QUOTES = {
   "I've heard every analyst talk about modern tight ends, but most of them are just trying to recreate what we were doing back when blocking defensive ends and torching cornerbacks was a one-man job.",
   "Taking a massive hit across the middle hurts, but walking back to the huddle knowing you completely broke the defense's coverage scheme makes the pain completely worth it.",
   "When your career is finally over, you want people to remember that you revolutionized a position, played with unmatched intensity, and redefined what a tight end could do."
-]
+],
 "jaxon-smith-njigba": [
   "When you break the single-game FBS bowl record with 347 receiving yards in the Rose Bowl, people stop wondering how you managed to out-target future first-round picks on the same college roster.",
   "They used to say slot receivers couldn't be true game-breaking deep threats, which is always hilarious right up until you make a diving, fingertip catch across the middle for a crucial third down.",
@@ -2131,7 +2130,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about my draft stock and transition to the pros, which is why I let my route-running and yards-after-catch do all the talking.",
   "Taking a massive hit across the middle hurts, but hearing the stadium roar after you turn a short slant into a thirty-yard gain makes the pain completely worth it.",
   "When your career is finally over, you want people to remember that you played with surgical precision, owned the slot, and always came through when the lights were brightest."
-]
+],
 "tony-gonzalez": [
   "When you spend sixteen seasons rewriting the record books for tight ends while also playing college basketball in the Final Four, blocking a defensive end feels like a relaxing warmup.",
   "They used to say a basketball player couldn't transition to the NFL without getting his head taken off over the middle, which was a great theory until I started using cornerbacks as stepstools.",
@@ -2149,7 +2148,7 @@ export const PLAYER_QUOTES = {
   "I've heard every analyst talk about modern pass-catching tight ends, but most of them are just trying to replicate what we were doing back when split-out flex routes were still a novelty.",
   "Taking a massive hit across the middle hurts, but walking back to the huddle knowing you completely broke the defense's coverage scheme makes the pain completely worth it.",
   "When your career is finally over, you want people to remember that you revolutionized the tight end position, played with unmatched consistency, and caught everything thrown near you."
-]
+],
 "terry-bradshaw": [
   "When you walk into the huddle as a number-one overall draft pick and half the stadium is chanting for your backup, throwing four interceptions in your rookie debut gives you a thick skin real quick.",
   "They used to joke that my playbook consisted of handing the ball off to Franco Harris and then just throwing the ball as far as I possibly could downfield, which was mostly true because John Stallworth and Lynn Swann were always down there waiting for it.",
@@ -2167,7 +2166,7 @@ export const PLAYER_QUOTES = {
   "I've heard every joke about my play-calling intelligence and my television broadcast antics, which is why I've always preferred to laugh right along with the audience.",
   "Taking a massive hit from a 260-pound pass rusher hurts, but walking back to the sideline knowing you missed an open receiver on a crucial third down hurts your pride way worse.",
   "When your career is finally over, you want people to remember that you played with unmatched fearlessness, delivered in the biggest moments, and quarterbacked the definitive dynasty of the seventies."
-]
+],
 "amon-ra-st.brown": [
   "When you memorize the exact draft position and name of every single one of the seventeen wide receivers selected before you in the 2021 NFL Draft, reading off that list becomes your favorite morning pre-game ritual.",
   "They used to say a slot receiver couldn't be a true WR1, which is always hilarious right up until you catch 119 passes and drag three defensive backs for ten extra yards after the catch.",
@@ -2186,35 +2185,4 @@ export const PLAYER_QUOTES = {
   "Taking a massive hit across the middle hurts, but hearing the Ford Field crowd roar after you convert a crucial third-and-long makes the ice bath completely worth it.",
   "When your career is finally over, you want people to remember that you played with unmatched preparation, owned the slot, and proved every single doubter wrong."
 ]
-
-
-
-
-
-
-
-
-
-
-
-  " ": [
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-    " ",
-  ],
-
-
 };
