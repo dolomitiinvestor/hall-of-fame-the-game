@@ -42,3 +42,18 @@ export function pickWeighted(r, weights) {
   }
   return weights[weights.length - 1][0];
 }
+
+// Deterministic Fisher-Yates: the same seed always produces the same
+// permutation of `array`. For a "random" order that needs to survive
+// re-renders without being persisted anywhere (see
+// previewSeasonSelection() in season.js) -- draft order and other
+// one-time, persisted-immediately rolls should keep using Math.random
+// via shuffle() (draftEngine.js) instead.
+export function seededShuffle(array, seed) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(seededRandom(`${seed}:${i}`) * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}

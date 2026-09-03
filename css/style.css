@@ -581,6 +581,11 @@ select {
   opacity: 0.6;
 }
 
+.schedule-row {
+  color: var(--text-dim);
+  font-style: italic;
+}
+
 .mini-roster h4 {
   margin: 0 0 0.4rem 0;
 }
