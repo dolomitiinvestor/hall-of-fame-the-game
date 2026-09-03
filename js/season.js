@@ -17,7 +17,7 @@
 import { getPlayerById, getBestSeason, selectSeason, getSeasonByYear } from "./players.js";
 import { round1, getSeasonSummary, calculateFantasyPoints } from "./scoring.js";
 import { generateSchedule } from "./schedule.js";
-import { seededNormal } from "./rng.js";
+import { seededNormal, seededRandom, seededShuffle } from "./rng.js";
 import { isOutForWeek, getInjuryStatusKey, rollSeasonEndingInjury } from "./injuries.js";
 import { generateBoxScore, realGameBoxScore, boxScoreToStats } from "./boxScore.js";
 import { shuffle } from "./draftEngine.js";
@@ -30,6 +30,20 @@ export const SEASON_WEEKS = 16;
 // (1 playoff week) so there's always at least a title game.
 export function getRegularSeasonWeeks(numTeams) {
   return numTeams >= 4 ? SEASON_WEEKS - 2 : SEASON_WEEKS - 1;
+}
+
+// Shared by buildSelectedSeasons() (a true one-time random roll,
+// snapshotted immediately) and previewSeasonSelection() (a stable,
+// seeded "roll" recomputed on every call) below -- `pickIndex(n)`
+// returns an index in [0, n) and `shuffleFn` permutes an array,
+// letting each caller supply its own randomness source.
+function pickArchiveSeasonSelection(playerId, pickIndex, shuffleFn) {
+  const archiveYears = Object.keys(REAL_GAME_LOGS[playerId] || {});
+  if (!archiveYears.length) return null;
+  const year = Number(archiveYears[pickIndex(archiveYears.length)]);
+  const games = REAL_GAME_LOGS[playerId][year];
+  const gameOrder = shuffleFn(games.map((_, i) => i));
+  return { year, gameOrder };
 }
 
 // At season creation, every rostered player's season is "chosen" once
@@ -50,12 +64,9 @@ function buildSelectedSeasons(draft, rules) {
       if (!slot.playerId || selected[slot.playerId]) return;
       const player = getPlayerById(slot.playerId);
       if (!player) return;
-      const archiveYears = Object.keys(REAL_GAME_LOGS[slot.playerId] || {});
-      if (archiveYears.length) {
-        const year = Number(archiveYears[Math.floor(Math.random() * archiveYears.length)]);
-        const games = REAL_GAME_LOGS[slot.playerId][year];
-        const gameOrder = shuffle(games.map((_, i) => i));
-        selected[slot.playerId] = { year, gameOrder };
+      const archived = pickArchiveSeasonSelection(slot.playerId, (n) => Math.floor(Math.random() * n), shuffle);
+      if (archived) {
+        selected[slot.playerId] = archived;
         return;
       }
       const season = selectSeason(player, rules, "best");
@@ -63,6 +74,34 @@ function buildSelectedSeasons(draft, rules) {
     });
   });
   return selected;
+}
+
+// A stand-in season selection for a player who isn't (or isn't yet)
+// rostered in `season` -- used by the player card, which shows a full
+// season of stat lines for *any* player, not just this league's
+// starters (see computePlayerWeek() below). Seeded by playerId alone,
+// so it's stable across re-renders without needing to be persisted
+// anywhere, unlike the real per-season roll above.
+function previewSeasonSelection(playerId, rules) {
+  const player = getPlayerById(playerId);
+  if (!player) return null;
+  const archived = pickArchiveSeasonSelection(
+    playerId,
+    (n) => Math.floor(seededRandom(`previewYear:${playerId}`) * n),
+    (arr) => seededShuffle(arr, `previewOrder:${playerId}`)
+  );
+  if (archived) return archived;
+  const season = selectSeason(player, rules, "best");
+  return season ? { year: season.year } : null;
+}
+
+// The season selection actually in effect for playerId: their real,
+// persisted pick if `season` has one (i.e. they're rostered this
+// season -- see buildSelectedSeasons() above), otherwise a stable
+// preview (see previewSeasonSelection() above). Exported for the
+// player card.
+export function resolvePlayerSeasonSelection(playerId, rules, season) {
+  return season?.selectedSeasons?.[playerId] || previewSeasonSelection(playerId, rules);
 }
 
 // The archived real game (see REAL_GAME_LOGS, js/data/realBoxScores.js)
@@ -169,61 +208,70 @@ export function weeklyVarianceMultiplier(playerId, week) {
   return Math.min(VARIANCE_MAX, Math.max(VARIANCE_MIN, factor));
 }
 
-// A single player's points for a given week. Without a week (e.g. the
-// Draft/Teams screens showing a flat "expected" rate), returns the
-// season's plain points-per-game -- no variance, no injury effect,
-// since those only make sense once a specific week is being played.
-// `season` (optional) is the in-progress fantasy season -- when given,
-// its selectedSeasons snapshot is used instead of always recomputing
-// "best" (see resolvePlayerSeason above). A player with an archived
-// real game for this week (see resolveRealGame() above) scores off
-// their actual stats that game instead of the season-rate/variance
-// model -- still zeroed out by the OUT/IR check below like anyone
-// else, since injury status is a gameplay layer on top of history, not
-// part of it.
-export function weeklyPointsForPlayer(playerId, rules, week, season) {
+// The full weekly result (points, box score, injury status) for ONE
+// player in ONE week -- the shared engine behind both
+// computeTeamWeekScore() (a real fantasy matchup) and the player
+// card's season-long stat line list (js/app.js), which shows every
+// player in the game, not just this league's rostered starters. Uses
+// `season`'s real, persisted selection when this player is rostered
+// this season (so numbers match exactly what a real matchup would
+// show), otherwise a stable preview (see resolvePlayerSeasonSelection()
+// above) -- either way scores off an archived real game when one is
+// selected, else the season-rate/variance model, exactly as
+// weeklyVarianceMultiplier()'s doc comment describes. Without a week
+// (e.g. the Draft/Teams screens showing a flat "expected" rate),
+// returns just the season's plain points-per-game -- no variance, no
+// injury effect, since those only make sense once a specific week is
+// being played.
+export function computePlayerWeek(playerId, rules, week, season) {
   const player = getPlayerById(playerId);
-  if (!player) return 0;
-  if (week != null && isOutForWeek(player, week, season?.seasonEndingInjuries)) return 0;
-  if (week != null) {
-    const realGame = resolveRealGame(playerId, season, week);
-    if (realGame) return calculateFantasyPoints(realGame, rules, player.position);
+  if (!player) return null;
+  if (week == null) {
+    const { summary } = resolvePlayerSeason(playerId, rules, season) || getBestSeason(player, rules);
+    return { points: summary.pointsPerGame, boxScore: null, injury: "HEALTHY" };
   }
-  const { summary } = resolvePlayerSeason(playerId, rules, season) || getBestSeason(player, rules);
-  if (week == null) return summary.pointsPerGame;
-  return round1(summary.pointsPerGame * weeklyVarianceMultiplier(playerId, week));
+  const injury = getInjuryStatusKey(player, week, season?.seasonEndingInjuries);
+  const out = isOutForWeek(player, week, season?.seasonEndingInjuries);
+  const sel = resolvePlayerSeasonSelection(playerId, rules, season);
+  const pseudoSeason = sel ? { selectedSeasons: { [playerId]: sel } } : null;
+
+  let points = 0;
+  // Generated regardless of injury status -- an OUT/IR player still
+  // gets a box score (their fantasy points are zeroed separately,
+  // below; the box score isn't gated on whether they "played").
+  let boxScore;
+  const realGame = resolveRealGame(playerId, pseudoSeason, week);
+  if (realGame) {
+    boxScore = realGameBoxScore(realGame);
+    if (!out) points = calculateFantasyPoints(realGame, rules, player.position);
+  } else {
+    const multiplier = weeklyVarianceMultiplier(playerId, week);
+    const resolved = resolvePlayerSeason(playerId, rules, pseudoSeason);
+    boxScore = generateBoxScore(player, resolved?.season, multiplier);
+    // A synthetic, healthy statline's points are recomputed from that
+    // exact (rounded) statline instead of independently sampling the
+    // rate*multiplier -- otherwise per-category rounding could show,
+    // say, a 2-TD game worth fewer points than a 0-TD one.
+    if (!out) {
+      points = boxScore
+        ? calculateFantasyPoints(boxScoreToStats(boxScore), rules, player.position)
+        : round1(resolved.summary.pointsPerGame * multiplier);
+    }
+  }
+  return { points, boxScore, injury };
+}
+
+// A single player's points for a given week -- see computePlayerWeek()
+// above for the full result (box score, injury status too).
+export function weeklyPointsForPlayer(playerId, rules, week, season) {
+  return computePlayerWeek(playerId, rules, week, season)?.points ?? 0;
 }
 
 export function computeTeamWeekScore(team, rules, week, season) {
   const starterIds = getStarterIds(team);
   const breakdown = starterIds.map((pid) => {
     const player = getPlayerById(pid);
-    const injury = week == null ? "HEALTHY" : getInjuryStatusKey(player, week, season?.seasonEndingInjuries);
-    let points = weeklyPointsForPlayer(pid, rules, week, season);
-    // Generated regardless of injury status -- an OUT/IR starter still
-    // gets a box score (their fantasy points are zeroed separately,
-    // above; the box score isn't gated on whether they "played").
-    let boxScore = null;
-    if (week != null) {
-      const realGame = resolveRealGame(pid, season, week);
-      if (realGame) {
-        boxScore = realGameBoxScore(realGame);
-      } else {
-        const multiplier = weeklyVarianceMultiplier(pid, week);
-        const resolved = resolvePlayerSeason(pid, rules, season);
-        boxScore = generateBoxScore(player, resolved?.season, multiplier);
-        // A synthetic, healthy statline's points are recomputed from
-        // that exact (rounded) statline instead of the independent
-        // rate*multiplier sample above -- otherwise per-category
-        // rounding could show, say, a 2-TD game worth fewer points
-        // than a 0-TD one. OUT/IR stays zeroed (still shows what the
-        // statline *would* have been -- see the box score comment
-        // above) and a real archived game already corresponds exactly.
-        if (boxScore && !isOutForWeek(player, week, season?.seasonEndingInjuries)) {
-          points = calculateFantasyPoints(boxScoreToStats(boxScore), rules, player.position);
-        }
-      }
-    }
+    const { points, boxScore, injury } = computePlayerWeek(pid, rules, week, season);
     return { playerId: pid, name: player.name, position: player.position, points, injury, boxScore };
   });
   let total = round1(breakdown.reduce((sum, b) => sum + b.points, 0));

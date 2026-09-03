@@ -1,5 +1,5 @@
 import { buildScoringRules } from "./scoring.js";
-import { searchPlayers, getPlayerById, getBestSeason, formatSeasonLine } from "./players.js";
+import { searchPlayers, getPlayerById, getBestSeason, formatSeasonLine, getAllPlayers, getSeasonByYear } from "./players.js";
 import {
   createDraft,
   draftPlayer,
@@ -24,15 +24,18 @@ import {
   getStandingsList,
   getPlayerLeaders,
   weeklyPointsForPlayer,
+  computePlayerWeek,
+  resolvePlayerSeasonSelection,
   getNewSeasonEndingInjuriesForWeek,
   SEASON_WEEKS,
 } from "./season.js";
 import { saveState, loadState, clearState } from "./storage.js";
-import { getByeWeek, NFL_TEAMS } from "./data/nflTeams.js";
+import { getByeWeek, getTeamCode, NFL_TEAMS } from "./data/nflTeams.js";
 import { getNflSchedule, isRealWeek } from "./nflSchedule.js";
 import { getInjuryStatusKey, INJURY_STATUSES, getInjuryPronePercent } from "./injuries.js";
 import { COACH_QUOTES } from "./data/coachQuotes.js";
 import { PLAYER_QUOTES } from "./data/playerQuotes.js";
+import { REAL_GAME_LOGS } from "./data/realBoxScores.js";
 import { formatBoxScoreLine } from "./boxScore.js";
 import { seededRandom } from "./rng.js";
 
@@ -59,6 +62,7 @@ const state = {
   draftFilter: { query: "", position: "ALL", tagFilter: "ALL" },
   playersFilter: { query: "", position: "ALL", tagFilter: "ALL" },
   freeAgentFilter: { query: "", position: "ALL", tagFilter: "ALL" },
+  devFilter: { query: "", position: "ALL", tagFilter: "ALL" },
   gamesWeekIndex: null,
 };
 
@@ -666,7 +670,7 @@ function renderDraftBoard(draft) {
       </div>`
     )
     .join("");
-  return `<h3>Rosters So Far</h3><div class="roster-grid">${teams}</div>`;
+  return `<h3>Rosters Post Draft</h3><div class="roster-grid">${teams}</div>`;
 }
 
 function handleDraftClick(action, target) {
@@ -740,13 +744,6 @@ function renderTeams() {
             .join("");
 
           const currentPlayer = slot.playerId ? getPlayerById(slot.playerId) : null;
-          const seasonLine = currentPlayer
-            ? escapeHtml(formatSeasonLine(currentPlayer, getBestSeason(currentPlayer, rules)))
-            : "";
-          const dropBtn =
-            currentPlayer && draft.status === "complete"
-              ? `<button class="btn btn-danger btn-small" data-action="drop-player" data-team="${team.id}" data-player="${currentPlayer.id}">Drop</button>`
-              : "";
 
           return `
             <tr>
@@ -756,8 +753,6 @@ function renderTeams() {
                 <select data-action="set-slot" data-team="${teamIdx}" data-slot="${slotIdx}">${optionHtml}</select>
                 ${currentPlayer ? injuryBadge(currentPlayer, upcomingWeek, state.season) : ""}
               </td>
-              <td class="season-line">${seasonLine}</td>
-              <td>${dropBtn}</td>
             </tr>`;
         })
         .join("");
@@ -766,7 +761,7 @@ function renderTeams() {
         <details class="panel" open>
           <summary>${escapeHtml(team.name)}</summary>
           <table class="roster-table">
-            <thead><tr><th>Slot</th><th>Player</th><th>Best Season</th><th></th></tr></thead>
+            <thead><tr><th>Slot</th><th>Player</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>
         </details>`;
@@ -847,18 +842,7 @@ function handleTeamsChange(target) {
 function handleTeamsClick(action, target) {
   const draft = state.draft;
   if (!draft) return;
-  if (action === "drop-player") {
-    const player = getPlayerById(target.dataset.player);
-    if (confirm(`Drop ${player ? player.name : "this player"}? They'll return to the free agent pool.`)) {
-      try {
-        dropPlayer(draft, target.dataset.team, target.dataset.player);
-        persist();
-        render();
-      } catch (err) {
-        alert(err.message);
-      }
-    }
-  } else if (action === "add-free-agent") {
+  if (action === "add-free-agent") {
     const playerId = target.dataset.player;
     const select = document.querySelector(`select[data-role="fa-team-select"][data-player="${playerId}"]`);
     const teamId = select ? select.value : draft.teams[0]?.id;
@@ -1296,7 +1280,6 @@ function renderSeason() {
     persist();
   }
   const season = state.season;
-  const complete = isSeasonComplete(season);
 
   const standings = getStandingsList(season, draft)
     .map(
@@ -1314,10 +1297,7 @@ function renderSeason() {
   return `
     <h2>Season</h2>
     <p class="hint">${currentWeekLabel(season)}</p>
-    <button class="btn btn-primary" data-action="advance-week" ${complete ? "disabled" : ""}>
-      ${complete ? "Season Finished" : "Advance Week"}
-    </button>
-    <p class="hint">Set lineups any time from the <button class="link-btn" data-action="goto-teams-from-season">Teams tab</button> -- changes apply starting with the next week you advance; past weeks keep their own recorded lineup. See every matchup so far on the <button class="link-btn" data-action="goto-games-from-season">Games tab</button>.</p>
+    <p class="hint">Set lineups any time from the <button class="link-btn" data-action="goto-teams-from-season">Teams tab</button> -- changes apply starting with the next week you advance; past weeks keep their own recorded lineup. Advance the week and see every matchup so far from the <button class="link-btn" data-action="goto-games-from-season">Games tab</button>.</p>
 
     <h3>Standings${isRegularSeasonComplete(season) ? " (Regular Season)" : ""}</h3>
     <table class="roster-table standings-table">
@@ -1376,15 +1356,21 @@ function renderLeadersSection(season, draft) {
   `;
 }
 
+// Shared by the Games tab's Advance Week button (see handleGamesClick()
+// below) -- moved there from the Season tab so advancing and watching
+// the results happen in the same place.
+function advanceWeekAction() {
+  advanceWeek(state.season, state.draft, getRules());
+  state.gamesWeekIndex = state.season.weeklyResults.length - 1;
+  persist();
+  render();
+  const justPlayed = state.season.weeklyResults[state.season.weeklyResults.length - 1];
+  const newInjuries = getNewSeasonEndingInjuriesForWeek(state.season, justPlayed.week);
+  showWeekCompleteSplash(justPlayed, newInjuries);
+}
+
 function handleSeasonClick(action) {
-  if (action === "advance-week") {
-    advanceWeek(state.season, state.draft, getRules());
-    persist();
-    render();
-    const justPlayed = state.season.weeklyResults[state.season.weeklyResults.length - 1];
-    const newInjuries = getNewSeasonEndingInjuriesForWeek(state.season, justPlayed.week);
-    showWeekCompleteSplash(justPlayed, newInjuries);
-  } else if (action === "goto-teams-from-season") {
+  if (action === "goto-teams-from-season") {
     setScreen("teams");
   } else if (action === "goto-games-from-season") {
     setScreen("games");
@@ -1556,14 +1542,19 @@ function renderGames() {
       : `Week ${preview.week} (not yet played)`;
   }
 
+  const complete = isSeasonComplete(season);
+
   return `
     <h2>Games</h2>
+    <button class="btn btn-primary" data-action="advance-week" ${complete ? "disabled" : ""}>
+      ${complete ? "Season Finished" : "Advance Week"}
+    </button>
     <div class="week-nav">
       <button class="btn btn-small" data-action="games-prev-week" ${idx === 0 ? "disabled" : ""} aria-label="Previous week">&larr;</button>
       <span class="week-nav-label">${weekHeading}</span>
       <button class="btn btn-small" data-action="games-next-week" ${idx === totalWeeks - 1 ? "disabled" : ""} aria-label="Next week">&rarr;</button>
     </div>
-    <p class="hint">${isPlayed ? "Tap a game for the full box score." : "This week hasn't been played yet -- scores fill in once you advance to it from the Season tab."}</p>
+    <p class="hint">${isPlayed ? "Tap a game for the full box score." : "This week hasn't been played yet -- scores fill in once you hit Advance Week."}</p>
     <div class="game-list">${gameRows}</div>
     ${byes}
 
@@ -1572,7 +1563,9 @@ function renderGames() {
 }
 
 function handleGamesClick(action, target) {
-  if (action === "games-prev-week") {
+  if (action === "advance-week") {
+    advanceWeekAction();
+  } else if (action === "games-prev-week") {
     state.gamesWeekIndex = Math.max(0, (state.gamesWeekIndex ?? 0) - 1);
     render();
   } else if (action === "games-next-week") {
@@ -1614,30 +1607,66 @@ function closeGameFullscreen() {
 
 // ---------------------------------------------------------- player card
 
-// Every week this season where `playerId` started (i.e. appears in a
-// matchup breakdown -- bench weeks never do, same as everywhere else
-// in the app), oldest first, with that week's points/box score/injury
-// as actually recorded at the time.
-function getPlayerWeeklyHistory(playerId) {
-  if (!state.season) return [];
+// Which real NFL team `rawTeamCode` plays in `week`, per the schedule
+// already generated for the Games tab's NFL Schedule panel -- null if
+// they're on a bye that week. `nflSchedule` is getNflSchedule(weeks)'s
+// result, passed in so callers building a whole season of rows only
+// generate it once.
+function scheduleOpponentForWeek(rawTeamCode, week, nflSchedule) {
+  const code = getTeamCode(rawTeamCode);
+  const games = nflSchedule[week - 1] || [];
+  const game = games.find((g) => g.home === code || g.away === code);
+  if (!game) return null;
+  return { oppCode: game.home === code ? game.away : game.home, isHome: game.home === code };
+}
+
+// One player's full season, week by week -- for any player in the
+// game, not just someone who actually started on a real fantasy
+// roster (unlike the old getPlayerWeeklyHistory(), which only showed
+// weeks pulled from real recorded matchups). Weeks already played
+// (<= season.currentWeek) show a generated points/box score/injury
+// line (computePlayerWeek(), season.js -- the same generator behind a
+// started player's real box score, so numbers match exactly for
+// anyone who did start); weeks still to come show who they'd play in
+// the real NFL schedule instead, since there's no fantasy result yet.
+function renderPlayerGamesSection(player, rules) {
+  if (!state.season) return `<p class="hint">No season in progress yet.</p>`;
+  const season = state.season;
+  const sel = resolvePlayerSeasonSelection(player.id, rules, season);
+  const seasonTeam = (sel && getSeasonByYear(player, sel.year)?.team) || getBestSeason(player, rules).season.team;
+  const nflSchedule = getNflSchedule(season.weeks);
+
   const rows = [];
-  state.season.weeklyResults.forEach((wk) => {
-    wk.matchups.forEach((m) => {
-      Object.values(m.scores).forEach((score) => {
-        const entry = score.breakdown.find((b) => b.playerId === playerId);
-        if (entry) rows.push({ week: wk.week, round: wk.round, roundLabel: wk.roundLabel, ...entry });
-      });
-    });
-  });
-  return rows.sort((a, b) => a.week - b.week);
+  for (let week = 1; week <= season.weeks; week++) {
+    if (week <= season.currentWeek) {
+      const { points, boxScore, injury } = computePlayerWeek(player.id, rules, week, season);
+      const boxLine = formatBoxScoreLine(boxScore);
+      const badge = INJURY_STATUSES[injury]?.code
+        ? `<span class="injury-badge ${INJURY_BADGE_CLASS[injury]}" title="${escapeHtml(INJURY_STATUSES[injury].label)}">${INJURY_STATUSES[injury].code}</span>`
+        : "";
+      rows.push(`<tr><td>Wk ${week}</td><td>${points.toFixed(1)} ${badge}</td><td>${escapeHtml(boxLine)}</td></tr>`);
+    } else {
+      const opp = scheduleOpponentForWeek(seasonTeam, week, nflSchedule);
+      const oppText = opp ? `${opp.isHome ? "vs" : "@"} ${escapeHtml(NFL_TEAM_NAMES[opp.oppCode] || opp.oppCode)}` : "BYE";
+      rows.push(`<tr class="schedule-row"><td>Wk ${week}</td><td colspan="2">${oppText}</td></tr>`);
+    }
+  }
+
+  return `
+    <h3>Games &amp; Stat Lines</h3>
+    <table class="roster-table">
+      <thead><tr><th>Week</th><th>Pts</th><th>Box Score</th></tr></thead>
+      <tbody>${rows.join("")}</tbody>
+    </table>`;
 }
 
 // Full-screen card for one player: avatar, position/tag/bye, which
-// fantasy team (if any) has them rostered, their season line, and
-// (once a season is underway) a week-by-week table of actual points
-// and box scores. Reachable by clicking a player's avatar or name
-// pretty much anywhere in the app -- see the global "show-player"
-// click handling in wireEvents().
+// fantasy team (if any) has them rostered (with a Drop button when
+// they're rostered on a completed draft), their season line, and a
+// week-by-week table of stat lines/schedule (see
+// renderPlayerGamesSection() above). Reachable by clicking a player's
+// avatar or name pretty much anywhere in the app -- see the global
+// "show-player" click handling in wireEvents().
 function showPlayerCard(playerId) {
   const player = getPlayerById(playerId);
   const body = document.getElementById("player-card-body");
@@ -1647,22 +1676,11 @@ function showPlayerCard(playerId) {
   const best = getBestSeason(player, rules);
 
   const rosterTeam = state.draft?.teams.find((t) => t.roster.some((s) => s.playerId === playerId));
+  const dropBtn =
+    rosterTeam && state.draft.status === "complete"
+      ? `<button class="btn btn-danger btn-small" data-action="drop-player-from-card" data-team="${rosterTeam.id}" data-player="${player.id}">Drop</button>`
+      : "";
   const teamLine = rosterTeam ? `Rostered by <strong>${escapeHtml(rosterTeam.name)}</strong>` : "Not currently rostered";
-
-  const history = getPlayerWeeklyHistory(playerId);
-  const historyRows = history
-    .map((h) => {
-      const boxLine = formatBoxScoreLine(h.boxScore);
-      const weekLabel = h.round === "playoff" ? `Wk ${h.week} (${escapeHtml(h.roundLabel)})` : `Wk ${h.week}`;
-      const badge = INJURY_STATUSES[h.injury]?.code
-        ? `<span class="injury-badge ${INJURY_BADGE_CLASS[h.injury]}" title="${escapeHtml(INJURY_STATUSES[h.injury].label)}">${INJURY_STATUSES[h.injury].code}</span>`
-        : "";
-      return `<tr><td>${weekLabel}</td><td>${h.points.toFixed(1)} ${badge}</td><td>${escapeHtml(boxLine)}</td></tr>`;
-    })
-    .join("");
-  const historySection = history.length
-    ? `<h3>Weekly Box Scores</h3><table class="roster-table"><thead><tr><th>Week</th><th>Pts</th><th>Box Score</th></tr></thead><tbody>${historyRows}</tbody></table>`
-    : `<p class="hint">${state.season ? "Hasn't started a week yet this season." : "No season in progress yet."}</p>`;
 
   body.innerHTML = `
     <div class="player-card-header">
@@ -1679,12 +1697,12 @@ function showPlayerCard(playerId) {
           ${injuryBadge(player, state.season ? state.season.currentWeek + 1 : null, state.season)}
           ${injuryProneBadge(player)}
         </p>
-        <p class="hint">${teamLine}</p>
+        <p class="hint">${teamLine} ${dropBtn}</p>
       </div>
     </div>
     <p>${escapeHtml(formatSeasonLine(player, best))}</p>
     <p class="hint">${best.summary.totalPoints.toFixed(1)} pts season &middot; ${best.summary.pointsPerGame.toFixed(1)} pts/gm</p>
-    ${historySection}
+    ${renderPlayerGamesSection(player, rules)}
   `;
   overlay.hidden = false;
 }
@@ -1692,6 +1710,68 @@ function showPlayerCard(playerId) {
 function closePlayerCard() {
   const overlay = document.getElementById("player-card-overlay");
   if (overlay) overlay.hidden = true;
+}
+
+// ---------------------------------------------------------------- dev
+
+// Data-coverage audit: every player/coach/kicker/defense in the game
+// (same pool as the Players tab), with whether they have real quotes
+// (js/data/playerQuotes.js) and/or a real archived game log
+// (REAL_GAME_LOGS, js/data/realBoxScores.js) -- the two content seams
+// this game fills in piecemeal, rather than every player automatically
+// having them. Not meant for regular players; a scrollable checklist
+// for filling in more real data over time.
+function renderDev() {
+  const rules = getRules();
+  const results = searchPlayers(state.devFilter, rules).sort((a, b) => a.player.name.localeCompare(b.player.name));
+
+  const withQuotes = results.filter(({ player }) => PLAYER_QUOTES[player.id]?.length).length;
+  const withRealSeasons = results.filter(({ player }) => Object.keys(REAL_GAME_LOGS[player.id] || {}).length).length;
+
+  const rows = results
+    .map(({ player }) => {
+      const quoteCount = PLAYER_QUOTES[player.id]?.length || 0;
+      const realYears = Object.keys(REAL_GAME_LOGS[player.id] || {});
+      return `
+        <tr>
+          <td><div class="player-row-name">${playerAvatar(player)}${playerNameLink(player)}</div></td>
+          <td><span class="pos-badge pos-${player.position}">${player.position}</span></td>
+          <td>${tagBadge(player)}</td>
+          <td>${quoteCount ? `Yes (${quoteCount})` : "&ndash;"}</td>
+          <td>${realYears.length ? escapeHtml(realYears.join(", ")) : "&ndash;"}</td>
+        </tr>`;
+    })
+    .join("") || `<tr><td colspan="5"><p class="hint">No players match your search/filter.</p></td></tr>`;
+
+  return `
+    <h2>Dev</h2>
+    <p class="hint">Data-coverage checklist -- every player, ranked by nothing in particular (alphabetical), showing which have real quotes and which have a real archived season in the database. Everyone else falls back to generated data.</p>
+    <p class="hint">${withQuotes} of ${results.length} shown have quotes &middot; ${withRealSeasons} of ${results.length} shown have a real archived season.</p>
+
+    <div class="draft-filters">
+      <input type="text" id="dev-search" placeholder="Search players..." value="${escapeHtml(state.devFilter.query)}" />
+      <select id="dev-position-filter">
+        ${["ALL", "QB", "RB", "WR", "TE", "COACH", "K", "DEF"]
+          .map((p) => `<option value="${p}" ${state.devFilter.position === p ? "selected" : ""}>${p}</option>`)
+          .join("")}
+      </select>
+      <select id="dev-tag-filter">
+        ${[
+          ["ALL", "All Players"],
+          ["HOF", "Hall of Famers"],
+          ["HOVG", "Hall of Very Good"],
+          ["ACTIVE", "Active"],
+        ]
+          .map(([v, label]) => `<option value="${v}" ${state.devFilter.tagFilter === v ? "selected" : ""}>${label}</option>`)
+          .join("")}
+      </select>
+    </div>
+
+    <table class="roster-table dev-table">
+      <thead><tr><th>Player</th><th>Pos</th><th>Tag</th><th>Quotes</th><th>Real Seasons</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
 }
 
 // ---------------------------------------------------------------- faq
@@ -1833,6 +1913,7 @@ function render() {
   else if (state.screen === "season") app.innerHTML = renderSeason();
   else if (state.screen === "games") app.innerHTML = renderGames();
   else if (state.screen === "faq") app.innerHTML = renderFAQ();
+  else if (state.screen === "dev") app.innerHTML = renderDev();
 }
 
 function wireEvents() {
@@ -1850,6 +1931,26 @@ function wireEvents() {
   document.addEventListener("click", (e) => {
     const target = e.target.closest('[data-action="show-player"]');
     if (target) showPlayerCard(target.dataset.player);
+  });
+  // "drop-player-from-card" -- same reasoning as "show-player" above:
+  // the player card overlay sits outside #app, so this needs its own
+  // document-level listener rather than the #app-scoped one below.
+  // Re-renders the card in place afterward (Drop button gone, "Not
+  // currently rostered" now) as well as whatever screen is underneath.
+  document.addEventListener("click", (e) => {
+    const target = e.target.closest('[data-action="drop-player-from-card"]');
+    if (!target) return;
+    const player = getPlayerById(target.dataset.player);
+    if (confirm(`Drop ${player ? player.name : "this player"}? They'll return to the free agent pool.`)) {
+      try {
+        dropPlayer(state.draft, target.dataset.team, target.dataset.player);
+        persist();
+        showPlayerCard(target.dataset.player);
+        render();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
   });
   // Keyboard activation (Enter/Space) for the avatar's role="button"
   // span, which isn't a real <button> so doesn't get this for free.
@@ -1894,6 +1995,9 @@ function wireEvents() {
     } else if (state.screen === "teams" && e.target.id === "fa-search") {
       state.freeAgentFilter.query = e.target.value;
       rerenderPreservingFocus();
+    } else if (state.screen === "dev" && e.target.id === "dev-search") {
+      state.devFilter.query = e.target.value;
+      rerenderPreservingFocus();
     }
   });
 
@@ -1917,6 +2021,12 @@ function wireEvents() {
       render();
     } else if (state.screen === "teams") {
       handleTeamsChange(e.target);
+    } else if (state.screen === "dev" && e.target.id === "dev-position-filter") {
+      state.devFilter.position = e.target.value;
+      render();
+    } else if (state.screen === "dev" && e.target.id === "dev-tag-filter") {
+      state.devFilter.tagFilter = e.target.value;
+      render();
     }
   });
 }
