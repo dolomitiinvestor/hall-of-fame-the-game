@@ -327,3 +327,44 @@ export function getStandingsList(season, draft) {
       return b.pointsFor - a.pointsFor;
     });
 }
+
+// Every player who has actually started (and scored) in at least one
+// week played so far this season, with their points summed across
+// those weeks -- sorted highest first, then grouped by position by the
+// caller. Reads straight from season.weeklyResults (each stored score
+// object, same as the Games tab's box scores), so it only reflects
+// weeks that have actually been simulated; a benched week contributes
+// nothing, same as real fantasy scoring. A started COACH's own
+// breakdown row is always 0 (their scoring is a team-level bonus, not
+// a personal stat -- see computeTeamWeekScore() above), so that bonus
+// is credited to them here instead, the same substitution the Games
+// tab box score already shows in their row.
+export function getPlayerLeaders(season, draft) {
+  const totals = {};
+  season.weeklyResults.forEach((wk) => {
+    wk.matchups.forEach((m) => {
+      Object.values(m.scores).forEach((score) => {
+        score.breakdown.forEach((b) => {
+          const isCoachBonusRow = b.position === "COACH" && score.coachBonus && score.coachBonus.coachName === b.name;
+          const points = isCoachBonusRow ? score.coachBonus.amount : b.points;
+          if (!totals[b.playerId]) {
+            totals[b.playerId] = { playerId: b.playerId, name: b.name, position: b.position, totalPoints: 0, games: 0 };
+          }
+          totals[b.playerId].totalPoints = round1(totals[b.playerId].totalPoints + points);
+          totals[b.playerId].games += 1;
+        });
+      });
+    });
+  });
+
+  const teamNameByPlayer = {};
+  draft.teams.forEach((t) => {
+    t.roster.forEach((s) => {
+      if (s.playerId) teamNameByPlayer[s.playerId] = t.name;
+    });
+  });
+
+  return Object.values(totals)
+    .map((p) => ({ ...p, teamName: teamNameByPlayer[p.playerId] || null }))
+    .sort((a, b) => b.totalPoints - a.totalPoints);
+}

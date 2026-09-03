@@ -22,6 +22,7 @@ import {
   isSeasonComplete,
   isRegularSeasonComplete,
   getStandingsList,
+  getPlayerLeaders,
   weeklyPointsForPlayer,
   SEASON_WEEKS,
 } from "./season.js";
@@ -513,7 +514,13 @@ function injuryProneBadge(player) {
 function renderDraft() {
   const draft = state.draft;
   if (!draft) {
-    return `<h2>Draft</h2><p class="hint">Set up a league first.</p>`;
+    return `
+      <h2>Draft</h2>
+      <p class="hint">Set up a league first.</p>
+      <div class="setup-actions">
+        <button class="btn btn-primary" data-action="start-draft">Start Draft</button>
+      </div>
+    `;
   }
 
   if (draft.status === "complete") {
@@ -659,7 +666,10 @@ function renderDraftBoard(draft) {
 
 function handleDraftClick(action, target) {
   const draft = state.draft;
-  if (!draft) return;
+  if (!draft) {
+    if (action === "start-draft") startDraft();
+    return;
+  }
   if (action === "draft-player") {
     try {
       draftPlayer(draft, target.dataset.player);
@@ -1306,7 +1316,54 @@ function renderSeason() {
       <tbody>${standings}</tbody>
     </table>
 
+    ${renderLeadersSection(season, draft)}
+
     ${renderPlayoffsSection(season, draft)}
+  `;
+}
+
+// Points leaders so far this season, one collapsible table per
+// position (only positions with at least one player who's actually
+// started a week are shown -- e.g. no K/DEF section if that league
+// has them disabled). Recomputed live from season.weeklyResults on
+// every render, same as the standings table above it.
+const LEADER_POSITIONS = ["QB", "RB", "WR", "TE", "COACH", "K", "DEF"];
+
+function renderLeadersSection(season, draft) {
+  if (!season.weeklyResults.length) {
+    return `<h3>Leaders</h3><p class="hint">No games played yet -- check back after the first week.</p>`;
+  }
+  const leaders = getPlayerLeaders(season, draft);
+  const sections = LEADER_POSITIONS.map((pos) => {
+    const rows = leaders.filter((p) => p.position === pos);
+    if (!rows.length) return "";
+    const body = rows
+      .map((p, i) => {
+        const player = getPlayerById(p.playerId);
+        const nameHtml = player ? `${playerAvatar(player)}${playerNameLink(player)}` : escapeHtml(p.name);
+        return `
+        <tr>
+          <td>${i + 1}</td>
+          <td><div class="player-row-name">${nameHtml}</div></td>
+          <td>${escapeHtml(p.teamName || "–")}</td>
+          <td>${p.totalPoints.toFixed(1)}</td>
+        </tr>`;
+      })
+      .join("");
+    return `
+      <details class="panel leaders-panel" open>
+        <summary>${pos} <span class="tag-badge hovg-tag">${rows.length}</span></summary>
+        <table class="roster-table leaders-table">
+          <thead><tr><th>#</th><th>Player</th><th>Team</th><th>Pts</th></tr></thead>
+          <tbody>${body}</tbody>
+        </table>
+      </details>`;
+  }).join("");
+
+  return `
+    <h3>Leaders (Through Week ${season.currentWeek})</h3>
+    <p class="hint">Every started player who's scored so far this season (regular season and playoffs), ranked by total points within their position.</p>
+    ${sections}
   `;
 }
 
