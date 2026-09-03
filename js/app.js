@@ -50,7 +50,7 @@ const DEFAULT_LEAGUE_SETTINGS = {
 
 const state = {
   screen: "setup",
-  setupTeamNames: ["Team 1", "Team 2"],
+  setupTeamNames: Array.from({ length: 8 }, (_, i) => `Team ${i + 1}`),
   leagueSettings: { ...DEFAULT_LEAGUE_SETTINGS },
   draft: null,
   season: null,
