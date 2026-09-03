@@ -832,6 +832,74 @@ select {
   text-align: right;
 }
 
+/* Name, statline, and (collapsed) quote each stay on their own single
+   line, truncating with an ellipsis rather than wrapping to a second
+   line -- .player-cell was flexing all of these into one row before
+   (a bug: it's also used, correctly, as a flex row in the Teams
+   roster editor), which this overrides back to a plain vertical
+   stack for the matchup table specifically. */
+.matchup-table .player-cell {
+  display: block;
+}
+
+.matchup-table .player-row-name {
+  flex-wrap: nowrap;
+}
+
+.matchup-table .player-avatar {
+  flex-shrink: 0;
+}
+
+.matchup-table .player-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.matchup-table .box-score-line {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.matchup-table .player-quote {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.matchup-table .player-quote:hover {
+  color: var(--text);
+}
+
+/* Clicked open: no longer clipped to one line, and centered on the
+   player cell via the left:50%/translateX(-50%) trick so it grows the
+   same distance left and right as it wraps, instead of just widening
+   toward whichever edge it's aligned to. Staying in normal flow (not
+   absolutely positioned) means the row still grows taller around it,
+   pushing the next row down, same as any other wrapped table cell. */
+.matchup-table .player-quote.expanded {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  width: max-content;
+  max-width: min(80vw, 26rem);
+  text-align: left;
+  background: var(--panel-alt);
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  z-index: 2;
+}
+
+.matchup-table .player-cell.mirrored .player-quote.expanded {
+  text-align: left;
+}
+
 .link-btn {
   background: none;
   border: none;

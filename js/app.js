@@ -1006,7 +1006,7 @@ function matchupRowCells(entry, coachBonus, week, mirrored) {
     player: `<td class="player-cell${mirrored ? " mirrored" : ""}">
         <div class="player-row-name">${player ? playerAvatar(player) : ""}${nameHtml}${coachSuffix} ${badge}</div>
         ${boxLine ? `<div class="box-score-line">${escapeHtml(boxLine)}</div>` : ""}
-        ${quote ? `<div class="player-quote">&ldquo;${escapeHtml(quote)}&rdquo;</div>` : ""}
+        ${quote ? `<div class="player-quote" onclick="this.classList.toggle('expanded')">&ldquo;${escapeHtml(quote)}&rdquo;</div>` : ""}
         ${coachBonusLine}
       </td>`,
     pts: `<td class="pts-cell">${displayPoints.toFixed(1)}</td>`,
