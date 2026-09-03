@@ -24,6 +24,7 @@ import {
   getStandingsList,
   getPlayerLeaders,
   weeklyPointsForPlayer,
+  getNewSeasonEndingInjuriesForWeek,
   SEASON_WEEKS,
 } from "./season.js";
 import { saveState, loadState, clearState } from "./storage.js";
@@ -493,9 +494,13 @@ const INJURY_BADGE_CLASS = {
 // to show only an ACTIVE player's fixed real-world designation, if
 // any -- retired players' status is a per-week random roll and only
 // makes sense once a specific simulated week exists (the Season
-// screen's matchup detail, where `week` is always passed).
-function injuryBadge(player, week) {
-  const key = getInjuryStatusKey(player, week);
+// screen's matchup detail, where `week` is always passed). `season`
+// (optional) is the in-progress fantasy season -- pass it whenever
+// available so a player already on IR for a season-ending injury (see
+// season.seasonEndingInjuries) shows that here instead of just their
+// per-week flutter.
+function injuryBadge(player, week, season) {
+  const key = getInjuryStatusKey(player, week, season?.seasonEndingInjuries);
   if (key === "HEALTHY") return "";
   const { code, label } = INJURY_STATUSES[key];
   return `<span class="injury-badge ${INJURY_BADGE_CLASS[key]}" title="${escapeHtml(label)}">${code}</span>`;
@@ -708,6 +713,10 @@ function renderTeams() {
   const draft = state.draft;
   if (!draft) return `<h2>Teams</h2><p class="hint">Set up a league first.</p>`;
   const rules = getRules();
+  // The next week that will actually be played -- lets a roster
+  // already on IR for a season-ending injury show that here, not just
+  // in that week's box score after the fact.
+  const upcomingWeek = state.season ? state.season.currentWeek + 1 : null;
 
   const teams = draft.teams
     .map((team, teamIdx) => {
@@ -745,7 +754,7 @@ function renderTeams() {
               <td class="player-cell">
                 ${currentPlayer ? playerAvatar(currentPlayer) : ""}
                 <select data-action="set-slot" data-team="${teamIdx}" data-slot="${slotIdx}">${optionHtml}</select>
-                ${currentPlayer ? injuryBadge(currentPlayer) : ""}
+                ${currentPlayer ? injuryBadge(currentPlayer, upcomingWeek, state.season) : ""}
               </td>
               <td class="season-line">${seasonLine}</td>
               <td>${dropBtn}</td>
@@ -957,7 +966,7 @@ function benchEntries(team, week) {
         name: player.name,
         position: player.position,
         points: weeklyPointsForPlayer(s.playerId, rules, week, state.season),
-        injury: getInjuryStatusKey(player, week),
+        injury: getInjuryStatusKey(player, week, state.season?.seasonEndingInjuries),
         isBench: true,
       };
     })
@@ -1373,7 +1382,8 @@ function handleSeasonClick(action) {
     persist();
     render();
     const justPlayed = state.season.weeklyResults[state.season.weeklyResults.length - 1];
-    showWeekCompleteSplash(justPlayed);
+    const newInjuries = getNewSeasonEndingInjuriesForWeek(state.season, justPlayed.week);
+    showWeekCompleteSplash(justPlayed, newInjuries);
   } else if (action === "goto-teams-from-season") {
     setScreen("teams");
   } else if (action === "goto-games-from-season") {
@@ -1666,7 +1676,7 @@ function showPlayerCard(playerId) {
           <span class="pos-badge pos-${player.position}">${player.position}</span>
           ${tagBadge(player)}
           ${byeBadge(best.season.team)}
-          ${injuryBadge(player)}
+          ${injuryBadge(player, state.season ? state.season.currentWeek + 1 : null, state.season)}
           ${injuryProneBadge(player)}
         </p>
         <p class="hint">${teamLine}</p>
@@ -1980,15 +1990,26 @@ function initSplash() {
 }
 
 // Shown after each "Advance Week" -- congratulates the player, shows
-// the logo again, and names the week (and playoff round, if any) that
-// was just completed.
-function showWeekCompleteSplash(weekResult) {
+// the logo again, names the week (and playoff round, if any) that was
+// just completed, and -- this is the first time that week's results
+// are actually shown -- calls out anyone who suffered a season-ending
+// injury this exact week (see getNewSeasonEndingInjuriesForWeek(),
+// season.js). `newInjuries` is that array of { playerId, reason }.
+function showWeekCompleteSplash(weekResult, newInjuries = []) {
   const overlay = document.getElementById("week-splash-overlay");
   const text = document.getElementById("week-splash-text");
-  if (!overlay || !text) return;
+  const injuriesEl = document.getElementById("week-splash-injuries");
+  if (!overlay || !text || !injuriesEl) return;
   const label =
     weekResult.round === "playoff" ? `Playoffs: ${weekResult.roundLabel} (Week ${weekResult.week})` : `Week ${weekResult.week}`;
   text.textContent = `Congratulations! ${label} complete.`;
+  injuriesEl.innerHTML = newInjuries
+    .map(({ playerId, reason }) => {
+      const player = getPlayerById(playerId);
+      const name = player ? escapeHtml(player.name) : "A player";
+      return `<p class="injury-alert">${name} suffered a season-ending injury: ${escapeHtml(reason)}.</p>`;
+    })
+    .join("");
   overlay.hidden = false;
 }
 
