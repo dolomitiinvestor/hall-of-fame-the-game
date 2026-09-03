@@ -640,6 +640,32 @@ select {
   font-size: 0.85rem;
 }
 
+.leaders-panel {
+  margin-bottom: 0.5rem;
+}
+
+.leaders-panel summary {
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.leaders-table {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.leaders-table td:first-child {
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  width: 2rem;
+}
+
+.leaders-table td:last-child {
+  font-variant-numeric: tabular-nums;
+}
+
 .nfl-game {
   display: flex;
   gap: 0.4rem;
