@@ -417,6 +417,8 @@ export const PLAYERS = [
     tag: "HOF",
     seasons: [
       { year: 1995, team: "STL", games: 16, stats: { rec: 119, recYds: 1781, recTD: 13 } },
+      // Full game log archived in js/data/realBoxScores.js (REAL_GAME_LOGS).
+      { year: 2000, team: "STL", games: 16, stats: { rec: 87, recYds: 1471, recTD: 9, rushAtt: 1, rushYds: 11, fumblesLost: 1 } },
     ],
   },
 
