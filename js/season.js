@@ -19,7 +19,7 @@ import { round1, getSeasonSummary, calculateFantasyPoints } from "./scoring.js";
 import { generateSchedule } from "./schedule.js";
 import { seededNormal } from "./rng.js";
 import { isOutForWeek, getInjuryStatusKey } from "./injuries.js";
-import { generateBoxScore, realGameBoxScore } from "./boxScore.js";
+import { generateBoxScore, realGameBoxScore, boxScoreToStats } from "./boxScore.js";
 import { shuffle } from "./draftEngine.js";
 import { REAL_GAME_LOGS } from "./data/realBoxScores.js";
 
@@ -163,8 +163,8 @@ export function computeTeamWeekScore(team, rules, week, season) {
   const starterIds = getStarterIds(team);
   const breakdown = starterIds.map((pid) => {
     const player = getPlayerById(pid);
-    const points = weeklyPointsForPlayer(pid, rules, week, season);
     const injury = week == null ? "HEALTHY" : getInjuryStatusKey(player, week);
+    let points = weeklyPointsForPlayer(pid, rules, week, season);
     // Generated regardless of injury status -- an OUT/IR starter still
     // gets a box score (their fantasy points are zeroed separately,
     // above; the box score isn't gated on whether they "played").
@@ -177,6 +177,16 @@ export function computeTeamWeekScore(team, rules, week, season) {
         const multiplier = weeklyVarianceMultiplier(pid, week);
         const resolved = resolvePlayerSeason(pid, rules, season);
         boxScore = generateBoxScore(player, resolved?.season, multiplier);
+        // A synthetic, healthy statline's points are recomputed from
+        // that exact (rounded) statline instead of the independent
+        // rate*multiplier sample above -- otherwise per-category
+        // rounding could show, say, a 2-TD game worth fewer points
+        // than a 0-TD one. OUT/IR stays zeroed (still shows what the
+        // statline *would* have been -- see the box score comment
+        // above) and a real archived game already corresponds exactly.
+        if (boxScore && !isOutForWeek(player, week)) {
+          points = calculateFantasyPoints(boxScoreToStats(boxScore), rules, player.position);
+        }
       }
     }
     return { playerId: pid, name: player.name, position: player.position, points, injury, boxScore };

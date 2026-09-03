@@ -7,13 +7,14 @@
 //      js/data/realBoxScores.js and resolveRealGame() in season.js),
 //      used as-is with no scaling.
 //   2. generateBoxScore() -- a simulated box score for everyone else:
-//      the player's selected season's per-game averages, scaled by the
-//      SAME weekly variance multiplier already applied to their
-//      fantasy points that week (see weeklyVarianceMultiplier() in
-//      season.js), then rounded to whole numbers. Using the same
-//      multiplier is what makes the box score "correspond to" that
-//      week's score -- a big scoring week shows big yardage/TD
-//      numbers, not independently-random ones.
+//      the player's selected season's per-game averages, scaled by a
+//      weekly variance multiplier (see weeklyVarianceMultiplier() in
+//      season.js) and rounded to whole numbers. That week's fantasy
+//      points are then computed FROM this exact rounded statline (see
+//      boxScoreToStats() below and computeTeamWeekScore() in
+//      season.js), rather than sampled independently -- so the points
+//      shown always add up to the stats shown next to them, the same
+//      way a real game's points do.
 //
 // "Carries" isn't a stored stat (season data only has rushing yards/
 // TDs) -- it's estimated from rushing yards at a fixed yards-per-carry
@@ -88,6 +89,27 @@ export function generateBoxScore(player, season, multiplier) {
     box.fumbles = scaledInt(s.fumblesLost, games, multiplier);
   }
   return box;
+}
+
+// Turns a box score (generateBoxScore()/realGameBoxScore() shape,
+// "receptions"/"fumbles") into the stat-field shape
+// calculateFantasyPoints() (scoring.js) expects ("rec"/"fumblesLost")
+// -- every other field name already matches, so this just renames
+// those two. Lets a week's points be computed directly from the exact
+// statline shown for it.
+export function boxScoreToStats(box) {
+  if (!box) return {};
+  return {
+    passYds: box.passYds,
+    passTD: box.passTD,
+    passInt: box.passInt,
+    rushYds: box.rushYds,
+    rushTD: box.rushTD,
+    recYds: box.recYds,
+    recTD: box.recTD,
+    rec: box.receptions,
+    fumblesLost: box.fumbles,
+  };
 }
 
 // Compact "187 pass yds, 2 pass TD, 12 rush yds" style line, shared by
