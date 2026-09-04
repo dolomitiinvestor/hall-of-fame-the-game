@@ -798,6 +798,17 @@ export const PLAYERS = [
       { year: 1983, team: "DAL", games: 16, stats: { passYds: 3980, passTD: 29, passInt: 23 } },
     ],
   },
+  {
+    id: "tom-brady",
+    name: "Tom Brady",
+    position: "QB",
+    tag: "HOVG",
+    heightIn: 76,
+    weightLbs: 225,
+    seasons: [
+      { year: 2007, team: "NE", games: 16, stats: { passYds: 4806, passTD: 50, passInt: 8 } },
+    ],
+  },
 
   // ---------------------------------------------------------- RB (hof: false)
   {
