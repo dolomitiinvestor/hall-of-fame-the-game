@@ -360,9 +360,9 @@ select {
   width: 1.6rem;
   height: 1.6rem;
   border-radius: 50%;
-  background: var(--panel-alt);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
+  background: linear-gradient(160deg, var(--gold-light), var(--gold) 55%, var(--gold-dark));
+  border: 1px solid var(--gold-dark);
+  color: var(--text);
   flex-shrink: 0;
   overflow: hidden;
   vertical-align: middle;
