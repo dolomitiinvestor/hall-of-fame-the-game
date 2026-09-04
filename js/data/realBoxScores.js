@@ -190,4 +190,24 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 23, rushYds: 184, rushTD: 1, rec: 3, recYds: 10, recTD: 0 }, // Wk17 vs NYJ
     ],
   },
+  "brett-favre": {
+    1995: [
+      { rushAtt: 4, rushYds: 27, rushTD: 0, passYds: 299, passTD: 2, passInt: 3 }, // Wk1 vs STL
+      { rushAtt: 4, rushYds: 7, rushTD: 0, passYds: 312, passTD: 3, passInt: 1 }, // Wk2 @CHI
+      { rushAtt: 1, rushYds: -2, rushTD: 0, passYds: 141, passTD: 2 }, // Wk3 vs NYG
+      { rushAtt: 2, rushYds: 39, rushTD: 0, passYds: 202, passTD: 2, passInt: 1 }, // Wk4 @JAX
+      { rushAtt: 2, rushYds: 25, rushTD: 2, passYds: 295, passTD: 1, passInt: 1 }, // Wk6 @DAL
+      { rushAtt: 5, rushYds: 12, rushTD: 0, passYds: 342, passTD: 2 }, // Wk7 vs DET
+      { rushAtt: 1, rushYds: 4, rushTD: 0, passYds: 295, passTD: 4 }, // Wk8 vs MIN
+      { rushAtt: 1, rushYds: 12, rushTD: 0, passYds: 304, passTD: 1, passInt: 3, fumblesLost: 1 }, // Wk9 @DET
+      { rushAtt: 1, rushYds: 2, rushTD: 0, passYds: 177, passInt: 2, fumblesLost: 1 }, // Wk10 @MIN
+      { rushAtt: 1, rushYds: 2, rushTD: 0, passYds: 336, passTD: 5 }, // Wk11 vs CHI
+      { rushAtt: 5, rushYds: -1, rushTD: 1, passYds: 210, passTD: 3, fumblesLost: 1 }, // Wk12 @CLE
+      { rushAtt: 2, rushYds: 18, rushTD: 0, passYds: 267, passTD: 3 }, // Wk13 vs TAM
+      { rushAtt: 6, rushYds: 15, rushTD: 0, passYds: 339, passTD: 3, passInt: 1 }, // Wk14 vs CIN
+      { passYds: 285, passTD: 1, passInt: 1 }, // Wk15 @TAM (OT)
+      { rushAtt: 1, rushYds: 15, rushTD: 0, passYds: 308, passTD: 4 }, // Wk16 @NOR
+      { rushAtt: 3, rushYds: 6, rushTD: 0, passYds: 301, passTD: 2, fumblesLost: 1 }, // Wk17 vs PIT
+    ],
+  },
 };

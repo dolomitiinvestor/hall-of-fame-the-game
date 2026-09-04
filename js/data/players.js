@@ -100,6 +100,7 @@ export const PLAYERS = [
     heightIn: 74,
     weightLbs: 222,
     seasons: [
+      { year: 1995, team: "GB", games: 16, stats: { rushYds: 181, rushTD: 3, passYds: 4413, passTD: 38, passInt: 13, fumblesLost: 4 } },
       { year: 1996, team: "GB", games: 16, stats: { passYds: 3899, passTD: 39, passInt: 13 } },
     ],
   },
