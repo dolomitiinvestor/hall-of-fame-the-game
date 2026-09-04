@@ -201,7 +201,7 @@ export const PLAYERS = [
     heightIn: 68,
     weightLbs: 203,
     seasons: [
-      { year: 1997, team: "DET", games: 16, stats: { rushYds: 2053, rushTD: 11, rec: 33, recYds: 305, recTD: 1 } },
+      { year: 1997, team: "DET", games: 16, stats: { rushYds: 2053, rushTD: 11, rec: 33, recYds: 305, recTD: 3, fumblesLost: 2 } },
     ],
   },
   {

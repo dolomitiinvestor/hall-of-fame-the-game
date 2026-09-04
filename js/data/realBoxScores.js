@@ -169,4 +169,25 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 1, rushYds: 8, rushTD: 0, rec: 6, recYds: 80, recTD: 0 }, // Wk16 @NYJ
     ],
   },
+  "barry-sanders": {
+    1997: [
+      { rushAtt: 15, rushYds: 33, rushTD: 0, rec: 2, recYds: 26, recTD: 0 }, // Wk1 vs ATL
+      { rushAtt: 10, rushYds: 20, rushTD: 0, rec: 8, recYds: 102, recTD: 1 }, // Wk2 vs TAM
+      { rushAtt: 19, rushYds: 161, rushTD: 0, rec: 1, recYds: 3, recTD: 0 }, // Wk3 @CHI
+      { rushAtt: 18, rushYds: 113, rushTD: 0, rec: 1, recYds: 17, recTD: 1 }, // Wk4 @NOR
+      { rushAtt: 28, rushYds: 139, rushTD: 0, rec: 1, recYds: 20, recTD: 0 }, // Wk5 vs GNB
+      { rushAtt: 25, rushYds: 107, rushTD: 0, rec: 2, recYds: -1, recTD: 0 }, // Wk6 @BUF
+      { rushAtt: 24, rushYds: 215, rushTD: 2, rec: 1, recYds: 7, recTD: 1, fumblesLost: 1 }, // Wk7 @TAM
+      { rushAtt: 24, rushYds: 105, rushTD: 1, rec: 2, recYds: 21, recTD: 0 }, // Wk8 vs NYG (OT)
+      // Wk9: bye
+      { rushAtt: 23, rushYds: 105, rushTD: 0 }, // Wk10 @GNB
+      { rushAtt: 15, rushYds: 105, rushTD: 1, rec: 1, recYds: 9, recTD: 0, fumblesLost: 1 }, // Wk11 @WAS
+      { rushAtt: 19, rushYds: 108, rushTD: 0, rec: 1, recYds: 34, recTD: 0 }, // Wk12 vs MIN
+      { rushAtt: 24, rushYds: 216, rushTD: 2, rec: 2, recYds: 10, recTD: 0 }, // Wk13 vs IND
+      { rushAtt: 19, rushYds: 167, rushTD: 3, rec: 2, recYds: 8, recTD: 0 }, // Wk14 vs CHI
+      { rushAtt: 30, rushYds: 137, rushTD: 1, rec: 1, recYds: 2, recTD: 0 }, // Wk15 @MIA
+      { rushAtt: 19, rushYds: 138, rushTD: 0, rec: 5, recYds: 37, recTD: 0 }, // Wk16 @MIN
+      { rushAtt: 23, rushYds: 184, rushTD: 1, rec: 3, recYds: 10, recTD: 0 }, // Wk17 vs NYJ
+    ],
+  },
 };
