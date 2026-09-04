@@ -49,4 +49,24 @@ export const REAL_GAME_LOGS = {
       { rec: 2, recYds: 43, recTD: 0 }, // Wk17 @NOR
     ],
   },
+  "calvin-johnson": {
+    2012: [
+      { rec: 6, recYds: 111, recTD: 0 }, // Wk1 vs STL
+      { rec: 8, recYds: 94, recTD: 0 }, // Wk2 @SFO
+      { rec: 10, recYds: 164, recTD: 1 }, // Wk3 @TEN (OT)
+      { rec: 5, recYds: 54, recTD: 0 }, // Wk4 vs MIN
+      { rec: 6, recYds: 135, recTD: 0 }, // Wk6 @PHI (OT)
+      { rec: 3, recYds: 34, recTD: 0 }, // Wk7 @CHI
+      { rec: 3, recYds: 46, recTD: 0 }, // Wk8 vs SEA
+      { rec: 7, recYds: 129, recTD: 0 }, // Wk9 @JAX
+      { rec: 12, recYds: 207, recTD: 1, fumblesLost: 1 }, // Wk10 @MIN
+      { rec: 5, recYds: 143, recTD: 1, fumblesLost: 1 }, // Wk11 vs GNB
+      { rec: 8, recYds: 140, recTD: 1 }, // Wk12 vs HOU (OT)
+      { rec: 13, recYds: 171, recTD: 1 }, // Wk13 vs IND
+      { rec: 10, recYds: 118, recTD: 1 }, // Wk14 @GNB
+      { rec: 10, recYds: 121, recTD: 0 }, // Wk15 @ARI
+      { rec: 11, recYds: 225, recTD: 0, fumblesLost: 1 }, // Wk16 vs ATL
+      { rec: 5, recYds: 72, recTD: 0 }, // Wk17 @CHI
+    ],
+  },
 };
