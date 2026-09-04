@@ -321,6 +321,15 @@ export const PLAYERS = [
     ],
   },
   {
+    id: "calvin-johnson",
+    name: "Calvin Johnson",
+    position: "WR",
+    tag: "HOF",
+    seasons: [
+      { year: 2012, team: "DET", games: 16, stats: { rec: 122, recYds: 1964, recTD: 5 } },
+    ],
+  },
+  {
     id: "don-hutson",
     name: "Don Hutson",
     position: "WR",
