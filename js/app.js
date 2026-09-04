@@ -467,17 +467,36 @@ function tagBadge(player) {
   return `<span class="tag-badge ${entry.cls}" title="${entry.title}">${player.tag}</span>`;
 }
 
+// "6'5", 236 lbs" -- or "" for the many players heightIn/weightLbs
+// hasn't been sourced for yet (see js/data/players.js's field comment).
+function formatHeightWeight(player) {
+  if (!player.heightIn || !player.weightLbs) return "";
+  const feet = Math.floor(player.heightIn / 12);
+  const inches = player.heightIn % 12;
+  return `${feet}'${inches}", ${player.weightLbs} lbs`;
+}
+
+// Shared <img> for a player's headshot: tries img/headshots/<id>.jpg
+// first, falls back to <id>.png if that 404s (a couple of uploaded
+// headshots are PNGs), and removes itself if neither exists -- leaving
+// just the generic silhouette underneath (see HEADSHOT_EXTENSIONS in
+// probeHeadshots() below, which mirrors this same jpg-then-png order
+// for the Dev tab's coverage check).
+function headshotImg(id) {
+  return `<img src="img/headshots/${id}.jpg" alt="" loading="lazy" data-fallback="img/headshots/${id}.png" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.removeAttribute('data-fallback');}else{this.remove();}" />`;
+}
+
 // Blank-for-now headshot placeholder. Drop a matching file at
-// img/headshots/<player.id>.jpg later and it starts showing up here
-// automatically -- no code changes needed. Until then (today, for
-// every player) the <img> fails to load and removes itself, leaving
-// just the generic silhouette underneath. Clickable everywhere it
-// appears -- opens that player's card (see showPlayerCard()).
+// img/headshots/<player.id>.jpg (or .png) later and it starts showing
+// up here automatically -- no code changes needed. Until then (today,
+// for most players) the <img> fails to load and removes itself,
+// leaving just the generic silhouette underneath. Clickable everywhere
+// it appears -- opens that player's card (see showPlayerCard()).
 function playerAvatar(player) {
   return `
     <span class="player-avatar" data-action="show-player" data-player="${player.id}" role="button" tabindex="0" aria-label="View ${escapeHtml(player.name)}'s player card">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-8 2.2-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.8-3.6-5-8-5Z"/></svg>
-      <img src="img/headshots/${player.id}.jpg" alt="" loading="lazy" onerror="this.remove()" />
+      ${headshotImg(player.id)}
     </span>`;
 }
 
@@ -1686,10 +1705,11 @@ function showPlayerCard(playerId) {
     <div class="player-card-header">
       <span class="player-avatar player-avatar-lg" aria-hidden="true">
         <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-8 2.2-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.8-3.6-5-8-5Z"/></svg>
-        <img src="img/headshots/${player.id}.jpg" alt="" loading="lazy" onerror="this.remove()" />
+        ${headshotImg(player.id)}
       </span>
       <div>
         <h2>${escapeHtml(player.name)}</h2>
+        ${formatHeightWeight(player) ? `<p class="hint player-card-hw">${formatHeightWeight(player)}</p>` : ""}
         <p class="player-card-badges">
           <span class="pos-badge pos-${player.position}">${player.position}</span>
           ${tagBadge(player)}
@@ -1714,24 +1734,70 @@ function closePlayerCard() {
 
 // ---------------------------------------------------------------- dev
 
+// Headshot coverage: unlike quotes/real seasons (plain JS data lookups),
+// whether img/headshots/<id>.jpg actually exists can only be answered by
+// trying to load it -- there's no build step producing a manifest of
+// what's in that folder. probeHeadshots() below does that probe once per
+// player id (cached in headshotChecked/headshotAvailable so re-renders
+// don't re-fetch) and re-renders the Dev screen when a batch resolves,
+// so the counts below fill in a beat after the tab first opens.
+const headshotChecked = new Set();
+const headshotAvailable = new Set();
+const HEADSHOT_EXTENSIONS = ["jpg", "png"]; // same order headshotImg() tries them in
+
+function tryLoadImage(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
+}
+
+async function probeOneHeadshot(id) {
+  for (const ext of HEADSHOT_EXTENSIONS) {
+    if (await tryLoadImage(`img/headshots/${id}.${ext}`)) return true;
+  }
+  return false;
+}
+
+function probeHeadshots(playerIds) {
+  const toCheck = playerIds.filter((id) => !headshotChecked.has(id));
+  if (!toCheck.length) return;
+  toCheck.forEach((id) => headshotChecked.add(id));
+  Promise.all(
+    toCheck.map((id) => probeOneHeadshot(id).then((found) => found && headshotAvailable.add(id)))
+  ).then(() => {
+    if (state.screen === "dev") render();
+  });
+}
+
 // Data-coverage audit: every player/coach/kicker/defense in the game
 // (same pool as the Players tab), with whether they have real quotes
-// (js/data/playerQuotes.js) and/or a real archived game log
-// (REAL_GAME_LOGS, js/data/realBoxScores.js) -- the two content seams
-// this game fills in piecemeal, rather than every player automatically
-// having them. Not meant for regular players; a scrollable checklist
-// for filling in more real data over time.
+// (js/data/playerQuotes.js), a real archived game log (REAL_GAME_LOGS,
+// js/data/realBoxScores.js), and/or a headshot image (img/headshots/) --
+// the content seams this game fills in piecemeal, rather than every
+// player automatically having them. Not meant for regular players; a
+// scrollable checklist for filling in more real data over time.
 function renderDev() {
   const rules = getRules();
   const results = searchPlayers(state.devFilter, rules).sort((a, b) => a.player.name.localeCompare(b.player.name));
+  probeHeadshots(results.map(({ player }) => player.id));
 
   const withQuotes = results.filter(({ player }) => PLAYER_QUOTES[player.id]?.length).length;
   const withRealSeasons = results.filter(({ player }) => Object.keys(REAL_GAME_LOGS[player.id] || {}).length).length;
+  const withHeadshots = results.filter(({ player }) => headshotAvailable.has(player.id)).length;
+  const stillChecking = results.some(({ player }) => !headshotChecked.has(player.id));
 
   const rows = results
     .map(({ player }) => {
       const quoteCount = PLAYER_QUOTES[player.id]?.length || 0;
       const realYears = Object.keys(REAL_GAME_LOGS[player.id] || {});
+      const headshotCell = !headshotChecked.has(player.id)
+        ? "&hellip;"
+        : headshotAvailable.has(player.id)
+          ? "Yes"
+          : "&ndash;";
       return `
         <tr>
           <td><div class="player-row-name">${playerAvatar(player)}${playerNameLink(player)}</div></td>
@@ -1739,14 +1805,19 @@ function renderDev() {
           <td>${tagBadge(player)}</td>
           <td>${quoteCount ? `Yes (${quoteCount})` : "&ndash;"}</td>
           <td>${realYears.length ? escapeHtml(realYears.join(", ")) : "&ndash;"}</td>
+          <td>${headshotCell}</td>
         </tr>`;
     })
-    .join("") || `<tr><td colspan="5"><p class="hint">No players match your search/filter.</p></td></tr>`;
+    .join("") || `<tr><td colspan="6"><p class="hint">No players match your search/filter.</p></td></tr>`;
 
   return `
     <h2>Dev</h2>
-    <p class="hint">Data-coverage checklist -- every player, ranked by nothing in particular (alphabetical), showing which have real quotes and which have a real archived season in the database. Everyone else falls back to generated data.</p>
-    <p class="hint">${withQuotes} of ${results.length} shown have quotes &middot; ${withRealSeasons} of ${results.length} shown have a real archived season.</p>
+    <p class="hint">Data-coverage checklist -- every player, ranked by nothing in particular (alphabetical), showing which have real quotes, a real archived season, and a headshot photo in the database. Everyone else falls back to generated data or the silhouette placeholder.</p>
+    <p class="hint">
+      ${withQuotes} of ${results.length} shown have quotes &middot;
+      ${withRealSeasons} of ${results.length} shown have a real archived season &middot;
+      ${withHeadshots} of ${results.length} shown have a headshot${stillChecking ? " (checking&hellip;)" : ""}.
+    </p>
 
     <div class="draft-filters">
       <input type="text" id="dev-search" placeholder="Search players..." value="${escapeHtml(state.devFilter.query)}" />
@@ -1768,7 +1839,7 @@ function renderDev() {
     </div>
 
     <table class="roster-table dev-table">
-      <thead><tr><th>Player</th><th>Pos</th><th>Tag</th><th>Quotes</th><th>Real Seasons</th></tr></thead>
+      <thead><tr><th>Player</th><th>Pos</th><th>Tag</th><th>Quotes</th><th>Real Seasons</th><th>Headshot</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
   `;
