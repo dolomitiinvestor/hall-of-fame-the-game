@@ -149,4 +149,24 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 4, rushYds: -4, rushTD: 0, passYds: 356, passTD: 2 }, // Wk17 @NYG
     ],
   },
+  "andre-reed": {
+    1989: [
+      { rec: 6, recYds: 58, recTD: 0 }, // Wk1 @MIA
+      { rec: 13, recYds: 157, recTD: 0 }, // Wk2 vs DEN
+      { rec: 5, recYds: 135, recTD: 2 }, // Wk3 @HOU (OT)
+      { rec: 4, recYds: 114, recTD: 0 }, // Wk4 vs NWE
+      { rec: 7, recYds: 75, recTD: 1 }, // Wk5 @IND
+      { rec: 8, recYds: 106, recTD: 1 }, // Wk6 vs RAM
+      { rec: 5, recYds: 58, recTD: 1 }, // Wk7 vs NYJ
+      {}, // Wk8 vs MIA (0 catches on 2 targets)
+      { rec: 5, recYds: 100, recTD: 0 }, // Wk9 @ATL
+      { rec: 6, recYds: 76, recTD: 2 }, // Wk10 vs IND
+      { rec: 6, recYds: 107, recTD: 0 }, // Wk11 @NWE
+      { rushAtt: 1, rushYds: 23, rushTD: 0, rec: 1, recYds: 19, recTD: 1 }, // Wk12 vs CIN
+      { rec: 2, recYds: 77, recTD: 1 }, // Wk13 @SEA
+      { rec: 4, recYds: 35, recTD: 0 }, // Wk14 vs NOR
+      { rec: 10, recYds: 115, recTD: 0 }, // Wk15 @SFO
+      { rushAtt: 1, rushYds: 8, rushTD: 0, rec: 6, recYds: 80, recTD: 0 }, // Wk16 @NYJ
+    ],
+  },
 };
