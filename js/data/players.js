@@ -1689,33 +1689,6 @@ export const PLAYERS = [
     ],
   },
   {
-    id: "dandre-swift",
-    name: "D'Andre Swift",
-    position: "RB",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "CHI", games: 16, stats: { rushYds: 968, rushTD: 8, rec: 37, recYds: 276, recTD: 2 } },
-    ],
-  },
-  {
-    id: "travis-etienne-jr",
-    name: "Travis Etienne Jr.",
-    position: "RB",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "JAX", games: 16, stats: { rushYds: 930, rushTD: 8, rec: 36, recYds: 265, recTD: 2 } },
-    ],
-  },
-  {
-    id: "josh-jacobs",
-    name: "Josh Jacobs",
-    position: "RB",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "GB", games: 16, stats: { rushYds: 892, rushTD: 7, rec: 34, recYds: 254, recTD: 2 } },
-    ],
-  },
-  {
     id: "cam-skattebo",
     name: "Cam Skattebo",
     position: "RB",
@@ -1725,111 +1698,12 @@ export const PLAYERS = [
     ],
   },
   {
-    id: "david-montgomery",
-    name: "David Montgomery",
-    position: "RB",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "DET", games: 16, stats: { rushYds: 816, rushTD: 7, rec: 32, recYds: 232, recTD: 2 } },
-    ],
-  },
-  {
-    id: "bhayshul-tuten",
-    name: "Bhayshul Tuten",
-    position: "RB",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "JAX", games: 16, stats: { rushYds: 778, rushTD: 6, rec: 30, recYds: 221, recTD: 2 } },
-    ],
-  },
-  {
-    id: "treveyon-henderson",
-    name: "TreVeyon Henderson",
-    position: "RB",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "NE", games: 16, stats: { rushYds: 740, rushTD: 6, rec: 29, recYds: 210, recTD: 2 } },
-    ],
-  },
-  {
-    id: "quinshon-judkins",
-    name: "Quinshon Judkins",
-    position: "RB",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "CLE", games: 16, stats: { rushYds: 702, rushTD: 6, rec: 28, recYds: 199, recTD: 2 } },
-    ],
-  },
-  {
-    id: "jaylen-warren",
-    name: "Jaylen Warren",
-    position: "RB",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "PIT", games: 16, stats: { rushYds: 664, rushTD: 5, rec: 26, recYds: 188, recTD: 1 } },
-    ],
-  },
-  {
     id: "bucky-irving",
     name: "Bucky Irving",
     position: "RB",
     tag: "ACTIVE",
     seasons: [
       { year: 2026, team: "TB", games: 16, stats: { rushYds: 626, rushTD: 5, rec: 25, recYds: 177, recTD: 1 } },
-    ],
-  },
-  {
-    id: "rhamondre-stevenson",
-    name: "Rhamondre Stevenson",
-    position: "RB",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "NE", games: 16, stats: { rushYds: 588, rushTD: 5, rec: 24, recYds: 166, recTD: 1 } },
-    ],
-  },
-  {
-    id: "tony-pollard",
-    name: "Tony Pollard",
-    position: "RB",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "TEN", games: 16, stats: { rushYds: 550, rushTD: 4, rec: 23, recYds: 155, recTD: 1 } },
-    ],
-  },
-  {
-    id: "jk-dobbins",
-    name: "J.K. Dobbins",
-    position: "RB",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "DEN", games: 16, stats: { rushYds: 512, rushTD: 4, rec: 21, recYds: 144, recTD: 1 } },
-    ],
-  },
-  {
-    id: "aaron-jones-sr",
-    name: "Aaron Jones Sr.",
-    position: "RB",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "MIN", games: 16, stats: { rushYds: 474, rushTD: 4, rec: 20, recYds: 133, recTD: 1 } },
-    ],
-  },
-  {
-    id: "najee-harris",
-    name: "Najee Harris",
-    position: "RB",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "LAC", games: 16, stats: { rushYds: 436, rushTD: 3, rec: 19, recYds: 122, recTD: 1 } },
-    ],
-  },
-  {
-    id: "zach-charbonnet",
-    name: "Zach Charbonnet",
-    position: "RB",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "SEA", games: 16, stats: { rushYds: 398, rushTD: 3, rec: 17, recYds: 111, recTD: 1 } },
     ],
   },
 
@@ -1970,15 +1844,6 @@ export const PLAYERS = [
     ],
   },
   {
-    id: "terry-mclaurin",
-    name: "Terry McLaurin",
-    position: "WR",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "WAS", games: 16, stats: { rec: 71, recYds: 970, recTD: 6 } },
-    ],
-  },
-  {
     id: "garrett-wilson",
     name: "Garrett Wilson",
     position: "WR",
@@ -2015,15 +1880,6 @@ export const PLAYERS = [
     ],
   },
   {
-    id: "brian-thomas-jr",
-    name: "Brian Thomas Jr.",
-    position: "WR",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "JAX", games: 16, stats: { rec: 63, recYds: 860, recTD: 6 } },
-    ],
-  },
-  {
     id: "rome-odunze",
     name: "Rome Odunze",
     position: "WR",
@@ -2042,48 +1898,12 @@ export const PLAYERS = [
     ],
   },
   {
-    id: "xavier-worthy",
-    name: "Xavier Worthy",
-    position: "WR",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "KC", games: 16, stats: { rec: 58, recYds: 794, recTD: 5 } },
-    ],
-  },
-  {
     id: "jameson-williams",
     name: "Jameson Williams",
     position: "WR",
     tag: "ACTIVE",
     seasons: [
       { year: 2026, team: "DET", games: 16, stats: { rec: 57, recYds: 772, recTD: 5 } },
-    ],
-  },
-  {
-    id: "courtland-sutton",
-    name: "Courtland Sutton",
-    position: "WR",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "DEN", games: 16, stats: { rec: 55, recYds: 750, recTD: 5 } },
-    ],
-  },
-  {
-    id: "jerry-jeudy",
-    name: "Jerry Jeudy",
-    position: "WR",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "CLE", games: 16, stats: { rec: 53, recYds: 728, recTD: 5 } },
-    ],
-  },
-  {
-    id: "calvin-ridley",
-    name: "Calvin Ridley",
-    position: "WR",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "TEN", games: 16, stats: { rec: 52, recYds: 706, recTD: 4 } },
     ],
   },
   {
@@ -2105,30 +1925,12 @@ export const PLAYERS = [
     ],
   },
   {
-    id: "jakobi-meyers",
-    name: "Jakobi Meyers",
-    position: "WR",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "LV", games: 16, stats: { rec: 47, recYds: 640, recTD: 4 } },
-    ],
-  },
-  {
     id: "deebo-samuel",
     name: "Deebo Samuel",
     position: "WR",
     tag: "ACTIVE",
     seasons: [
       { year: 2026, team: "WAS", games: 16, stats: { rec: 45, recYds: 618, recTD: 4 } },
-    ],
-  },
-  {
-    id: "wandale-robinson",
-    name: "Wan'Dale Robinson",
-    position: "WR",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "TEN", games: 16, stats: { rec: 44, recYds: 596, recTD: 4 } },
     ],
   },
   {
@@ -2141,39 +1943,12 @@ export const PLAYERS = [
     ],
   },
   {
-    id: "josh-downs",
-    name: "Josh Downs",
-    position: "WR",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "IND", games: 16, stats: { rec: 41, recYds: 552, recTD: 3 } },
-    ],
-  },
-  {
     id: "tetairoa-mcmillan",
     name: "Tetairoa McMillan",
     position: "WR",
     tag: "ACTIVE",
     seasons: [
       { year: 2026, team: "CAR", games: 16, stats: { rec: 39, recYds: 530, recTD: 3 } },
-    ],
-  },
-  {
-    id: "keon-coleman",
-    name: "Keon Coleman",
-    position: "WR",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "BUF", games: 16, stats: { rec: 37, recYds: 508, recTD: 3 } },
-    ],
-  },
-  {
-    id: "rashid-shaheed",
-    name: "Rashid Shaheed",
-    position: "WR",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "NO", games: 16, stats: { rec: 36, recYds: 486, recTD: 3 } },
     ],
   },
 
@@ -2233,30 +2008,12 @@ export const PLAYERS = [
     ],
   },
   {
-    id: "kyle-pitts",
-    name: "Kyle Pitts",
-    position: "TE",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "ATL", games: 16, stats: { rec: 60, recYds: 722, recTD: 5 } },
-    ],
-  },
-  {
     id: "dallas-goedert",
     name: "Dallas Goedert",
     position: "TE",
     tag: "ACTIVE",
     seasons: [
       { year: 2026, team: "PHI", games: 16, stats: { rec: 57, recYds: 684, recTD: 5 } },
-    ],
-  },
-  {
-    id: "chig-okonkwo",
-    name: "Chig Okonkwo",
-    position: "TE",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "WAS", games: 16, stats: { rec: 54, recYds: 646, recTD: 5 } },
     ],
   },
   {
@@ -2275,15 +2032,6 @@ export const PLAYERS = [
     tag: "ACTIVE",
     seasons: [
       { year: 2026, team: "DAL", games: 16, stats: { rec: 48, recYds: 570, recTD: 4 } },
-    ],
-  },
-  {
-    id: "brenton-strange",
-    name: "Brenton Strange",
-    position: "TE",
-    tag: "ACTIVE",
-    seasons: [
-      { year: 2026, team: "JAX", games: 16, stats: { rec: 45, recYds: 532, recTD: 4 } },
     ],
   },
   {
