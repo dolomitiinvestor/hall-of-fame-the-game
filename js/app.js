@@ -476,17 +476,27 @@ function formatHeightWeight(player) {
   return `${feet}'${inches}", ${player.weightLbs} lbs`;
 }
 
+// Shared <img> for a player's headshot: tries img/headshots/<id>.jpg
+// first, falls back to <id>.png if that 404s (a couple of uploaded
+// headshots are PNGs), and removes itself if neither exists -- leaving
+// just the generic silhouette underneath (see HEADSHOT_EXTENSIONS in
+// probeHeadshots() below, which mirrors this same jpg-then-png order
+// for the Dev tab's coverage check).
+function headshotImg(id) {
+  return `<img src="img/headshots/${id}.jpg" alt="" loading="lazy" data-fallback="img/headshots/${id}.png" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.removeAttribute('data-fallback');}else{this.remove();}" />`;
+}
+
 // Blank-for-now headshot placeholder. Drop a matching file at
-// img/headshots/<player.id>.jpg later and it starts showing up here
-// automatically -- no code changes needed. Until then (today, for
-// every player) the <img> fails to load and removes itself, leaving
-// just the generic silhouette underneath. Clickable everywhere it
-// appears -- opens that player's card (see showPlayerCard()).
+// img/headshots/<player.id>.jpg (or .png) later and it starts showing
+// up here automatically -- no code changes needed. Until then (today,
+// for most players) the <img> fails to load and removes itself,
+// leaving just the generic silhouette underneath. Clickable everywhere
+// it appears -- opens that player's card (see showPlayerCard()).
 function playerAvatar(player) {
   return `
     <span class="player-avatar" data-action="show-player" data-player="${player.id}" role="button" tabindex="0" aria-label="View ${escapeHtml(player.name)}'s player card">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-8 2.2-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.8-3.6-5-8-5Z"/></svg>
-      <img src="img/headshots/${player.id}.jpg" alt="" loading="lazy" onerror="this.remove()" />
+      ${headshotImg(player.id)}
     </span>`;
 }
 
@@ -1695,7 +1705,7 @@ function showPlayerCard(playerId) {
     <div class="player-card-header">
       <span class="player-avatar player-avatar-lg" aria-hidden="true">
         <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-8 2.2-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.8-3.6-5-8-5Z"/></svg>
-        <img src="img/headshots/${player.id}.jpg" alt="" loading="lazy" onerror="this.remove()" />
+        ${headshotImg(player.id)}
       </span>
       <div>
         <h2>${escapeHtml(player.name)}</h2>
@@ -1733,24 +1743,30 @@ function closePlayerCard() {
 // so the counts below fill in a beat after the tab first opens.
 const headshotChecked = new Set();
 const headshotAvailable = new Set();
+const HEADSHOT_EXTENSIONS = ["jpg", "png"]; // same order headshotImg() tries them in
+
+function tryLoadImage(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
+}
+
+async function probeOneHeadshot(id) {
+  for (const ext of HEADSHOT_EXTENSIONS) {
+    if (await tryLoadImage(`img/headshots/${id}.${ext}`)) return true;
+  }
+  return false;
+}
 
 function probeHeadshots(playerIds) {
   const toCheck = playerIds.filter((id) => !headshotChecked.has(id));
   if (!toCheck.length) return;
+  toCheck.forEach((id) => headshotChecked.add(id));
   Promise.all(
-    toCheck.map(
-      (id) =>
-        new Promise((resolve) => {
-          headshotChecked.add(id);
-          const img = new Image();
-          img.onload = () => {
-            headshotAvailable.add(id);
-            resolve();
-          };
-          img.onerror = resolve;
-          img.src = `img/headshots/${id}.jpg`;
-        })
-    )
+    toCheck.map((id) => probeOneHeadshot(id).then((found) => found && headshotAvailable.add(id)))
   ).then(() => {
     if (state.screen === "dev") render();
   });
