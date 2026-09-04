@@ -84,12 +84,23 @@ function main() {
   // Map each column index to a scored field name, or null if it's not
   // one we track. Carries the running category since the category row
   // only labels the first column of each group (repeats as blanks after).
+  // PFR passing tables reuse the "Yds" header twice under "Passing" --
+  // real pass yards, then sack-yards-lost -- so only the *first* column
+  // in a category matching a given name is mapped; a repeat (e.g. that
+  // second "Yds") is left unmapped rather than double-counted.
   let currentCategory = "";
+  let seenInCategory = new Set();
   const fieldForCol = nameRow.map((name, i) => {
-    if (categoryRow[i] && categoryRow[i].trim()) currentCategory = categoryRow[i].trim();
+    if (categoryRow[i] && categoryRow[i].trim() && categoryRow[i].trim() !== currentCategory) {
+      currentCategory = categoryRow[i].trim();
+      seenInCategory = new Set();
+    }
     const group = STAT_COLUMNS[currentCategory];
     if (!group) return null;
-    return group[name.trim()] || null;
+    const key = name.trim();
+    if (seenInCategory.has(key)) return null;
+    seenInCategory.add(key);
+    return group[key] || null;
   });
 
   const weekCol = nameRow.findIndex((n) => n.trim() === "Week");

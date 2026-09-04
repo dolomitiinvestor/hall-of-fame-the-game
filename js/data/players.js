@@ -806,7 +806,7 @@ export const PLAYERS = [
     heightIn: 76,
     weightLbs: 225,
     seasons: [
-      { year: 2007, team: "NE", games: 16, stats: { passYds: 4806, passTD: 50, passInt: 8 } },
+      { year: 2007, team: "NE", games: 16, stats: { passYds: 4806, passTD: 50, passInt: 8, rushYds: 98, rushTD: 2, fumblesLost: 4 } },
     ],
   },
 

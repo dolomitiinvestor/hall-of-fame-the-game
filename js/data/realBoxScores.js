@@ -129,4 +129,24 @@ export const REAL_GAME_LOGS = {
       { rec: 7, recYds: 128, recTD: 1 }, // Wk17 vs CIN
     ],
   },
+  "tom-brady": {
+    2007: [
+      { rushAtt: 1, rushYds: 4, rushTD: 0, passYds: 297, passTD: 3 }, // Wk1 @NYJ
+      { rushAtt: 1, rushYds: 2, rushTD: 0, passYds: 279, passTD: 3, passInt: 1 }, // Wk2 vs SDG
+      { rushAtt: 1, rushYds: 2, rushTD: 0, passYds: 311, passTD: 4, fumblesLost: 1 }, // Wk3 vs BUF
+      { rushAtt: 2, rushYds: -2, rushTD: 0, passYds: 231, passTD: 3, passInt: 1 }, // Wk4 @CIN
+      { passYds: 265, passTD: 3 }, // Wk5 vs CLE
+      { rushAtt: 3, rushYds: 5, rushTD: 0, passYds: 388, passTD: 5, fumblesLost: 1 }, // Wk6 @DAL
+      { passYds: 354, passTD: 6 }, // Wk7 @MIA
+      { rushAtt: 4, rushYds: 14, rushTD: 2, passYds: 306, passTD: 3, fumblesLost: 1 }, // Wk8 vs WAS
+      { rushAtt: 5, rushYds: 14, rushTD: 0, passYds: 255, passTD: 3, passInt: 2 }, // Wk9 @IND
+      { rushAtt: 2, rushYds: 9, rushTD: 0, passYds: 373, passTD: 5 }, // Wk11 @BUF
+      { rushAtt: 3, rushYds: 16, rushTD: 0, passYds: 380, passTD: 1 }, // Wk12 vs PHI
+      { rushAtt: 2, rushYds: 14, rushTD: 0, passYds: 257, passTD: 2, passInt: 1 }, // Wk13 @BAL
+      { rushAtt: 1, rushYds: 4, rushTD: 0, passYds: 399, passTD: 4 }, // Wk14 vs PIT
+      { rushAtt: 4, rushYds: 9, rushTD: 0, passYds: 140, passInt: 1 }, // Wk15 vs NYJ
+      { rushAtt: 4, rushYds: 11, rushTD: 0, passYds: 215, passTD: 3, passInt: 2, fumblesLost: 1 }, // Wk16 vs MIA
+      { rushAtt: 4, rushYds: -4, rushTD: 0, passYds: 356, passTD: 2 }, // Wk17 @NYG
+    ],
+  },
 };
