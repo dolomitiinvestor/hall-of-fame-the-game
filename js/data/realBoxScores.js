@@ -89,4 +89,23 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 16, rushYds: 66, rushTD: 0, rec: 2, recYds: 14, recTD: 0 }, // Wk17 vs ARI
     ],
   },
+  "marshall-faulk": {
+    2001: [
+      { rushAtt: 20, rushYds: 72, rushTD: 1, rec: 8, recYds: 48, recTD: 0 }, // Wk1 @PHI (OT)
+      { rushAtt: 18, rushYds: 105, rushTD: 0, rec: 8, recYds: 79, recTD: 0 }, // Wk2 @SFO
+      { rushAtt: 19, rushYds: 88, rushTD: 1, rec: 6, recYds: 72, recTD: 2 }, // Wk3 vs MIA
+      { rushAtt: 14, rushYds: 71, rushTD: 1, rec: 9, recYds: 80, recTD: 0, fumblesLost: 1 }, // Wk4 @DET
+      { rushAtt: 8, rushYds: 25, rushTD: 0, rec: 5, recYds: 38, recTD: 0, fumblesLost: 2 }, // Wk5 vs NYG
+      // Wk6 @NYJ, Wk7 vs NOR: inactive, skipped
+      { rushAtt: 15, rushYds: 183, rushTD: 2, rec: 4, recYds: 14, recTD: 0 }, // Wk9 vs CAR
+      { rushAtt: 20, rushYds: 83, rushTD: 0, rec: 7, recYds: 70, recTD: 1 }, // Wk10 @NWE
+      { rushAtt: 12, rushYds: 55, rushTD: 0, rec: 2, recYds: 11, recTD: 0 }, // Wk11 vs TAM
+      { rushAtt: 12, rushYds: 70, rushTD: 0, rec: 6, recYds: 128, recTD: 3 }, // Wk12 @ATL
+      { rushAtt: 25, rushYds: 88, rushTD: 1, rec: 5, recYds: 19, recTD: 1 }, // Wk13 vs SFO
+      { rushAtt: 22, rushYds: 54, rushTD: 0, rec: 8, recYds: 51, recTD: 1 }, // Wk14 @NOR
+      { rushAtt: 30, rushYds: 202, rushTD: 2, rec: 3, recYds: 50, recTD: 0 }, // Wk15 @CAR
+      { rushAtt: 25, rushYds: 118, rushTD: 3, rec: 7, recYds: 47, recTD: 1 }, // Wk16 vs IND
+      { rushAtt: 20, rushYds: 168, rushTD: 1, rec: 5, recYds: 58, recTD: 0 }, // Wk17 vs ATL
+    ],
+  },
 };
