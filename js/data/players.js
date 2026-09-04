@@ -225,7 +225,7 @@ export const PLAYERS = [
     position: "RB",
     tag: "HOF",
     seasons: [
-      { year: 2006, team: "SD", games: 16, stats: { rushYds: 1815, rushTD: 28, rec: 56, recYds: 508, recTD: 3 } },
+      { year: 2006, team: "SD", games: 16, stats: { rushYds: 1815, rushTD: 28, rec: 56, recYds: 508, recTD: 3, passYds: 20, passTD: 2 } },
     ],
   },
   {

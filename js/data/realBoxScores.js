@@ -69,4 +69,24 @@ export const REAL_GAME_LOGS = {
       { rec: 5, recYds: 72, recTD: 0 }, // Wk17 @CHI
     ],
   },
+  "ladainian-tomlinson": {
+    2006: [
+      { rushAtt: 31, rushYds: 131, rushTD: 1, rec: 3, recYds: 18, recTD: 0 }, // Wk1 @OAK
+      { rushAtt: 19, rushYds: 71, rushTD: 2, rec: 7, recYds: 51, recTD: 0 }, // Wk2 vs TEN
+      { rushAtt: 26, rushYds: 98, rushTD: 0, rec: 1, recYds: 7, recTD: 0 }, // Wk4 @BAL
+      { rushAtt: 13, rushYds: 36, rushTD: 0, rec: 8, recYds: 34, recTD: 0 }, // Wk5 vs PIT
+      { rushAtt: 21, rushYds: 71, rushTD: 4, rec: 7, recYds: 64, recTD: 0 }, // Wk6 @SFO
+      { rushAtt: 15, rushYds: 66, rushTD: 0, rec: 6, recYds: 72, recTD: 1, passYds: 1, passTD: 1, fumblesLost: 1 }, // Wk7 @KAN
+      { rushAtt: 25, rushYds: 183, rushTD: 2, rec: 3, recYds: 57, recTD: 1 }, // Wk8 vs STL
+      { rushAtt: 18, rushYds: 172, rushTD: 3, rec: 3, recYds: 20, recTD: 0 }, // Wk9 vs CLE
+      { rushAtt: 22, rushYds: 104, rushTD: 4, rec: 6, recYds: 54, recTD: 0 }, // Wk10 @CIN
+      { rushAtt: 20, rushYds: 105, rushTD: 3, rec: 3, recYds: 74, recTD: 1 }, // Wk11 @DEN
+      { rushAtt: 19, rushYds: 109, rushTD: 2, rec: 1, recYds: 5, recTD: 0, passYds: 19, passTD: 1 }, // Wk12 vs OAK
+      { rushAtt: 28, rushYds: 178, rushTD: 2, rec: 3, recYds: 14, recTD: 0 }, // Wk13 @BUF
+      { rushAtt: 28, rushYds: 103, rushTD: 3, rec: 1, recYds: 9, recTD: 0 }, // Wk14 vs DEN
+      { rushAtt: 25, rushYds: 199, rushTD: 2, rec: 1, recYds: 5, recTD: 0 }, // Wk15 vs KAN
+      { rushAtt: 22, rushYds: 123, rushTD: 0, rec: 1, recYds: 10, recTD: 0 }, // Wk16 @SEA
+      { rushAtt: 16, rushYds: 66, rushTD: 0, rec: 2, recYds: 14, recTD: 0 }, // Wk17 vs ARI
+    ],
+  },
 };
