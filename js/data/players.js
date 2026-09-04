@@ -1253,6 +1253,7 @@ export const PLAYERS = [
     tag: "HOVG",
     seasons: [
       { year: 2015, team: "PIT", games: 16, stats: { rec: 136, recYds: 1834, recTD: 10 } },
+      { year: 2014, team: "PIT", games: 16, stats: { rushYds: 13, rec: 129, recYds: 1698, recTD: 13, passYds: 20, passTD: 1, fumblesLost: 2 } },
     ],
   },
   {
