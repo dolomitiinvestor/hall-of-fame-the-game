@@ -108,4 +108,25 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 20, rushYds: 168, rushTD: 1, rec: 5, recYds: 58, recTD: 0 }, // Wk17 vs ATL
     ],
   },
+  "antonio-brown": {
+    2014: [
+      { rec: 5, recYds: 116, recTD: 1 }, // Wk1 vs CLE
+      { rushAtt: 2, rushYds: 10, rec: 7, recYds: 90, recTD: 0 }, // Wk2 @BAL
+      { rec: 10, recYds: 90, recTD: 2 }, // Wk3 @CAR
+      { rec: 7, recYds: 131, recTD: 2, passYds: 17 }, // Wk4 vs TAM
+      { rec: 5, recYds: 84, recTD: 0 }, // Wk5 @JAX
+      { rushAtt: 1, rushYds: -2, rec: 7, recYds: 118, recTD: 0 }, // Wk6 @CLE
+      { rec: 9, recYds: 90, recTD: 0, passYds: 3, passTD: 1 }, // Wk7 vs HOU
+      { rushAtt: 1, rushYds: 5, rec: 10, recYds: 133, recTD: 2 }, // Wk8 vs IND
+      { rec: 11, recYds: 144, recTD: 1 }, // Wk9 vs BAL
+      { rec: 8, recYds: 74, recTD: 0, fumblesLost: 2 }, // Wk10 @NYJ
+      { rec: 9, recYds: 91, recTD: 1 }, // Wk11 @TEN
+      // Wk12: bye
+      { rec: 8, recYds: 97, recTD: 2 }, // Wk13 vs NOR
+      { rec: 9, recYds: 117, recTD: 0 }, // Wk14 @CIN
+      { rec: 10, recYds: 123, recTD: 0 }, // Wk15 @ATL
+      { rec: 7, recYds: 72, recTD: 1 }, // Wk16 vs KAN
+      { rec: 7, recYds: 128, recTD: 1 }, // Wk17 vs CIN
+    ],
+  },
 };

@@ -124,6 +124,12 @@ function main() {
       if (val) stats[field] = (stats[field] || 0) + val;
       totals[field] = (totals[field] || 0) + val;
     }
+    // Repo convention (see the hand-written entries already in this
+    // file): rushTD/recTD stay explicit at 0 whenever that game had any
+    // carries/catches at all -- only the sparser fields (passing,
+    // fumbles) get dropped when zero.
+    if ("rushAtt" in stats) stats.rushTD = stats.rushTD || 0;
+    if ("rec" in stats) stats.recTD = stats.recTD || 0;
     const week = (cells[weekCol] || "").trim();
     const opp = (cells[oppCol] || "").trim();
     const away = (cells[atCol] || "").trim() === "@";
