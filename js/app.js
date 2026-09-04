@@ -2176,14 +2176,29 @@ function initSplash() {
 // are actually shown -- calls out anyone who suffered a season-ending
 // injury this exact week (see getNewSeasonEndingInjuriesForWeek(),
 // season.js). `newInjuries` is that array of { playerId, reason }.
+// Playoff-round-specific splash art. Drop a matching file at either
+// path and it takes over automatically -- no code changes needed;
+// until then (or for a regular-season week, which has no round-specific
+// art at all) the <img> falls back to the normal main-logo.jpg.
+const ROUND_SPLASH_IMG = {
+  Semifinal: "img/splash-semifinal.jpg",
+  Championship: "img/splash-final.jpg",
+};
+
 function showWeekCompleteSplash(weekResult, newInjuries = []) {
   const overlay = document.getElementById("week-splash-overlay");
   const text = document.getElementById("week-splash-text");
   const injuriesEl = document.getElementById("week-splash-injuries");
-  if (!overlay || !text || !injuriesEl) return;
+  const logo = document.getElementById("week-splash-logo");
+  if (!overlay || !text || !injuriesEl || !logo) return;
   const label =
     weekResult.round === "playoff" ? `Playoffs: ${weekResult.roundLabel} (Week ${weekResult.week})` : `Week ${weekResult.week}`;
   text.textContent = `Congratulations! ${label} complete.`;
+  logo.src = ROUND_SPLASH_IMG[weekResult.roundLabel] || "img/main-logo.jpg";
+  logo.onerror = () => {
+    logo.onerror = null;
+    logo.src = "img/main-logo.jpg";
+  };
   injuriesEl.innerHTML = newInjuries
     .map(({ playerId, reason }) => {
       const player = getPlayerById(playerId);
