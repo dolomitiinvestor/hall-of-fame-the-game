@@ -217,6 +217,7 @@ export const PLAYERS = [
     tag: "HOF",
     seasons: [
       { year: 2000, team: "STL", games: 14, stats: { rushYds: 1359, rushTD: 18, rec: 81, recYds: 830, recTD: 8 } },
+      { year: 2001, team: "STL", games: 14, stats: { rushYds: 1382, rushTD: 12, rec: 83, recYds: 765, recTD: 9 } },
     ],
   },
   {
