@@ -17,6 +17,8 @@
 //        "HOVG" (retired, statistically great, not (yet) enshrined --
 //                the "Hall of Very Good") |
 //        "ACTIVE" (currently playing; see the ACTIVE section below)
+//   heightIn: total height in inches (optional -- omitted until sourced)
+//   weightLbs: playing weight in pounds (optional -- omitted until sourced)
 //   seasons: [
 //     { year, team, games, stats: { ...raw box score totals for the year } }
 //   ]
@@ -50,6 +52,8 @@ export const PLAYERS = [
     name: "Dan Marino",
     position: "QB",
     tag: "HOF",
+    heightIn: 76,
+    weightLbs: 224,
     seasons: [
       { year: 1984, team: "MIA", games: 16, stats: { passYds: 5084, passTD: 48, passInt: 17 } },
     ],
@@ -59,6 +63,8 @@ export const PLAYERS = [
     name: "Peyton Manning",
     position: "QB",
     tag: "HOF",
+    heightIn: 77,
+    weightLbs: 230,
     seasons: [
       { year: 2004, team: "IND", games: 16, stats: { passYds: 4557, passTD: 49, passInt: 10 } },
       { year: 2013, team: "DEN", games: 16, stats: { passYds: 5477, passTD: 55, passInt: 10 } },
@@ -69,6 +75,8 @@ export const PLAYERS = [
     name: "Kurt Warner",
     position: "QB",
     tag: "HOF",
+    heightIn: 74,
+    weightLbs: 220,
     seasons: [
       { year: 1999, team: "STL", games: 16, stats: { passYds: 4353, passTD: 41, passInt: 13 } },
     ],
@@ -78,6 +86,8 @@ export const PLAYERS = [
     name: "Steve Young",
     position: "QB",
     tag: "HOF",
+    heightIn: 74,
+    weightLbs: 205,
     seasons: [
       { year: 1994, team: "SF", games: 16, stats: { passYds: 3969, passTD: 35, passInt: 10, rushYds: 293, rushTD: 7 } },
     ],
@@ -87,6 +97,8 @@ export const PLAYERS = [
     name: "Brett Favre",
     position: "QB",
     tag: "HOF",
+    heightIn: 74,
+    weightLbs: 222,
     seasons: [
       { year: 1996, team: "GB", games: 16, stats: { passYds: 3899, passTD: 39, passInt: 13 } },
     ],
@@ -96,6 +108,8 @@ export const PLAYERS = [
     name: "Warren Moon",
     position: "QB",
     tag: "HOF",
+    heightIn: 75,
+    weightLbs: 212,
     seasons: [
       { year: 1991, team: "HOU", games: 16, stats: { passYds: 4690, passTD: 23, passInt: 21 } },
     ],
@@ -105,6 +119,8 @@ export const PLAYERS = [
     name: "John Elway",
     position: "QB",
     tag: "HOF",
+    heightIn: 75,
+    weightLbs: 215,
     seasons: [
       { year: 1993, team: "DEN", games: 16, stats: { passYds: 4030, passTD: 25, passInt: 10 } },
     ],
@@ -114,6 +130,8 @@ export const PLAYERS = [
     name: "Fran Tarkenton",
     position: "QB",
     tag: "HOF",
+    heightIn: 72,
+    weightLbs: 190,
     seasons: [
       { year: 1975, team: "MIN", games: 14, stats: { passYds: 2994, passTD: 25, passInt: 13 } },
     ],
@@ -123,6 +141,8 @@ export const PLAYERS = [
     name: "Dan Fouts",
     position: "QB",
     tag: "HOF",
+    heightIn: 75,
+    weightLbs: 205,
     seasons: [
       { year: 1981, team: "SD", games: 16, stats: { passYds: 4802, passTD: 33, passInt: 17 } },
     ],
@@ -132,6 +152,8 @@ export const PLAYERS = [
     name: "Joe Montana",
     position: "QB",
     tag: "HOF",
+    heightIn: 74,
+    weightLbs: 200,
     seasons: [
       { year: 1989, team: "SF", games: 16, stats: { passYds: 3521, passTD: 26, passInt: 8 } },
     ],
@@ -141,6 +163,8 @@ export const PLAYERS = [
     name: "Troy Aikman",
     position: "QB",
     tag: "HOF",
+    heightIn: 76,
+    weightLbs: 219,
     seasons: [
       { year: 1993, team: "DAL", games: 14, stats: { passYds: 3100, passTD: 15, passInt: 6 } },
     ],
@@ -150,6 +174,8 @@ export const PLAYERS = [
     name: "Terry Bradshaw",
     position: "QB",
     tag: "HOF",
+    heightIn: 75,
+    weightLbs: 215,
     seasons: [
       { year: 1978, team: "PIT", games: 14, stats: { passYds: 2915, passTD: 28, passInt: 20 } },
     ],
@@ -161,6 +187,8 @@ export const PLAYERS = [
     name: "Jim Brown",
     position: "RB",
     tag: "HOF",
+    heightIn: 74,
+    weightLbs: 232,
     seasons: [
       { year: 1963, team: "CLE", games: 14, stats: { rushYds: 1863, rushTD: 12, rec: 24, recYds: 268, recTD: 3 } },
     ],
@@ -170,6 +198,8 @@ export const PLAYERS = [
     name: "Barry Sanders",
     position: "RB",
     tag: "HOF",
+    heightIn: 68,
+    weightLbs: 203,
     seasons: [
       { year: 1997, team: "DET", games: 16, stats: { rushYds: 2053, rushTD: 11, rec: 33, recYds: 305, recTD: 1 } },
     ],
@@ -179,6 +209,8 @@ export const PLAYERS = [
     name: "Emmitt Smith",
     position: "RB",
     tag: "HOF",
+    heightIn: 69,
+    weightLbs: 209,
     seasons: [
       { year: 1995, team: "DAL", games: 16, stats: { rushYds: 1773, rushTD: 25, rec: 62, recYds: 375, recTD: 0 } },
     ],
@@ -188,6 +220,8 @@ export const PLAYERS = [
     name: "Walter Payton",
     position: "RB",
     tag: "HOF",
+    heightIn: 70,
+    weightLbs: 200,
     seasons: [
       { year: 1977, team: "CHI", games: 14, stats: { rushYds: 1852, rushTD: 14, rec: 27, recYds: 269, recTD: 2 } },
     ],
@@ -197,6 +231,8 @@ export const PLAYERS = [
     name: "O.J. Simpson",
     position: "RB",
     tag: "HOF",
+    heightIn: 73,
+    weightLbs: 212,
     seasons: [
       { year: 1973, team: "BUF", games: 14, stats: { rushYds: 2003, rushTD: 12, rec: 6, recYds: 70, recTD: 0 } },
     ],
@@ -206,6 +242,8 @@ export const PLAYERS = [
     name: "Eric Dickerson",
     position: "RB",
     tag: "HOF",
+    heightIn: 75,
+    weightLbs: 220,
     seasons: [
       { year: 1984, team: "LAR", games: 16, stats: { rushYds: 2105, rushTD: 14, rec: 21, recYds: 139, recTD: 1 } },
     ],
@@ -215,6 +253,8 @@ export const PLAYERS = [
     name: "Marshall Faulk",
     position: "RB",
     tag: "HOF",
+    heightIn: 70,
+    weightLbs: 211,
     seasons: [
       { year: 2000, team: "STL", games: 14, stats: { rushYds: 1359, rushTD: 18, rec: 81, recYds: 830, recTD: 8 } },
       { year: 2001, team: "STL", games: 14, stats: { rushYds: 1382, rushTD: 12, rec: 83, recYds: 765, recTD: 9 } },
@@ -225,6 +265,8 @@ export const PLAYERS = [
     name: "LaDainian Tomlinson",
     position: "RB",
     tag: "HOF",
+    heightIn: 70,
+    weightLbs: 221,
     seasons: [
       { year: 2006, team: "SD", games: 16, stats: { rushYds: 1815, rushTD: 28, rec: 56, recYds: 508, recTD: 3, passYds: 20, passTD: 2 } },
     ],
@@ -234,6 +276,8 @@ export const PLAYERS = [
     name: "Earl Campbell",
     position: "RB",
     tag: "HOF",
+    heightIn: 71,
+    weightLbs: 233,
     seasons: [
       { year: 1980, team: "HOU", games: 16, stats: { rushYds: 1934, rushTD: 13, rec: 6, recYds: 47, recTD: 0 } },
     ],
@@ -243,6 +287,8 @@ export const PLAYERS = [
     name: "Tony Dorsett",
     position: "RB",
     tag: "HOF",
+    heightIn: 71,
+    weightLbs: 192,
     seasons: [
       { year: 1981, team: "DAL", games: 16, stats: { rushYds: 1646, rushTD: 4, rec: 32, recYds: 325, recTD: 2 } },
     ],
@@ -252,6 +298,8 @@ export const PLAYERS = [
     name: "Thurman Thomas",
     position: "RB",
     tag: "HOF",
+    heightIn: 70,
+    weightLbs: 198,
     seasons: [
       { year: 1991, team: "BUF", games: 16, stats: { rushYds: 1407, rushTD: 7, rec: 62, recYds: 631, recTD: 5 } },
     ],
@@ -261,6 +309,8 @@ export const PLAYERS = [
     name: "Marcus Allen",
     position: "RB",
     tag: "HOF",
+    heightIn: 74,
+    weightLbs: 210,
     seasons: [
       { year: 1985, team: "LAR", games: 16, stats: { rushYds: 1759, rushTD: 11, rec: 67, recYds: 555, recTD: 3 } },
     ],
@@ -270,6 +320,8 @@ export const PLAYERS = [
     name: "Franco Harris",
     position: "RB",
     tag: "HOF",
+    heightIn: 74,
+    weightLbs: 230,
     seasons: [
       { year: 1975, team: "PIT", games: 14, stats: { rushYds: 1246, rushTD: 10, rec: 28, recYds: 179, recTD: 1 } },
     ],
@@ -279,6 +331,8 @@ export const PLAYERS = [
     name: "Gale Sayers",
     position: "RB",
     tag: "HOF",
+    heightIn: 72,
+    weightLbs: 198,
     seasons: [
       { year: 1965, team: "CHI", games: 14, stats: { rushYds: 867, rushTD: 14, rec: 29, recYds: 507, recTD: 6 } },
     ],
@@ -288,6 +342,8 @@ export const PLAYERS = [
     name: "Terrell Davis",
     position: "RB",
     tag: "HOF",
+    heightIn: 71,
+    weightLbs: 206,
     seasons: [
       { year: 1998, team: "DEN", games: 16, stats: { rushYds: 2008, rushTD: 21, rec: 25, recYds: 217, recTD: 2 } },
     ],
@@ -297,6 +353,8 @@ export const PLAYERS = [
     name: "Curtis Martin",
     position: "RB",
     tag: "HOF",
+    heightIn: 71,
+    weightLbs: 203,
     seasons: [
       { year: 2004, team: "NYJ", games: 16, stats: { rushYds: 1697, rushTD: 12, rec: 22, recYds: 137, recTD: 0 } },
     ],
@@ -308,6 +366,8 @@ export const PLAYERS = [
     name: "Jerry Rice",
     position: "WR",
     tag: "HOF",
+    heightIn: 74,
+    weightLbs: 200,
     seasons: [
       { year: 1995, team: "SF", games: 16, stats: { rec: 122, recYds: 1848, recTD: 15 } },
     ],
@@ -317,6 +377,8 @@ export const PLAYERS = [
     name: "Randy Moss",
     position: "WR",
     tag: "HOF",
+    heightIn: 76,
+    weightLbs: 210,
     seasons: [
       { year: 2007, team: "NE", games: 16, stats: { rec: 98, recYds: 1493, recTD: 23 } },
     ],
@@ -326,6 +388,8 @@ export const PLAYERS = [
     name: "Calvin Johnson",
     position: "WR",
     tag: "HOF",
+    heightIn: 77,
+    weightLbs: 236,
     seasons: [
       { year: 2012, team: "DET", games: 16, stats: { rec: 122, recYds: 1964, recTD: 5 } },
     ],
@@ -335,6 +399,8 @@ export const PLAYERS = [
     name: "Don Hutson",
     position: "WR",
     tag: "HOF",
+    heightIn: 73,
+    weightLbs: 183,
     seasons: [
       { year: 1942, team: "GB", games: 11, stats: { rec: 74, recYds: 1211, recTD: 17 } },
     ],
@@ -344,6 +410,8 @@ export const PLAYERS = [
     name: "Steve Largent",
     position: "WR",
     tag: "HOF",
+    heightIn: 71,
+    weightLbs: 187,
     seasons: [
       { year: 1985, team: "SEA", games: 16, stats: { rec: 79, recYds: 1287, recTD: 6 } },
     ],
@@ -353,6 +421,8 @@ export const PLAYERS = [
     name: "Michael Irvin",
     position: "WR",
     tag: "HOF",
+    heightIn: 74,
+    weightLbs: 207,
     seasons: [
       { year: 1995, team: "DAL", games: 16, stats: { rec: 111, recYds: 1603, recTD: 10 } },
     ],
@@ -362,6 +432,8 @@ export const PLAYERS = [
     name: "Cris Carter",
     position: "WR",
     tag: "HOF",
+    heightIn: 75,
+    weightLbs: 202,
     seasons: [
       { year: 1995, team: "MIN", games: 16, stats: { rec: 122, recYds: 1371, recTD: 17 } },
     ],
@@ -371,6 +443,8 @@ export const PLAYERS = [
     name: "Andre Reed",
     position: "WR",
     tag: "HOF",
+    heightIn: 74,
+    weightLbs: 190,
     seasons: [
       { year: 1994, team: "BUF", games: 16, stats: { rec: 90, recYds: 1303, recTD: 4 } },
     ],
@@ -380,6 +454,8 @@ export const PLAYERS = [
     name: "Art Monk",
     position: "WR",
     tag: "HOF",
+    heightIn: 75,
+    weightLbs: 210,
     seasons: [
       { year: 1984, team: "WAS", games: 16, stats: { rec: 106, recYds: 1372, recTD: 7 } },
     ],
@@ -389,6 +465,8 @@ export const PLAYERS = [
     name: "Lance Alworth",
     position: "WR",
     tag: "HOF",
+    heightIn: 72,
+    weightLbs: 184,
     seasons: [
       { year: 1965, team: "SD", games: 14, stats: { rec: 69, recYds: 1602, recTD: 14 } },
     ],
@@ -398,6 +476,8 @@ export const PLAYERS = [
     name: "James Lofton",
     position: "WR",
     tag: "HOF",
+    heightIn: 75,
+    weightLbs: 187,
     seasons: [
       { year: 1984, team: "GB", games: 16, stats: { rec: 62, recYds: 1361, recTD: 7 } },
     ],
@@ -407,6 +487,8 @@ export const PLAYERS = [
     name: "Tim Brown",
     position: "WR",
     tag: "HOF",
+    heightIn: 72,
+    weightLbs: 195,
     seasons: [
       { year: 1997, team: "OAK", games: 16, stats: { rec: 104, recYds: 1408, recTD: 5 } },
     ],
@@ -416,6 +498,8 @@ export const PLAYERS = [
     name: "Terrell Owens",
     position: "WR",
     tag: "HOF",
+    heightIn: 75,
+    weightLbs: 224,
     seasons: [
       { year: 2000, team: "SF", games: 16, stats: { rec: 97, recYds: 1451, recTD: 13 } },
     ],
@@ -425,6 +509,8 @@ export const PLAYERS = [
     name: "Isaac Bruce",
     position: "WR",
     tag: "HOF",
+    heightIn: 72,
+    weightLbs: 188,
     seasons: [
       { year: 1995, team: "STL", games: 16, stats: { rec: 119, recYds: 1781, recTD: 13 } },
       // Full game log archived in js/data/realBoxScores.js (REAL_GAME_LOGS).
@@ -438,6 +524,8 @@ export const PLAYERS = [
     name: "Tony Gonzalez",
     position: "TE",
     tag: "HOF",
+    heightIn: 77,
+    weightLbs: 247,
     seasons: [
       { year: 2004, team: "KC", games: 16, stats: { rec: 102, recYds: 1258, recTD: 7 } },
     ],
@@ -447,6 +535,8 @@ export const PLAYERS = [
     name: "Shannon Sharpe",
     position: "TE",
     tag: "HOF",
+    heightIn: 74,
+    weightLbs: 230,
     seasons: [
       { year: 1996, team: "DEN", games: 16, stats: { rec: 80, recYds: 1062, recTD: 10 } },
     ],
@@ -456,6 +546,8 @@ export const PLAYERS = [
     name: "Kellen Winslow",
     position: "TE",
     tag: "HOF",
+    heightIn: 77,
+    weightLbs: 251,
     seasons: [
       { year: 1980, team: "SD", games: 16, stats: { rec: 89, recYds: 1290, recTD: 9 } },
     ],
@@ -465,6 +557,8 @@ export const PLAYERS = [
     name: "Ozzie Newsome",
     position: "TE",
     tag: "HOF",
+    heightIn: 74,
+    weightLbs: 232,
     seasons: [
       { year: 1984, team: "CLE", games: 16, stats: { rec: 89, recYds: 1001, recTD: 5 } },
     ],
@@ -474,6 +568,8 @@ export const PLAYERS = [
     name: "Dave Casper",
     position: "TE",
     tag: "HOF",
+    heightIn: 76,
+    weightLbs: 240,
     seasons: [
       { year: 1977, team: "OAK", games: 14, stats: { rec: 48, recYds: 584, recTD: 6 } },
     ],
@@ -1422,6 +1518,8 @@ export const PLAYERS = [
     name: "Josh Allen",
     position: "QB",
     tag: "ACTIVE",
+    heightIn: 77,
+    weightLbs: 237,
     seasons: [
       { year: 2026, team: "BUF", games: 16, stats: { passYds: 4650, passTD: 36, passInt: 9, rushYds: 550, rushTD: 4 } },
     ],
@@ -1431,6 +1529,8 @@ export const PLAYERS = [
     name: "Lamar Jackson",
     position: "QB",
     tag: "ACTIVE",
+    heightIn: 74,
+    weightLbs: 212,
     seasons: [
       { year: 2026, team: "BAL", games: 16, stats: { passYds: 4555, passTD: 35, passInt: 9, rushYds: 525, rushTD: 4 } },
     ],
@@ -1440,6 +1540,8 @@ export const PLAYERS = [
     name: "Joe Burrow",
     position: "QB",
     tag: "ACTIVE",
+    heightIn: 76,
+    weightLbs: 215,
     seasons: [
       { year: 2026, team: "CIN", games: 16, stats: { passYds: 4460, passTD: 34, passInt: 10, rushYds: 110, rushTD: 1 } },
     ],
@@ -1458,6 +1560,8 @@ export const PLAYERS = [
     name: "Jalen Hurts",
     position: "QB",
     tag: "ACTIVE",
+    heightIn: 73,
+    weightLbs: 223,
     seasons: [
       { year: 2026, team: "PHI", games: 16, stats: { passYds: 4270, passTD: 32, passInt: 10, rushYds: 450, rushTD: 3 } },
     ],
@@ -1476,6 +1580,8 @@ export const PLAYERS = [
     name: "Justin Herbert",
     position: "QB",
     tag: "ACTIVE",
+    heightIn: 78,
+    weightLbs: 236,
     seasons: [
       { year: 2026, team: "LAC", games: 16, stats: { passYds: 4080, passTD: 29, passInt: 11, rushYds: 90, rushTD: 1 } },
     ],
@@ -1494,6 +1600,8 @@ export const PLAYERS = [
     name: "Trevor Lawrence",
     position: "QB",
     tag: "ACTIVE",
+    heightIn: 78,
+    weightLbs: 213,
     seasons: [
       { year: 2026, team: "JAX", games: 16, stats: { passYds: 3890, passTD: 27, passInt: 11, rushYds: 80, rushTD: 1 } },
     ],
@@ -1503,6 +1611,8 @@ export const PLAYERS = [
     name: "Dak Prescott",
     position: "QB",
     tag: "ACTIVE",
+    heightIn: 74,
+    weightLbs: 238,
     seasons: [
       { year: 2026, team: "DAL", games: 16, stats: { passYds: 3795, passTD: 26, passInt: 12, rushYds: 75, rushTD: 1 } },
     ],
@@ -1530,6 +1640,8 @@ export const PLAYERS = [
     name: "Patrick Mahomes",
     position: "QB",
     tag: "ACTIVE",
+    heightIn: 75,
+    weightLbs: 225,
     seasons: [
       { year: 2026, team: "KC", games: 16, stats: { passYds: 3510, passTD: 23, passInt: 13, rushYds: 250, rushTD: 2 } },
     ],
@@ -1557,6 +1669,8 @@ export const PLAYERS = [
     name: "Matthew Stafford",
     position: "QB",
     tag: "ACTIVE",
+    heightIn: 75,
+    weightLbs: 220,
     seasons: [
       { year: 2026, team: "LAR", games: 16, stats: { passYds: 3225, passTD: 20, passInt: 14, rushYds: 45, rushTD: 0 } },
     ],
@@ -1568,6 +1682,8 @@ export const PLAYERS = [
     name: "Jahmyr Gibbs",
     position: "RB",
     tag: "ACTIVE",
+    heightIn: 69,
+    weightLbs: 199,
     seasons: [
       { year: 2026, team: "DET", games: 16, stats: { rushYds: 1500, rushTD: 13, rec: 55, recYds: 430, recTD: 3 } },
     ],
@@ -1577,6 +1693,8 @@ export const PLAYERS = [
     name: "Bijan Robinson",
     position: "RB",
     tag: "ACTIVE",
+    heightIn: 71,
+    weightLbs: 215,
     seasons: [
       { year: 2026, team: "ATL", games: 16, stats: { rushYds: 1462, rushTD: 13, rec: 54, recYds: 419, recTD: 3 } },
     ],
@@ -1586,6 +1704,8 @@ export const PLAYERS = [
     name: "Christian McCaffrey",
     position: "RB",
     tag: "ACTIVE",
+    heightIn: 71,
+    weightLbs: 205,
     seasons: [
       { year: 2026, team: "SF", games: 16, stats: { rushYds: 1424, rushTD: 12, rec: 52, recYds: 408, recTD: 3 } },
     ],
@@ -1595,6 +1715,8 @@ export const PLAYERS = [
     name: "Jonathan Taylor",
     position: "RB",
     tag: "ACTIVE",
+    heightIn: 70,
+    weightLbs: 226,
     seasons: [
       { year: 2026, team: "IND", games: 16, stats: { rushYds: 1386, rushTD: 12, rec: 51, recYds: 397, recTD: 3 } },
     ],
@@ -1631,6 +1753,8 @@ export const PLAYERS = [
     name: "Derrick Henry",
     position: "RB",
     tag: "ACTIVE",
+    heightIn: 75,
+    weightLbs: 247,
     seasons: [
       { year: 2026, team: "BAL", games: 16, stats: { rushYds: 1234, rushTD: 11, rec: 46, recYds: 353, recTD: 3 } },
     ],
@@ -1676,6 +1800,8 @@ export const PLAYERS = [
     name: "Breece Hall",
     position: "RB",
     tag: "ACTIVE",
+    heightIn: 73,
+    weightLbs: 217,
     seasons: [
       { year: 2026, team: "NYJ", games: 16, stats: { rushYds: 1044, rushTD: 9, rec: 39, recYds: 298, recTD: 2 } },
     ],
@@ -1714,6 +1840,8 @@ export const PLAYERS = [
     name: "Ja'Marr Chase",
     position: "WR",
     tag: "ACTIVE",
+    heightIn: 72,
+    weightLbs: 201,
     seasons: [
       { year: 2026, team: "CIN", games: 16, stats: { rec: 95, recYds: 1300, recTD: 9 } },
     ],
@@ -1723,6 +1851,8 @@ export const PLAYERS = [
     name: "Puka Nacua",
     position: "WR",
     tag: "ACTIVE",
+    heightIn: 74,
+    weightLbs: 201,
     seasons: [
       { year: 2026, team: "LAR", games: 16, stats: { rec: 93, recYds: 1278, recTD: 9 } },
     ],
@@ -1741,6 +1871,8 @@ export const PLAYERS = [
     name: "Amon-Ra St. Brown",
     position: "WR",
     tag: "ACTIVE",
+    heightIn: 72,
+    weightLbs: 197,
     seasons: [
       { year: 2026, team: "DET", games: 16, stats: { rec: 90, recYds: 1234, recTD: 8 } },
     ],
@@ -1750,6 +1882,8 @@ export const PLAYERS = [
     name: "Justin Jefferson",
     position: "WR",
     tag: "ACTIVE",
+    heightIn: 73,
+    weightLbs: 195,
     seasons: [
       { year: 2026, team: "MIN", games: 16, stats: { rec: 89, recYds: 1212, recTD: 8 } },
     ],
@@ -1759,6 +1893,8 @@ export const PLAYERS = [
     name: "CeeDee Lamb",
     position: "WR",
     tag: "ACTIVE",
+    heightIn: 74,
+    weightLbs: 200,
     seasons: [
       { year: 2026, team: "DAL", games: 16, stats: { rec: 87, recYds: 1190, recTD: 8 } },
     ],
@@ -1786,6 +1922,8 @@ export const PLAYERS = [
     name: "A.J. Brown",
     position: "WR",
     tag: "ACTIVE",
+    heightIn: 73,
+    weightLbs: 226,
     seasons: [
       { year: 2026, team: "NE", games: 16, stats: { rec: 82, recYds: 1124, recTD: 8 } },
     ],
@@ -1822,6 +1960,8 @@ export const PLAYERS = [
     name: "Tee Higgins",
     position: "WR",
     tag: "ACTIVE",
+    heightIn: 76,
+    weightLbs: 219,
     seasons: [
       { year: 2026, team: "CIN", games: 16, stats: { rec: 76, recYds: 1036, recTD: 7 } },
     ],
@@ -1831,6 +1971,8 @@ export const PLAYERS = [
     name: "DeVonta Smith",
     position: "WR",
     tag: "ACTIVE",
+    heightIn: 72,
+    weightLbs: 170,
     seasons: [
       { year: 2026, team: "PHI", games: 16, stats: { rec: 74, recYds: 1014, recTD: 7 } },
     ],
@@ -1840,6 +1982,8 @@ export const PLAYERS = [
     name: "DK Metcalf",
     position: "WR",
     tag: "ACTIVE",
+    heightIn: 76,
+    weightLbs: 235,
     seasons: [
       { year: 2026, team: "PIT", games: 16, stats: { rec: 73, recYds: 992, recTD: 7 } },
     ],
@@ -1849,6 +1993,8 @@ export const PLAYERS = [
     name: "Garrett Wilson",
     position: "WR",
     tag: "ACTIVE",
+    heightIn: 72,
+    weightLbs: 192,
     seasons: [
       { year: 2026, team: "NYJ", games: 16, stats: { rec: 69, recYds: 948, recTD: 6 } },
     ],
@@ -1959,6 +2105,8 @@ export const PLAYERS = [
     name: "Trey McBride",
     position: "TE",
     tag: "ACTIVE",
+    heightIn: 76,
+    weightLbs: 246,
     seasons: [
       { year: 2026, team: "ARI", games: 16, stats: { rec: 78, recYds: 950, recTD: 7 } },
     ],
@@ -1968,6 +2116,8 @@ export const PLAYERS = [
     name: "Brock Bowers",
     position: "TE",
     tag: "ACTIVE",
+    heightIn: 76,
+    weightLbs: 243,
     seasons: [
       { year: 2026, team: "LV", games: 16, stats: { rec: 75, recYds: 912, recTD: 7 } },
     ],
@@ -2022,6 +2172,8 @@ export const PLAYERS = [
     name: "Travis Kelce",
     position: "TE",
     tag: "ACTIVE",
+    heightIn: 77,
+    weightLbs: 250,
     seasons: [
       { year: 2026, team: "KC", games: 16, stats: { rec: 51, recYds: 608, recTD: 4 } },
     ],
@@ -2049,6 +2201,8 @@ export const PLAYERS = [
     name: "Sam LaPorta",
     position: "TE",
     tag: "ACTIVE",
+    heightIn: 75,
+    weightLbs: 245,
     seasons: [
       { year: 2026, team: "DET", games: 16, stats: { rec: 39, recYds: 456, recTD: 3 } },
     ],
@@ -2058,6 +2212,8 @@ export const PLAYERS = [
     name: "George Kittle",
     position: "TE",
     tag: "ACTIVE",
+    heightIn: 76,
+    weightLbs: 250,
     seasons: [
       { year: 2026, team: "SF", games: 16, stats: { rec: 36, recYds: 418, recTD: 3 } },
     ],
@@ -2067,6 +2223,8 @@ export const PLAYERS = [
     name: "Mark Andrews",
     position: "TE",
     tag: "ACTIVE",
+    heightIn: 77,
+    weightLbs: 256,
     seasons: [
       { year: 2026, team: "BAL", games: 16, stats: { rec: 33, recYds: 380, recTD: 3 } },
     ],
