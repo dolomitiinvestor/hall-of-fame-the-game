@@ -100,6 +100,7 @@ export const PLAYERS = [
     heightIn: 74,
     weightLbs: 222,
     seasons: [
+      { year: 1995, team: "GB", games: 16, stats: { rushYds: 181, rushTD: 3, passYds: 4413, passTD: 38, passInt: 13, fumblesLost: 4 } },
       { year: 1996, team: "GB", games: 16, stats: { passYds: 3899, passTD: 39, passInt: 13 } },
     ],
   },
@@ -201,7 +202,7 @@ export const PLAYERS = [
     heightIn: 68,
     weightLbs: 203,
     seasons: [
-      { year: 1997, team: "DET", games: 16, stats: { rushYds: 2053, rushTD: 11, rec: 33, recYds: 305, recTD: 1 } },
+      { year: 1997, team: "DET", games: 16, stats: { rushYds: 2053, rushTD: 11, rec: 33, recYds: 305, recTD: 3, fumblesLost: 2 } },
     ],
   },
   {
@@ -279,7 +280,7 @@ export const PLAYERS = [
     heightIn: 71,
     weightLbs: 233,
     seasons: [
-      { year: 1980, team: "HOU", games: 16, stats: { rushYds: 1934, rushTD: 13, rec: 6, recYds: 47, recTD: 0 } },
+      { year: 1980, team: "HOU", games: 15, stats: { rushYds: 1934, rushTD: 13, rec: 11, recYds: 47, passYds: 57, passTD: 1 } },
     ],
   },
   {
@@ -312,7 +313,7 @@ export const PLAYERS = [
     heightIn: 74,
     weightLbs: 210,
     seasons: [
-      { year: 1985, team: "LAR", games: 16, stats: { rushYds: 1759, rushTD: 11, rec: 67, recYds: 555, recTD: 3 } },
+      { year: 1985, team: "OAK", games: 16, stats: { rushYds: 1759, rushTD: 11, rec: 67, recYds: 555, recTD: 3, passYds: 16 } },
     ],
   },
   {
@@ -446,6 +447,7 @@ export const PLAYERS = [
     heightIn: 74,
     weightLbs: 190,
     seasons: [
+      { year: 1989, team: "BUF", games: 16, stats: { rushYds: 31, rec: 88, recYds: 1312, recTD: 9 } },
       { year: 1994, team: "BUF", games: 16, stats: { rec: 90, recYds: 1303, recTD: 4 } },
     ],
   },
@@ -741,6 +743,7 @@ export const PLAYERS = [
     position: "QB",
     tag: "HOVG",
     seasons: [
+      { year: 2003, team: "SEA", games: 16, stats: { rushYds: 125, rushTD: 2, passYds: 3841, passTD: 26, passInt: 15, fumblesLost: 1 } },
       { year: 2007, team: "SEA", games: 16, stats: { passYds: 3966, passTD: 28, passInt: 19 } },
     ],
   },
@@ -806,7 +809,7 @@ export const PLAYERS = [
     heightIn: 76,
     weightLbs: 225,
     seasons: [
-      { year: 2007, team: "NE", games: 16, stats: { passYds: 4806, passTD: 50, passInt: 8 } },
+      { year: 2007, team: "NE", games: 16, stats: { passYds: 4806, passTD: 50, passInt: 8, rushYds: 98, rushTD: 2, fumblesLost: 4 } },
     ],
   },
 
