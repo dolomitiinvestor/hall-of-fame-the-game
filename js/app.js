@@ -46,12 +46,33 @@ const DRAFT_TIMER_SECONDS = 60;
 const DEFAULT_LEAGUE_SETTINGS = {
   pprValue: 0.5,
   tePremium: 0,
-  superflex: false,
-  enableKicker: true,
-  enableDefense: true,
+  qbSlots: 1,
+  rbSlots: 2,
+  wrSlots: 2,
+  teSlots: 1,
+  flexSlots: 1,
+  superflexSlots: 0,
+  kSlots: 1,
+  defSlots: 1,
   benchSpots: 7,
   maxRetiredSkillPlayers: null, // null = no limit
 };
+
+// The 8 configurable starting-slot counts, in roster order -- drives
+// both the editable selects on the pre-draft Scoring Settings column
+// and the read-only rows shown once a draft exists. `max` just bounds
+// each <select>'s option range; buildRosterSlots() (draftEngine.js)
+// does the actual roster-building from whatever settings object.
+const ROSTER_SLOT_FIELDS = [
+  { key: "qbSlots", label: "QB Spots", max: 4 },
+  { key: "rbSlots", label: "RB Spots", max: 6 },
+  { key: "wrSlots", label: "WR Spots", max: 6 },
+  { key: "teSlots", label: "TE Spots", max: 4 },
+  { key: "flexSlots", label: "Flex Spots", max: 4 },
+  { key: "superflexSlots", label: "Superflex Spots (QB/RB/WR/TE)", max: 3 },
+  { key: "kSlots", label: "K Slots", max: 2 },
+  { key: "defSlots", label: "Def Spots", max: 2 },
+];
 
 const state = {
   screen: "setup",
@@ -175,14 +196,13 @@ function startDraftTimer() {
   }, 1000);
 }
 
-// A K or DEF pick is only legal when that slot is enabled for this
-// league (see the Kicker/Defense Slot format toggles) -- without it,
-// no roster slot (including BENCH) would ever accept one anyway, but
-// filtering here keeps them out of the pool/auto-pick entirely rather
-// than relying on that indirectly.
+// A K or DEF pick is only legal when this league's roster template has
+// at least one K/DEF slot (see the Scoring Settings' K/DEF spot
+// counts) -- keeps them out of the pool/auto-pick entirely rather than
+// letting every pick attempt fail on "no open roster spot" instead.
 function positionEnabledForLeague(position) {
-  if (position === "K") return state.leagueSettings.enableKicker;
-  if (position === "DEF") return state.leagueSettings.enableDefense;
+  if (position === "K") return state.leagueSettings.kSlots > 0;
+  if (position === "DEF") return state.leagueSettings.defSlots > 0;
   return true;
 }
 
@@ -269,13 +289,47 @@ function setScreen(screen) {
 
 // -------------------------------------------------------------- setup
 
+// Simple 0..max <select>'s <option> list, used for every roster-slot-count
+// and bench-spot dropdown below.
+function numberSelectOptions(max, selected) {
+  return Array.from({ length: max + 1 }, (_, n) => n)
+    .map((n) => `<option value="${n}" ${selected === n ? "selected" : ""}>${n}</option>`)
+    .join("");
+}
+
+// The vertical stack of position tiles shared by both branches below --
+// live-computed from the in-progress settings pre-draft, or read
+// straight off draft.rosterSlots once a draft exists (see
+// renderSetup()). Reused as-is (not per-team) since every team in a
+// league shares the same roster template.
+function rosterSlotTiles(slots) {
+  return slots.map((slot) => `<div class="roster-slot-tile pos-${slot}">${slot}</div>`).join("");
+}
+
+// The read-only rows shown in the Scoring Settings column once a draft
+// exists -- the editable pre-draft form below builds the same settings
+// from <select>s instead of this static label/value list.
+function scoringSettingsRows(settings) {
+  const tepLabel = settings.tePremium === 0 ? "None" : settings.tePremium === 0.5 ? "+0.5 pts / TE reception" : "+1.0 pt / TE reception";
+  const rows = [
+    ["Points Per Reception", `${settings.pprValue} PPR`],
+    ["TE Premium", tepLabel],
+    ...ROSTER_SLOT_FIELDS.map(({ key, label }) => [label, settings[key]]),
+    ["Bench Spots", settings.benchSpots],
+    ["Max Retired Players (per team)", settings.maxRetiredSkillPlayers == null ? "No limit" : settings.maxRetiredSkillPlayers],
+  ];
+  return rows.map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join("");
+}
+
 // Once a draft exists, team COUNT and league format are locked in (the
 // roster template is already built), but renaming should still work at
 // any point -- including mid-season -- so this branches to a much
 // simpler view: team names, plus a read-only look at the roster shape
 // and scoring settings this league is locked into (nothing here is
 // editable -- see the format selects in the pre-draft form below for
-// the only place these can actually change).
+// the only place these can actually change). Both branches share the
+// same 3-column layout (Team Names / Roster / Scoring Settings) so the
+// screen doesn't reshuffle the moment a draft starts.
 function renderSetup() {
   const draft = state.draft;
   if (draft) {
@@ -288,21 +342,9 @@ function renderSetup() {
       </div>`
       )
       .join("");
-    const rosterTiles = draft.rosterSlots.map((slot) => `<div class="roster-slot-tile pos-${slot}">${slot}</div>`).join("");
-    const tepLabel = settings.tePremium === 0 ? "None" : settings.tePremium === 0.5 ? "+0.5 pts / TE reception" : "+1.0 pt / TE reception";
-    const scoringRows = [
-      ["Points Per Reception", `${settings.pprValue} PPR`],
-      ["TE Premium", tepLabel],
-      ["Superflex", settings.superflex ? "On" : "Off"],
-      ["Kicker Slot", settings.enableKicker ? "On" : "Off"],
-      ["Defense Slot", settings.enableDefense ? "On" : "Off"],
-      ["Bench Spots", settings.benchSpots],
-      ["Max Retired Players (per team)", settings.maxRetiredSkillPlayers == null ? "No limit" : settings.maxRetiredSkillPlayers],
-    ]
-      .map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`)
-      .join("");
     return `
       <h2>League Settings</h2>
+      <p class="league-team-count">${draft.teams.length} team${draft.teams.length === 1 ? "" : "s"} in this league.</p>
       <p class="hint">This league's format and team count are locked in for the draft already underway. You can still rename teams any time.</p>
       <div class="league-settings-columns">
         <div class="league-settings-col">
@@ -311,11 +353,11 @@ function renderSetup() {
         </div>
         <div class="league-settings-col">
           <h3>Roster</h3>
-          <div class="roster-slot-list">${rosterTiles}</div>
+          <div class="roster-slot-list">${rosterSlotTiles(draft.rosterSlots)}</div>
         </div>
         <div class="league-settings-col">
           <h3>Scoring Settings</h3>
-          <dl class="scoring-settings-list">${scoringRows}</dl>
+          <dl class="scoring-settings-list">${scoringSettingsRows(settings)}</dl>
         </div>
       </div>
       <div class="setup-actions">
@@ -347,27 +389,13 @@ function renderSetup() {
   ]
     .map(({ v, label }) => `<option value="${v}" ${settings.tePremium === v ? "selected" : ""}>${label}</option>`)
     .join("");
-  const superflexOptions = [
-    { v: "off", label: "Off" },
-    { v: "on", label: "On (extra slot also allows QB)" },
-  ]
-    .map(({ v, label }) => `<option value="${v}" ${(settings.superflex ? "on" : "off") === v ? "selected" : ""}>${label}</option>`)
-    .join("");
-  const kickerOptions = [
-    { v: "on", label: "On" },
-    { v: "off", label: "Off" },
-  ]
-    .map(({ v, label }) => `<option value="${v}" ${(settings.enableKicker ? "on" : "off") === v ? "selected" : ""}>${label}</option>`)
-    .join("");
-  const defenseOptions = [
-    { v: "on", label: "On" },
-    { v: "off", label: "Off" },
-  ]
-    .map(({ v, label }) => `<option value="${v}" ${(settings.enableDefense ? "on" : "off") === v ? "selected" : ""}>${label}</option>`)
-    .join("");
-  const benchOptions = Array.from({ length: 11 }, (_, i) => i)
-    .map((n) => `<option value="${n}" ${settings.benchSpots === n ? "selected" : ""}>${n}</option>`)
-    .join("");
+  const rosterFieldSelects = ROSTER_SLOT_FIELDS.map(
+    ({ key, label, max }) => `
+      <label>${label}
+        <select id="format-${key}">${numberSelectOptions(max, settings[key])}</select>
+      </label>`
+  ).join("");
+  const benchOptions = numberSelectOptions(10, settings.benchSpots);
   const maxRetiredOptions = [["", "No limit"], ...Array.from({ length: 10 }, (_, i) => [String(i + 1), String(i + 1)])]
     .map(
       ([v, label]) =>
@@ -377,33 +405,36 @@ function renderSetup() {
 
   return `
     <h2>League Settings</h2>
-    <p class="hint">Add each team, then start the draft. Roster: ${buildRosterSlots(settings).join(", ")}.</p>
-    <div id="team-inputs">${rows}</div>
-    <button class="btn" data-action="add-team" ${state.setupTeamNames.length >= 12 ? "disabled" : ""}>+ Add Team</button>
-
-    <h3>League Format</h3>
-    <div class="format-row">
-      <label>Points Per Reception
-        <select id="format-ppr">${pprOptions}</select>
-      </label>
-      <label>TE Premium
-        <select id="format-tep">${tepOptions}</select>
-      </label>
-      <label>Superflex
-        <select id="format-superflex">${superflexOptions}</select>
-      </label>
-      <label>Kicker Slot
-        <select id="format-kicker">${kickerOptions}</select>
-      </label>
-      <label>Defense Slot
-        <select id="format-defense">${defenseOptions}</select>
-      </label>
-      <label>Bench Spots
-        <select id="format-bench">${benchOptions}</select>
-      </label>
-      <label>Max Retired Players (per team)
-        <select id="format-max-retired">${maxRetiredOptions}</select>
-      </label>
+    <p class="league-team-count">${state.setupTeamNames.length} team${state.setupTeamNames.length === 1 ? "" : "s"} in this league.</p>
+    <p class="hint">Add each team, then start the draft.</p>
+    <div class="league-settings-columns">
+      <div class="league-settings-col">
+        <h3>Team Names</h3>
+        <div id="team-inputs">${rows}</div>
+        <button class="btn" data-action="add-team" ${state.setupTeamNames.length >= 12 ? "disabled" : ""}>+ Add Team</button>
+      </div>
+      <div class="league-settings-col">
+        <h3>Roster</h3>
+        <div class="roster-slot-list">${rosterSlotTiles(buildRosterSlots(settings))}</div>
+      </div>
+      <div class="league-settings-col">
+        <h3>Scoring Settings</h3>
+        <div class="format-row">
+          <label>Points Per Reception
+            <select id="format-ppr">${pprOptions}</select>
+          </label>
+          <label>TE Premium
+            <select id="format-tep">${tepOptions}</select>
+          </label>
+          ${rosterFieldSelects}
+          <label>Bench Spots
+            <select id="format-bench">${benchOptions}</select>
+          </label>
+          <label>Max Retired Players (per team)
+            <select id="format-max-retired">${maxRetiredOptions}</select>
+          </label>
+        </div>
+      </div>
     </div>
 
     <div class="setup-actions">
@@ -435,16 +466,13 @@ function handleSetupClick(action, target) {
 }
 
 function handleSetupChange(target) {
-  if (target.id === "format-ppr") {
+  const rosterField = ROSTER_SLOT_FIELDS.find((f) => target.id === `format-${f.key}`);
+  if (rosterField) {
+    state.leagueSettings[rosterField.key] = Number(target.value);
+  } else if (target.id === "format-ppr") {
     state.leagueSettings.pprValue = Number(target.value);
   } else if (target.id === "format-tep") {
     state.leagueSettings.tePremium = Number(target.value);
-  } else if (target.id === "format-superflex") {
-    state.leagueSettings.superflex = target.value === "on";
-  } else if (target.id === "format-kicker") {
-    state.leagueSettings.enableKicker = target.value === "on";
-  } else if (target.id === "format-defense") {
-    state.leagueSettings.enableDefense = target.value === "on";
   } else if (target.id === "format-bench") {
     state.leagueSettings.benchSpots = Number(target.value);
   } else if (target.id === "format-max-retired") {
@@ -809,7 +837,7 @@ function renderTeams() {
 
           return `
             <tr>
-              <td class="slot-label">${slot.slot}</td>
+              <td><div class="roster-slot-tile pos-${slot.slot}">${slot.slot}</div></td>
               <td class="player-cell">
                 ${currentPlayer ? playerAvatar(currentPlayer) : ""}
                 <select data-action="set-slot" data-team="${teamIdx}" data-slot="${slotIdx}">${optionHtml}</select>
@@ -1429,6 +1457,7 @@ function advanceWeekAction() {
   const justPlayed = state.season.weeklyResults[state.season.weeklyResults.length - 1];
   const newInjuries = getNewSeasonEndingInjuriesForWeek(state.season, justPlayed.week);
   showWeekCompleteSplash(justPlayed, newInjuries);
+  if (isSeasonComplete(state.season)) launchConfetti();
 }
 
 function handleSeasonClick(action) {
@@ -1910,11 +1939,11 @@ const FAQ_ITEMS = [
   },
   {
     q: "What are the Coach, K, and DEF roster spots?",
-    a: "Every team drafts exactly one Coach (from the top 10 all-time NFL coaches and top 4 all-time college coaches), one Kicker, and one Defense (a single all-time-great team defensive season), alongside the usual offensive skill positions. Kickers score on field goals/extra points made; defenses score on sacks, interceptions, fumble recoveries, defensive TDs, safeties, and a tiered bonus/penalty for points allowed per game -- all real scoring, adjustable in js/scoring.js. A started Coach doesn't score individually, but adds a flat 5% bonus to your team's total for the week -- shown as its own line right under the Coach's own row in the box score (their name gets a '- coach bonus' suffix so it's obvious at a glance), not as a separate note elsewhere. Benching your Coach removes the bonus. None of the three count toward the retired/active alternation.",
+    a: "Every team drafts exactly one Coach (from the top 10 all-time NFL coaches and top 4 all-time college coaches), plus however many Kicker and Defense spots your league's Scoring Settings set (1 each by default; 0 makes that position undraftable entirely, not just benched). Kickers score on field goals/extra points made; defenses score on sacks, interceptions, fumble recoveries, defensive TDs, safeties, and a tiered bonus/penalty for points allowed per game -- all real scoring, adjustable in js/scoring.js. A started Coach doesn't score individually, but adds a flat 5% bonus to your team's total for the week -- shown as its own line right under the Coach's own row in the box score (their name gets a '- coach bonus' suffix so it's obvious at a glance), not as a separate note elsewhere. Benching your Coach removes the bonus. None of the three count toward the retired/active alternation.",
   },
   {
-    q: "Can I turn off Kicker/Defense, or change bench spots and how many retired players I can draft?",
-    a: "Yes -- League Settings has four more format toggles alongside PPR/TE Premium/Superflex: Kicker Slot and Defense Slot can each be switched off (that position is then never draftable at all, not just benched), Bench Spots sets how many bench slots every roster gets (0-10), and Max Retired Players caps how many HOF/HOVG skill-position (QB/RB/WR/TE) players a team may draft -- once a team hits that cap, the alternating retired/active rule just requires active for the rest of their skill picks. All four are locked in once you start the draft, like every other format setting.",
+    q: "Can I change how many roster spots each position gets, or bench spots and how many retired players I can draft?",
+    a: "Yes -- the League Settings screen's Scoring Settings column has a spot count for every starting position (QB, RB, WR, TE, Flex, Superflex, K, Def), plus Bench Spots (0-10) and Max Retired Players, alongside PPR/TE Premium. Setting K or Def to 0 makes that position undraftable entirely rather than just unstartable; the offensive skill positions (QB/RB/WR/TE) stay draftable even at 0 starting spots, they'd just always land on the bench. Max Retired Players caps how many HOF/HOVG skill-position (QB/RB/WR/TE) players a team may draft -- once a team hits that cap, the alternating retired/active rule just requires active for the rest of their skill picks. The Roster column previews the exact roster shape those counts produce, live as you change them. Everything here is locked in once you start the draft, like every other format setting.",
   },
   {
     q: "What's the quote (or quotes) under each team's score on the Games tab?",
@@ -1974,7 +2003,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Can I rename my teams after the draft?",
-    a: "Yes -- League Settings stays reachable at any point, including mid-season; once a draft exists it shows just an editable name per team (format and team count are locked in by then) instead of the pre-draft setup form. Renames take effect everywhere immediately.",
+    a: "Yes -- League Settings stays reachable at any point, including mid-season; once a draft exists, its Team Names column is the only editable part (format and team count are locked in by then -- the Roster and Scoring Settings columns just show what's already in effect). Renames take effect everywhere immediately.",
   },
   {
     q: "Can I add or drop players during the season?",
@@ -2271,6 +2300,57 @@ function showWeekCompleteSplash(weekResult, newInjuries = []) {
     })
     .join("");
   overlay.hidden = false;
+}
+
+// Confetti burst for the season's final game (the championship) -- see
+// the isSeasonComplete() check in advanceWeekAction(). No library:
+// just a few seconds of small colored rectangles falling under gravity
+// with a little rotation, drawn on the full-viewport canvas that sits
+// above every overlay (see #confetti-canvas in index.html/style.css).
+const CONFETTI_COLORS = ["#d4af37", "#f0cf7a", "#ff9f4f", "#4fd6ff", "#7dff4f", "#d38bff", "#ff7dc4"];
+
+function launchConfetti() {
+  const canvas = document.getElementById("confetti-canvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const pieces = Array.from({ length: 150 }, () => ({
+    x: Math.random() * canvas.width,
+    y: -20 - Math.random() * canvas.height * 0.5,
+    w: 6 + Math.random() * 6,
+    h: 3 + Math.random() * 4,
+    color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+    speedY: 2 + Math.random() * 3,
+    speedX: -1.5 + Math.random() * 3,
+    rotation: Math.random() * 360,
+    spin: -8 + Math.random() * 16,
+  }));
+
+  const start = performance.now();
+  const duration = 4000;
+
+  function frame(now) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const p of pieces) {
+      p.x += p.speedX;
+      p.y += p.speedY;
+      p.rotation += p.spin;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    }
+    if (now - start < duration) {
+      requestAnimationFrame(frame);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+  requestAnimationFrame(frame);
 }
 
 function init() {

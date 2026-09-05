@@ -42,6 +42,18 @@ body {
   display: none;
 }
 
+/* Season-complete confetti burst -- see launchConfetti() in app.js.
+   Sits above even the week-complete splash (that's exactly when it
+   fires) and never intercepts clicks. */
+#confetti-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1100;
+}
+
 .splash-content {
   position: relative;
   max-width: 90vw;
@@ -497,11 +509,20 @@ select {
   border-color: #ff6b5c;
 }
 
-/* Setup: locked-in league settings (post-draft, read-only) */
+/* Setup: League Settings' 3-column layout (Team Names / Roster /
+   Scoring Settings) -- shown both pre-draft (Scoring Settings is an
+   editable form, see .format-row below) and post-draft (read-only, see
+   .scoring-settings-list) so the screen keeps the same shape once a
+   draft starts. */
+
+.league-team-count {
+  font-weight: 700;
+  margin: 0.2rem 0 0;
+}
 
 .league-settings-columns {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
   align-items: start;
   margin: 1rem 0;
@@ -573,6 +594,15 @@ select {
   gap: 0.3rem;
   font-size: 0.85rem;
   color: var(--text-dim);
+}
+
+/* Nested in the League Settings column layout, .format-row stacks
+   vertically instead of wrapping as a row -- the column's too narrow
+   for side-by-side fields once there are a dozen of them. */
+.league-settings-col .format-row {
+  flex-direction: column;
+  align-items: stretch;
+  margin-bottom: 0;
 }
 
 .roster-grid {
