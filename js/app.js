@@ -476,6 +476,14 @@ function formatHeightWeight(player) {
   return `${feet}'${inches}", ${player.weightLbs} lbs`;
 }
 
+// Headshot files are named after the person, not the game id -- coach
+// ids carry a "coach-" prefix (e.g. "coach-andy-reid") to keep them out
+// of the player id namespace, but the uploaded image is just
+// "andy-reid.jpg". Strip that prefix when building the file path.
+function headshotFilename(id) {
+  return id.replace(/^coach-/, "");
+}
+
 // Shared <img> for a player's headshot: tries img/headshots/<id>.jpg
 // first, falls back to <id>.png if that 404s (a couple of uploaded
 // headshots are PNGs), and removes itself if neither exists -- leaving
@@ -483,7 +491,8 @@ function formatHeightWeight(player) {
 // probeHeadshots() below, which mirrors this same jpg-then-png order
 // for the Dev tab's coverage check).
 function headshotImg(id) {
-  return `<img src="img/headshots/${id}.jpg" alt="" loading="lazy" data-fallback="img/headshots/${id}.png" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.removeAttribute('data-fallback');}else{this.remove();}" />`;
+  const file = headshotFilename(id);
+  return `<img src="img/headshots/${file}.jpg" alt="" loading="lazy" data-fallback="img/headshots/${file}.png" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.removeAttribute('data-fallback');}else{this.remove();}" />`;
 }
 
 // Blank-for-now headshot placeholder. Drop a matching file at
@@ -1755,8 +1764,9 @@ function tryLoadImage(src) {
 }
 
 async function probeOneHeadshot(id) {
+  const file = headshotFilename(id);
   for (const ext of HEADSHOT_EXTENSIONS) {
-    if (await tryLoadImage(`img/headshots/${id}.${ext}`)) return true;
+    if (await tryLoadImage(`img/headshots/${file}.${ext}`)) return true;
   }
   return false;
 }
@@ -2031,6 +2041,19 @@ function wireEvents() {
       showPlayerCard(e.target.dataset.player);
     }
   });
+  // Left/Right arrows move between weeks on the Games tab, mirroring the
+  // prev/next week buttons in the week-nav bar. Ignored while any
+  // overlay is open (so e.g. the game-fullscreen view isn't fought over)
+  // or while a text input has focus.
+  document.addEventListener("keydown", (e) => {
+    if (state.screen !== "games" || !state.season) return;
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    const tag = e.target.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || e.target.isContentEditable) return;
+    if (isAnyOverlayOpen()) return;
+    e.preventDefault();
+    handleGamesClick(e.key === "ArrowLeft" ? "games-prev-week" : "games-next-week");
+  });
 
   const app = document.getElementById("app");
 
@@ -2131,6 +2154,13 @@ function closeWeekSplash() {
 // should reveal the other underneath, not dismiss both in one keypress.
 // Player card is checked first since it always renders above the game
 // view (see z-index in style.css) when both are open.
+function isAnyOverlayOpen() {
+  return ["splash-overlay", "week-splash-overlay", "player-card-overlay", "game-fullscreen-overlay"].some((id) => {
+    const el = document.getElementById(id);
+    return el && !el.hidden;
+  });
+}
+
 function closeTopOverlay() {
   const playerCard = document.getElementById("player-card-overlay");
   if (playerCard && !playerCard.hidden) {
