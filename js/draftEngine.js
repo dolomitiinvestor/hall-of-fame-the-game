@@ -46,23 +46,46 @@ export const SLOT_ELIGIBILITY = {
 };
 
 export const DEFAULT_BENCH_SPOTS = 7;
+export const DEFAULT_QB_SLOTS = 1;
+export const DEFAULT_RB_SLOTS = 2;
+export const DEFAULT_WR_SLOTS = 2;
+export const DEFAULT_TE_SLOTS = 1;
+export const DEFAULT_FLEX_SLOTS = 1;
+export const DEFAULT_SUPERFLEX_SLOTS = 0;
+export const DEFAULT_K_SLOTS = 1;
+export const DEFAULT_DEF_SLOTS = 1;
 
-// Builds a roster-slot template from league format settings. Kicker
-// and Defense slots are each optional (omitting one means that
-// position is never draftable at all -- see the pool filtering in
-// app.js's Draft screen); bench size is configurable too.
+// Builds a roster-slot template from league format settings. Every
+// starting slot count is independently configurable; 0 for K or DEF
+// means that position is never draftable at all (see the pool
+// filtering in app.js's Draft screen) -- QB/RB/WR/TE/FLEX/SUPERFLEX
+// stay draftable even at 0 starting spots, they'd just always end up
+// on BENCH. Coach is always exactly 1 slot. Bench size is configurable.
 export function buildRosterSlots({
-  superflex = false,
-  enableKicker = true,
-  enableDefense = true,
+  qbSlots = DEFAULT_QB_SLOTS,
+  rbSlots = DEFAULT_RB_SLOTS,
+  wrSlots = DEFAULT_WR_SLOTS,
+  teSlots = DEFAULT_TE_SLOTS,
+  flexSlots = DEFAULT_FLEX_SLOTS,
+  superflexSlots = DEFAULT_SUPERFLEX_SLOTS,
+  kSlots = DEFAULT_K_SLOTS,
+  defSlots = DEFAULT_DEF_SLOTS,
   benchSpots = DEFAULT_BENCH_SPOTS,
 } = {}) {
-  const slots = ["QB", "RB", "RB", "WR", "WR", "TE", "FLEX"];
-  if (superflex) slots.push("SUPERFLEX");
-  if (enableKicker) slots.push("K");
-  if (enableDefense) slots.push("DEF");
+  const slots = [];
+  const repeat = (slot, count) => {
+    for (let i = 0; i < Math.max(0, count); i++) slots.push(slot);
+  };
+  repeat("QB", qbSlots);
+  repeat("RB", rbSlots);
+  repeat("WR", wrSlots);
+  repeat("TE", teSlots);
+  repeat("FLEX", flexSlots);
+  repeat("SUPERFLEX", superflexSlots);
+  repeat("K", kSlots);
+  repeat("DEF", defSlots);
   slots.push("COACH");
-  for (let i = 0; i < Math.max(0, benchSpots); i++) slots.push("BENCH");
+  repeat("BENCH", benchSpots);
   return slots;
 }
 

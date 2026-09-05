@@ -14,17 +14,20 @@ throughout (`--gold`/`--gold-light`/`--gold-dark` in `css/style.css`).
 
 ## Play it
 
-1. **League Settings** — name your teams (2-12) and pick your league
-   format: PPR (0 / 0.5 / 1 points per reception), TE Premium (bonus
-   points per TE reception), Superflex (an extra starting slot that
-   also allows a QB), Kicker/Defense Slot (each can be switched off,
-   removing that position from the draft pool entirely), Bench Spots
-   (0-10), and Max Retired Players (caps how many HOF/HOVG skill-position
-   players a team may draft; once hit, the alternating rule requires
-   active for the rest of that team's skill picks). All locked in once
-   the draft starts -- though once a draft exists this screen switches
-   to just an editable name per team (renaming works any time,
-   including mid-season) since format and team count are fixed by then.
+1. **League Settings** — name your teams (2-12) across 3 columns: Team
+   Names, a live Roster preview (one tile per starting slot, color-coded
+   by position), and Scoring Settings: PPR (0 / 0.5 / 1 points per
+   reception), TE Premium (bonus points per TE reception), a starting
+   spot count for every position (QB/RB/WR/TE/Flex/Superflex/K/Def --
+   0 for K or Def removes that position from the draft pool entirely;
+   the offensive positions stay draftable at 0 starting spots, they'd
+   just always land on BENCH), Bench Spots (0-10), and Max Retired
+   Players (caps how many HOF/HOVG skill-position players a team may
+   draft; once hit, the alternating rule requires active for the rest
+   of that team's skill picks). All locked in once the draft starts --
+   though once a draft exists only the Team Names column stays editable
+   (renaming works any time, including mid-season); Roster and Scoring
+   Settings just show what's already locked in.
 2. **Draft** — a local, hot-seat snake draft with a 60-second pick clock.
    Each team's own QB/RB/WR/TE picks also alternate between retired and
    active, starting with retired on their 1st skill pick, active on
@@ -50,13 +53,14 @@ throughout (`--gold`/`--gold-light`/`--gold-dark` in `css/style.css`).
    while testing Teams/Season -- not meant for normal play. A scrollable
    Draft Order table (pick #, clickable player name, team) records the
    exact order everyone was taken in, live as the draft happens.
-3. **Teams** — set your starting lineup: QB, 2×RB, 2×WR, TE, FLEX (+
-   SUPERFLEX if enabled), K and/or DEF (if enabled), Coach, and however
-   many bench spots your league format set (0-10). Only non-BENCH slots
-   score. Swapping a player into a slot swaps whoever was there back to
-   where the new player came from, so the roster never ends up in a
-   broken state. Editable any time, including mid-season — see Season
-   below. A small circular avatar sits inline with each player's name —
+3. **Teams** — set your starting lineup, shaped by whatever starting
+   spot counts your league format set (QB/RB/WR/TE/FLEX/SUPERFLEX/K/DEF,
+   1 QB/2 RB/2 WR/1 TE/1 FLEX by default), plus Coach and however many
+   bench spots your league format set (0-10); each slot shows as a
+   color-coded position tile. Only non-BENCH slots score. Swapping a
+   player into a slot swaps whoever was there back to where the new
+   player came from, so the roster never ends up in a broken state.
+   Editable any time, including mid-season — see Season below. A small circular avatar sits inline with each player's name —
    click either to open that player's card (see FAQ) — a blank headshot
    placeholder for now. Once the draft is complete, every rostered
    player also gets a Drop button, and a Free Agency section below every
@@ -130,6 +134,8 @@ the music may not start on a hard refresh with no prior interaction —
 that's a browser policy, not a bug. A second splash (logo again, no
 audio) pops up after every "Advance Week," congratulating you and naming
 the week (or playoff round) you just completed — same X/Escape to close.
+Advancing past the very last week of the season (the championship) also
+fires a brief canvas confetti burst over the whole screen.
 
 State is saved to `localStorage`, so progress survives a page refresh.
 "Reset League" on the League Settings screen clears everything and
@@ -272,9 +278,11 @@ the roadmap below doesn't require rewrites:
   data-coverage limits.
 - `js/draftEngine.js` — pure state-machine snake draft (order, turns,
   roster-slot eligibility via `SLOT_ELIGIBILITY`, undo). `buildRosterSlots()`
-  builds the roster template from league format settings: SUPERFLEX
-  when enabled, K/DEF each omitted entirely when disabled, and however
-  many BENCH slots the league chose. `SKILL_POSITIONS` (QB/RB/WR/TE) is
+  builds the roster template from league format settings: an independently
+  configurable starting-spot count per position (QB/RB/WR/TE/FLEX/SUPERFLEX/
+  K/DEF -- 0 for K or DEF omits that slot from the roster entirely), a fixed
+  1 COACH slot, and however many BENCH slots the league chose.
+  `SKILL_POSITIONS` (QB/RB/WR/TE) is
   the only group of positions subject to the retired/active alternation;
   `getRequiredGroup()` / `playerMatchesGroup()` / `canDraftPlayer()`
   enforce it per team (from how many *skill* picks that team has made so
