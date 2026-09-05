@@ -213,7 +213,7 @@ export const PLAYERS = [
     heightIn: 69,
     weightLbs: 209,
     seasons: [
-      { year: 1995, team: "DAL", games: 16, stats: { rushYds: 1773, rushTD: 25, rec: 62, recYds: 375, recTD: 0 } },
+      { year: 1995, team: "DAL", games: 16, stats: { rushYds: 1773, rushTD: 25, rec: 62, recYds: 375, fumblesLost: 6 } },
     ],
   },
   {

@@ -329,4 +329,24 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 28, rushYds: 153, rushTD: 0, rec: 2, recYds: 22, recTD: 0 }, // Wk17 @STL (OT)
     ],
   },
+  "emmitt-smith": {
+    1995: [
+      { rushAtt: 21, rushYds: 163, rushTD: 4, rec: 1, recTD: 0 }, // Wk1 @NYG
+      { rushAtt: 26, rushYds: 114, rushTD: 1, rec: 4, recYds: 35, recTD: 0 }, // Wk2 vs DEN
+      { rushAtt: 20, rushYds: 150, rushTD: 2, rec: 6, recYds: 12, recTD: 0, fumblesLost: 1 }, // Wk3 @MIN (OT)
+      { rushAtt: 21, rushYds: 116, rushTD: 2, rec: 3, recYds: 53, recTD: 0 }, // Wk4 vs ARI
+      { rushAtt: 22, rushYds: 95, rushTD: 0, rec: 8, recYds: 38, recTD: 0, fumblesLost: 1 }, // Wk5 @WAS
+      { rushAtt: 31, rushYds: 106, rushTD: 2, rec: 3, recYds: 19, recTD: 0 }, // Wk6 vs GNB
+      { rushAtt: 22, rushYds: 68, rushTD: 2, rec: 5, recYds: 15, recTD: 0 }, // Wk7 @SDG
+      { rushAtt: 26, rushYds: 167, rushTD: 1, rec: 5, recYds: 30, recTD: 0 }, // Wk9 @ATL
+      { rushAtt: 27, rushYds: 158, rushTD: 2, rec: 3, recYds: 22, recTD: 0, fumblesLost: 1 }, // Wk10 vs PHI
+      { rushAtt: 18, rushYds: 100, rushTD: 1, rec: 6, recYds: 50, recTD: 0 }, // Wk11 vs SFO
+      { rushAtt: 29, rushYds: 110, rushTD: 3, rec: 3, recYds: 22, recTD: 0, fumblesLost: 1 }, // Wk12 @OAK
+      { rushAtt: 18, rushYds: 56, rushTD: 1, rec: 3, recYds: 11, recTD: 0 }, // Wk13 vs KAN
+      { rushAtt: 21, rushYds: 91, rushTD: 1, rec: 4, recYds: 16, recTD: 0, fumblesLost: 1 }, // Wk14 vs WAS
+      { rushAtt: 27, rushYds: 108, rushTD: 1, rec: 3, recYds: 8, recTD: 0, fumblesLost: 1 }, // Wk15 @PHI
+      { rushAtt: 24, rushYds: 103, rushTD: 1, rec: 2, recYds: 6, recTD: 0 }, // Wk16 vs NYG
+      { rushAtt: 24, rushYds: 68, rushTD: 1, rec: 3, recYds: 38, recTD: 0 }, // Wk17 @ARI
+    ],
+  },
 };
