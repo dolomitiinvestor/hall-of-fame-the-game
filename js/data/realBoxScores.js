@@ -309,4 +309,24 @@ export const REAL_GAME_LOGS = {
       { rec: 7, recYds: 79, recTD: 1 }, // Wk17 @CIN
     ],
   },
+  "curtis-martin": {
+    2004: [
+      { rushAtt: 29, rushYds: 196, rushTD: 1, rec: 3, recYds: 7, recTD: 1 }, // Wk1 vs CIN
+      { rushAtt: 32, rushYds: 119, rushTD: 2, rec: 6, recYds: 25, recTD: 0 }, // Wk2 @SDG
+      { rushAtt: 24, rushYds: 110, rushTD: 1, rec: 4, recYds: 31, recTD: 0 }, // Wk4 @MIA
+      { rushAtt: 22, rushYds: 77, rushTD: 0, rec: 6, recYds: 23, recTD: 0 }, // Wk5 vs BUF
+      { rushAtt: 25, rushYds: 111, rushTD: 2, rec: 3, recYds: 20, recTD: 0 }, // Wk6 vs SFO
+      { rushAtt: 20, rushYds: 70, rushTD: 0, rec: 2, recTD: 0 }, // Wk7 @NWE
+      { rushAtt: 19, rushYds: 115, rushTD: 1, rec: 1, recYds: 13, recTD: 0 }, // Wk8 vs MIA
+      { rushAtt: 19, rushYds: 67, rushTD: 0 }, // Wk9 @BUF
+      { rushAtt: 28, rushYds: 119, rushTD: 2, rec: 2, recYds: 5, recTD: 0 }, // Wk10 vs BAL (OT)
+      { rushAtt: 17, rushYds: 88, rushTD: 0 }, // Wk11 @CLE
+      { rushAtt: 24, rushYds: 99, rushTD: 0 }, // Wk12 @ARI
+      { rushAtt: 23, rushYds: 134, rushTD: 1, rec: 4, recYds: 20, recTD: 1 }, // Wk13 vs HOU
+      { rushAtt: 24, rushYds: 72, rushTD: 0, rec: 3, recYds: 35, recTD: 0 }, // Wk14 @PIT
+      { rushAtt: 24, rushYds: 134, rushTD: 2 }, // Wk15 vs SEA
+      { rushAtt: 13, rushYds: 33, rushTD: 0, rec: 5, recYds: 44, recTD: 0 }, // Wk16 vs NWE
+      { rushAtt: 28, rushYds: 153, rushTD: 0, rec: 2, recYds: 22, recTD: 0 }, // Wk17 @STL (OT)
+    ],
+  },
 };
