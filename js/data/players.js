@@ -213,7 +213,7 @@ export const PLAYERS = [
     heightIn: 69,
     weightLbs: 209,
     seasons: [
-      { year: 1995, team: "DAL", games: 16, stats: { rushYds: 1773, rushTD: 25, rec: 62, recYds: 375, recTD: 0 } },
+      { year: 1995, team: "DAL", games: 16, stats: { rushYds: 1773, rushTD: 25, rec: 62, recYds: 375, fumblesLost: 6 } },
     ],
   },
   {
@@ -357,7 +357,7 @@ export const PLAYERS = [
     heightIn: 71,
     weightLbs: 203,
     seasons: [
-      { year: 2004, team: "NYJ", games: 16, stats: { rushYds: 1697, rushTD: 12, rec: 22, recYds: 137, recTD: 0 } },
+      { year: 2004, team: "NYJ", games: 16, stats: { rushYds: 1697, rushTD: 12, rec: 41, recYds: 245, recTD: 2 } },
     ],
   },
 
@@ -459,7 +459,7 @@ export const PLAYERS = [
     heightIn: 75,
     weightLbs: 210,
     seasons: [
-      { year: 1984, team: "WAS", games: 16, stats: { rec: 106, recYds: 1372, recTD: 7 } },
+      { year: 1984, team: "WAS", games: 16, stats: { rushYds: 18, rec: 106, recYds: 1372, recTD: 7 } },
     ],
   },
   {
