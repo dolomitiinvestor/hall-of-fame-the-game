@@ -329,6 +329,9 @@ select {
 .pos-COACH { color: #ffd54f; border-color: #ffd54f; }
 .pos-K { color: #ff7dc4; border-color: #ff7dc4; }
 .pos-DEF { color: #9fb0d0; border-color: #9fb0d0; }
+.pos-FLEX { color: var(--gold-light); border-color: var(--gold-light); }
+.pos-SUPERFLEX { color: var(--gold); border-color: var(--gold); }
+.pos-BENCH { color: var(--text-dim); border-color: var(--border); }
 
 .bye-badge {
   display: inline-block;
@@ -492,6 +495,66 @@ select {
 .draft-timer.timer-danger {
   color: #ff6b5c;
   border-color: #ff6b5c;
+}
+
+/* Setup: locked-in league settings (post-draft, read-only) */
+
+.league-settings-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+  margin: 1rem 0;
+}
+
+.league-settings-col h3 {
+  margin-top: 0;
+}
+
+.roster-slot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.roster-slot-tile {
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-style: solid;
+  background: var(--panel-alt);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.scoring-settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.scoring-settings-list > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.35rem;
+}
+
+.scoring-settings-list dt {
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+.scoring-settings-list dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
 }
 
 /* Setup: league format */

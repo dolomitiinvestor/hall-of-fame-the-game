@@ -272,10 +272,14 @@ function setScreen(screen) {
 // Once a draft exists, team COUNT and league format are locked in (the
 // roster template is already built), but renaming should still work at
 // any point -- including mid-season -- so this branches to a much
-// simpler view that only edits draft.teams[i].name directly.
+// simpler view: team names, plus a read-only look at the roster shape
+// and scoring settings this league is locked into (nothing here is
+// editable -- see the format selects in the pre-draft form below for
+// the only place these can actually change).
 function renderSetup() {
   const draft = state.draft;
   if (draft) {
+    const settings = state.leagueSettings;
     const rows = draft.teams
       .map(
         (team, i) => `
@@ -284,12 +288,36 @@ function renderSetup() {
       </div>`
       )
       .join("");
+    const rosterTiles = draft.rosterSlots.map((slot) => `<div class="roster-slot-tile pos-${slot}">${slot}</div>`).join("");
+    const tepLabel = settings.tePremium === 0 ? "None" : settings.tePremium === 0.5 ? "+0.5 pts / TE reception" : "+1.0 pt / TE reception";
+    const scoringRows = [
+      ["Points Per Reception", `${settings.pprValue} PPR`],
+      ["TE Premium", tepLabel],
+      ["Superflex", settings.superflex ? "On" : "Off"],
+      ["Kicker Slot", settings.enableKicker ? "On" : "Off"],
+      ["Defense Slot", settings.enableDefense ? "On" : "Off"],
+      ["Bench Spots", settings.benchSpots],
+      ["Max Retired Players (per team)", settings.maxRetiredSkillPlayers == null ? "No limit" : settings.maxRetiredSkillPlayers],
+    ]
+      .map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`)
+      .join("");
     return `
       <h2>League Settings</h2>
       <p class="hint">This league's format and team count are locked in for the draft already underway. You can still rename teams any time.</p>
-      <h3>Team Names</h3>
-      <div id="team-inputs">${rows}</div>
-      <p class="hint">Roster: ${draft.rosterSlots.join(", ")}.</p>
+      <div class="league-settings-columns">
+        <div class="league-settings-col">
+          <h3>Team Names</h3>
+          <div id="team-inputs">${rows}</div>
+        </div>
+        <div class="league-settings-col">
+          <h3>Roster</h3>
+          <div class="roster-slot-list">${rosterTiles}</div>
+        </div>
+        <div class="league-settings-col">
+          <h3>Scoring Settings</h3>
+          <dl class="scoring-settings-list">${scoringRows}</dl>
+        </div>
+      </div>
       <div class="setup-actions">
         <button class="btn btn-danger" data-action="reset-league">Reset League</button>
       </div>
