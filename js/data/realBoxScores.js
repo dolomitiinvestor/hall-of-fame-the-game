@@ -269,4 +269,24 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 24, rushYds: 123, rushTD: 0, rec: 8, recYds: 25, recTD: 0 }, // Wk16 @RAM
     ],
   },
+  "art-monk": {
+    1984: [
+      { rec: 3, recYds: 54, recTD: 0 }, // Wk1 vs MIA
+      { rushAtt: 1, rushTD: 0, rec: 10, recYds: 200, recTD: 0 }, // Wk2 @SFO
+      { rec: 8, recYds: 78, recTD: 0 }, // Wk3 vs NYG
+      { rec: 5, recYds: 37, recTD: 0 }, // Wk4 @NWE
+      { rec: 5, recYds: 80, recTD: 1 }, // Wk5 vs PHI
+      { rec: 8, recYds: 141, recTD: 3 }, // Wk6 @IND
+      { rec: 4, recYds: 67, recTD: 0 }, // Wk7 vs DAL
+      { rec: 6, recYds: 87, recTD: 0 }, // Wk8 @STL
+      { rec: 4, recYds: 104, recTD: 0 }, // Wk9 @NYG
+      { rec: 5, recYds: 45, recTD: 0 }, // Wk10 vs ATL
+      { rec: 5, recYds: 34, recTD: 0 }, // Wk11 vs DET
+      { rec: 8, recYds: 80, recTD: 0 }, // Wk12 @PHI
+      { rec: 11, recYds: 104, recTD: 1 }, // Wk13 vs BUF
+      { rec: 6, recYds: 45, recTD: 0 }, // Wk14 @MIN
+      { rushAtt: 1, rushYds: 18, rushTD: 0, rec: 7, recYds: 80, recTD: 0 }, // Wk15 @DAL
+      { rec: 11, recYds: 136, recTD: 2 }, // Wk16 vs STL
+    ],
+  },
 };

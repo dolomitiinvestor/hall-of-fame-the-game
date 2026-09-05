@@ -459,7 +459,7 @@ export const PLAYERS = [
     heightIn: 75,
     weightLbs: 210,
     seasons: [
-      { year: 1984, team: "WAS", games: 16, stats: { rec: 106, recYds: 1372, recTD: 7 } },
+      { year: 1984, team: "WAS", games: 16, stats: { rushYds: 18, rec: 106, recYds: 1372, recTD: 7 } },
     ],
   },
   {
