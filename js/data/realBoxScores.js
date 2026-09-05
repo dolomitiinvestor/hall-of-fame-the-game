@@ -289,4 +289,24 @@ export const REAL_GAME_LOGS = {
       { rec: 11, recYds: 136, recTD: 2 }, // Wk16 vs STL
     ],
   },
+  "cris-carter": {
+    1995: [
+      { rec: 5, recYds: 83, recTD: 0 }, // Wk1 @CHI
+      { rec: 6, recYds: 57, recTD: 0 }, // Wk2 vs DET
+      { rec: 5, recYds: 39, recTD: 1 }, // Wk3 vs DAL (OT)
+      { rec: 6, recYds: 67, recTD: 2 }, // Wk4 @PIT
+      { rec: 12, recYds: 115, recTD: 2 }, // Wk6 vs HOU (OT)
+      { rec: 4, recYds: 21, recTD: 0 }, // Wk7 @TAM (OT)
+      { rec: 5, recYds: 58, recTD: 0 }, // Wk8 @GNB
+      { rec: 8, recYds: 68, recTD: 0 }, // Wk9 vs CHI
+      { rec: 9, recYds: 91, recTD: 1 }, // Wk10 vs GNB
+      { rec: 12, recYds: 157, recTD: 2 }, // Wk11 @ARI (OT)
+      { rec: 12, recYds: 137, recTD: 2 }, // Wk12 vs NOR
+      { rec: 5, recYds: 51, recTD: 2 }, // Wk13 @DET
+      { rec: 6, recYds: 136, recTD: 2 }, // Wk14 vs TAM
+      { rec: 8, recYds: 124, recTD: 0 }, // Wk15 vs CLE
+      { rushAtt: 1, rushTD: 0, rec: 12, recYds: 88, recTD: 2 }, // Wk16 @SFO
+      { rec: 7, recYds: 79, recTD: 1 }, // Wk17 @CIN
+    ],
+  },
 };
