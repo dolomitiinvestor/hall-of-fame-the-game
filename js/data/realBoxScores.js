@@ -249,4 +249,24 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 29, rushYds: 203, rushTD: 1, rec: 1, recYds: -1, recTD: 0 }, // Wk16 vs MIN
     ],
   },
+  "marcus-allen": {
+    1985: [
+      { rushAtt: 20, rushYds: 76, rushTD: 2, rec: 2, recYds: 30, recTD: 0, passYds: 16 }, // Wk1 vs NYJ
+      { rushAtt: 14, rushYds: 50, rushTD: 0, rec: 6, recYds: 27, recTD: 0 }, // Wk2 @KAN
+      { rushAtt: 12, rushYds: 59, rushTD: 0, rec: 8, recYds: 53, recTD: 0 }, // Wk3 vs SFO
+      { rushAtt: 21, rushYds: 98, rushTD: 0, rec: 3, recYds: 30, recTD: 0 }, // Wk4 @NWE
+      { rushAtt: 29, rushYds: 126, rushTD: 0, rec: 3, recYds: 24, recTD: 0 }, // Wk5 vs KAN
+      { rushAtt: 28, rushYds: 107, rushTD: 2, rec: 3, recYds: 51, recTD: 0 }, // Wk6 vs NOR
+      { rushAtt: 20, rushYds: 81, rushTD: 0, rec: 3, recYds: 41, recTD: 1 }, // Wk7 @CLE
+      { rushAtt: 30, rushYds: 111, rushTD: 3, rec: 3, recYds: 24, recTD: 0 }, // Wk8 vs SDG
+      { rushAtt: 19, rushYds: 101, rushTD: 0, rec: 5, recYds: 49, recTD: 0 }, // Wk9 @SEA
+      { rushAtt: 28, rushYds: 119, rushTD: 1, rec: 5, recYds: 30, recTD: 0 }, // Wk10 @SDG (OT)
+      { rushAtt: 31, rushYds: 135, rushTD: 0, rec: 6, recYds: 54, recTD: 1 }, // Wk11 vs CIN
+      { rushAtt: 24, rushYds: 173, rushTD: 1, rec: 4, recYds: 49, recTD: 0 }, // Wk12 vs DEN (OT)
+      { rushAtt: 28, rushYds: 156, rushTD: 0, rec: 2, recYds: 42, recTD: 1 }, // Wk13 @ATL
+      { rushAtt: 25, rushYds: 135, rushTD: 1, rec: 5, recYds: 21, recTD: 0 }, // Wk14 @DEN (OT)
+      { rushAtt: 27, rushYds: 109, rushTD: 1, rec: 1, recYds: 5, recTD: 0 }, // Wk15 vs SEA
+      { rushAtt: 24, rushYds: 123, rushTD: 0, rec: 8, recYds: 25, recTD: 0 }, // Wk16 @RAM
+    ],
+  },
 };

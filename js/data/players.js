@@ -313,7 +313,7 @@ export const PLAYERS = [
     heightIn: 74,
     weightLbs: 210,
     seasons: [
-      { year: 1985, team: "LAR", games: 16, stats: { rushYds: 1759, rushTD: 11, rec: 67, recYds: 555, recTD: 3 } },
+      { year: 1985, team: "OAK", games: 16, stats: { rushYds: 1759, rushTD: 11, rec: 67, recYds: 555, recTD: 3, passYds: 16 } },
     ],
   },
   {
