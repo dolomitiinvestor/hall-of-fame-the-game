@@ -743,6 +743,7 @@ export const PLAYERS = [
     position: "QB",
     tag: "HOVG",
     seasons: [
+      { year: 2003, team: "SEA", games: 16, stats: { rushYds: 125, rushTD: 2, passYds: 3841, passTD: 26, passInt: 15, fumblesLost: 1 } },
       { year: 2007, team: "SEA", games: 16, stats: { passYds: 3966, passTD: 28, passInt: 19 } },
     ],
   },

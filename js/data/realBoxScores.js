@@ -210,4 +210,24 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 3, rushYds: 6, rushTD: 0, passYds: 301, passTD: 2, fumblesLost: 1 }, // Wk17 vs PIT
     ],
   },
+  "matt-hasselbeck": {
+    2003: [
+      { rushAtt: 4, rushYds: 11, rushTD: 0, passYds: 137, passTD: 2 }, // Wk1 vs NOR
+      { rushAtt: 1, rushYds: 2, rushTD: 1, passYds: 175, passTD: 2 }, // Wk2 @ARI
+      { rushAtt: 5, rushYds: 28, rushTD: 0, passYds: 256, passTD: 2, passInt: 1 }, // Wk3 vs STL
+      { rushAtt: 1, rushYds: 7, rushTD: 0, passYds: 225, passInt: 1 }, // Wk5 @GNB
+      { rushAtt: 5, rushYds: 17, rushTD: 0, passYds: 207, passTD: 1, passInt: 1 }, // Wk6 vs SFO
+      { rushAtt: 4, rushYds: 12, rushTD: 0, passYds: 215, passTD: 1, passInt: 1 }, // Wk7 vs CHI
+      { rushAtt: 1, rushYds: 11, rushTD: 0, passYds: 344, passTD: 3, passInt: 3 }, // Wk8 @CIN
+      { rushAtt: 2, rushYds: 3, rushTD: 0, passYds: 215, passTD: 1 }, // Wk9 vs PIT
+      { rushAtt: 1, rushYds: 1, rushTD: 0, passYds: 241, passTD: 1, passInt: 1 }, // Wk10 @WAS
+      { rushAtt: 3, rushYds: 15, rushTD: 1, passYds: 207, passTD: 1 }, // Wk11 vs DET
+      { rushAtt: 3, rushYds: 26, rushTD: 0, passYds: 333, passTD: 5, fumblesLost: 1 }, // Wk12 @BAL (OT)
+      { passYds: 328, passTD: 3, passInt: 1 }, // Wk13 vs CLE
+      { passYds: 218, passInt: 2 }, // Wk14 @MIN
+      { passYds: 246, passTD: 1, passInt: 1 }, // Wk15 @STL
+      { rushAtt: 3, rushYds: -5, rushTD: 0, passYds: 179, passTD: 1, passInt: 1 }, // Wk16 vs ARI
+      { rushAtt: 3, rushYds: -3, rushTD: 0, passYds: 315, passTD: 2, passInt: 2 }, // Wk17 @SFO
+    ],
+  },
 };
