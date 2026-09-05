@@ -1113,7 +1113,7 @@ select {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto auto minmax(0, 1fr);
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.2rem;
   width: 100%;
   text-align: left;
   padding: 0.55rem 0.7rem;
@@ -1145,6 +1145,13 @@ select {
   white-space: nowrap;
 }
 
+/* The right-hand team's name is the outer (last) column now that
+   scores sit clustered around "vs" in the middle -- push it flush to
+   the row's right edge to mirror the left-hand name's flush-left. */
+.game-row-name:last-child {
+  text-align: right;
+}
+
 .game-row-score {
   min-width: 2.6rem;
   text-align: right;
@@ -1156,7 +1163,7 @@ select {
   color: var(--text-dim);
   font-size: 0.7rem;
   text-align: center;
-  padding: 0 0.1rem;
+  padding: 0 0.35rem;
 }
 
 .game-row-name.win,

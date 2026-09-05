@@ -1414,7 +1414,8 @@ function handleSeasonClick(action) {
 // -------------------------------------------------------------- games
 
 // One compact game row -- 5 inline columns: team name, score, "vs",
-// team name, score. No expansion in place; tapping it opens the full
+// score, team name (scores clustered around "vs" in the middle, names
+// pushed to the outer edges). No expansion in place; tapping it opens the full
 // box score full-screen (see openGameFullscreen()) instead, which is
 // what keeps a whole week's slate fitting on screen together. Once the
 // game is finalized, the winning team's name+score get a gold glow.
@@ -1434,8 +1435,8 @@ function renderCompactGameRow(m, draft, weekIdx, matchupIdx, label) {
         <span class="game-row-name${aWin}">${escapeHtml(aTeam.name)}</span>
         <span class="game-row-score${aWin}">${aScore.total.toFixed(1)}</span>
         <span class="game-row-vs">vs</span>
-        <span class="game-row-name${bWin}">${escapeHtml(bTeam.name)}</span>
         <span class="game-row-score${bWin}">${bScore.total.toFixed(1)}</span>
+        <span class="game-row-name${bWin}">${escapeHtml(bTeam.name)}</span>
       </button>
     </div>`;
 }
@@ -1457,8 +1458,8 @@ function renderPreviewGameRow(pair, draft, label) {
         <span class="game-row-name">${aName}</span>
         <span class="game-row-score">&ndash;</span>
         <span class="game-row-vs">vs</span>
-        <span class="game-row-name">${bName}</span>
         <span class="game-row-score">&ndash;</span>
+        <span class="game-row-name">${bName}</span>
       </div>
     </div>`;
 }
