@@ -476,23 +476,29 @@ function formatHeightWeight(player) {
   return `${feet}'${inches}", ${player.weightLbs} lbs`;
 }
 
-// Headshot files are named after the person, not the game id -- coach
-// ids carry a "coach-" prefix (e.g. "coach-andy-reid") to keep them out
-// of the player id namespace, but the uploaded image is just
-// "andy-reid.jpg". Strip that prefix when building the file path.
-function headshotFilename(id) {
-  return id.replace(/^coach-/, "");
+// Coach ids carry a "coach-" prefix (e.g. "coach-andy-reid") to keep
+// them out of the player id namespace, but uploaded headshot files are
+// inconsistently named -- some keep that prefix (coach-curly-lambeau.jpg),
+// others drop it to match the person's plain name (andy-reid.jpg). Rather
+// than assume one convention, list every id/extension combination worth
+// trying so either naming works no matter which one a future upload uses.
+function headshotCandidates(id) {
+  const bases = id.startsWith("coach-") ? [id, id.replace(/^coach-/, "")] : [id];
+  const files = [];
+  for (const base of bases) {
+    for (const ext of HEADSHOT_EXTENSIONS) {
+      files.push(`img/headshots/${base}.${ext}`);
+    }
+  }
+  return files;
 }
 
-// Shared <img> for a player's headshot: tries img/headshots/<id>.jpg
-// first, falls back to <id>.png if that 404s (a couple of uploaded
-// headshots are PNGs), and removes itself if neither exists -- leaving
-// just the generic silhouette underneath (see HEADSHOT_EXTENSIONS in
-// probeHeadshots() below, which mirrors this same jpg-then-png order
-// for the Dev tab's coverage check).
+// Shared <img> for a player's headshot: tries each headshotCandidates()
+// path in turn, advancing to the next on a 404, and removes itself once
+// they're all exhausted -- leaving just the generic silhouette underneath.
 function headshotImg(id) {
-  const file = headshotFilename(id);
-  return `<img src="img/headshots/${file}.jpg" alt="" loading="lazy" data-fallback="img/headshots/${file}.png" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.removeAttribute('data-fallback');}else{this.remove();}" />`;
+  const [first, ...rest] = headshotCandidates(id);
+  return `<img src="${first}" alt="" loading="lazy" data-remaining='${JSON.stringify(rest)}' onerror="const rem=JSON.parse(this.dataset.remaining||'[]');if(rem.length){this.src=rem.shift();this.dataset.remaining=JSON.stringify(rem);}else{this.remove();}" />`;
 }
 
 // Blank-for-now headshot placeholder. Drop a matching file at
@@ -1764,9 +1770,8 @@ function tryLoadImage(src) {
 }
 
 async function probeOneHeadshot(id) {
-  const file = headshotFilename(id);
-  for (const ext of HEADSHOT_EXTENSIONS) {
-    if (await tryLoadImage(`img/headshots/${file}.${ext}`)) return true;
+  for (const src of headshotCandidates(id)) {
+    if (await tryLoadImage(src)) return true;
   }
   return false;
 }
