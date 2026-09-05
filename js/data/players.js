@@ -280,7 +280,7 @@ export const PLAYERS = [
     heightIn: 71,
     weightLbs: 233,
     seasons: [
-      { year: 1980, team: "HOU", games: 16, stats: { rushYds: 1934, rushTD: 13, rec: 6, recYds: 47, recTD: 0 } },
+      { year: 1980, team: "HOU", games: 15, stats: { rushYds: 1934, rushTD: 13, rec: 11, recYds: 47, passYds: 57, passTD: 1 } },
     ],
   },
   {

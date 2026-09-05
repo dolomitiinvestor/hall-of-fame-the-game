@@ -230,4 +230,23 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 3, rushYds: -3, rushTD: 0, passYds: 315, passTD: 2, passInt: 2 }, // Wk17 @SFO
     ],
   },
+  "earl-campbell": {
+    1980: [
+      { rushAtt: 13, rushYds: 57, rushTD: 1, rec: 4, recYds: 24, recTD: 0, passYds: 57, passTD: 1 }, // Wk1 @PIT
+      { rushAtt: 18, rushYds: 106, rushTD: 0, rec: 1, recYds: 8, recTD: 0 }, // Wk2 @CLE
+      { rushAtt: 7, rushYds: 11, rushTD: 1 }, // Wk3 vs BAL
+      { rushAtt: 12, rushYds: 50, rushTD: 0, rec: 2, recYds: -2, recTD: 0 }, // Wk5 vs SEA
+      { rushAtt: 38, rushYds: 178, rushTD: 1 }, // Wk6 @KAN
+      { rushAtt: 33, rushYds: 203, rushTD: 0, rec: 1, recYds: 8, recTD: 0 }, // Wk7 vs TAM
+      { rushAtt: 27, rushYds: 202, rushTD: 2 }, // Wk8 vs CIN
+      { rushAtt: 36, rushYds: 157, rushTD: 2 }, // Wk9 @DEN
+      { rushAtt: 30, rushYds: 130, rushTD: 2 }, // Wk10 vs NWE
+      { rushAtt: 31, rushYds: 206, rushTD: 0 }, // Wk11 @CHI
+      { rushAtt: 15, rushYds: 60, rushTD: 0, rec: 1, recYds: 8, recTD: 0 }, // Wk12 @NYJ (OT)
+      { rushAtt: 27, rushYds: 109, rushTD: 1, rec: 1, recYds: 2, recTD: 0 }, // Wk13 vs CLE
+      { rushAtt: 21, rushYds: 81, rushTD: 0 }, // Wk14 vs PIT
+      { rushAtt: 36, rushYds: 181, rushTD: 2 }, // Wk15 @GNB
+      { rushAtt: 29, rushYds: 203, rushTD: 1, rec: 1, recYds: -1, recTD: 0 }, // Wk16 vs MIN
+    ],
+  },
 };
