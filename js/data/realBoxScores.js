@@ -349,4 +349,24 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 24, rushYds: 68, rushTD: 1, rec: 3, recYds: 38, recTD: 0 }, // Wk17 @ARI
     ],
   },
+  "eric-dickerson": {
+    1984: [
+      { rushAtt: 21, rushYds: 138, rushTD: 1, rec: 2, recYds: 20, recTD: 0, passInt: 1 }, // Wk1 vs DAL
+      { rushAtt: 27, rushYds: 102, rushTD: 0, rec: 2, recYds: 9, recTD: 0 }, // Wk2 vs CLE
+      { rushAtt: 23, rushYds: 49, rushTD: 0, rec: 3, recYds: 16, recTD: 0 }, // Wk3 @PIT
+      { rushAtt: 22, rushYds: 89, rushTD: 1 }, // Wk4 @CIN
+      { rushAtt: 22, rushYds: 120, rushTD: 0, rec: 3, recYds: 27, recTD: 0 }, // Wk5 vs NYG
+      { rushAtt: 19, rushYds: 107, rushTD: 2, rec: 1, recYds: 17, recTD: 0 }, // Wk6 vs ATL
+      { rushAtt: 20, rushYds: 175, rushTD: 0 }, // Wk7 @NOR
+      { rushAtt: 24, rushYds: 145, rushTD: 1, rec: 1, recYds: 2, recTD: 0 }, // Wk8 @ATL
+      { rushAtt: 13, rushYds: 38, rushTD: 0, rec: 3, recYds: 19, recTD: 0 }, // Wk9 vs SFO
+      { rushAtt: 21, rushYds: 208, rushTD: 0 }, // Wk10 @STL
+      { rushAtt: 28, rushYds: 149, rushTD: 2 }, // Wk11 vs CHI
+      { rushAtt: 25, rushYds: 132, rushTD: 0, rec: 3, recYds: 14, recTD: 0 }, // Wk12 @GNB
+      { rushAtt: 28, rushYds: 191, rushTD: 3, rec: 1, recYds: 3, recTD: 0 }, // Wk13 @TAM
+      { rushAtt: 33, rushYds: 149, rushTD: 1, rec: 1, recYds: 6, recTD: 0 }, // Wk14 vs NOR
+      { rushAtt: 27, rushYds: 215, rushTD: 2 }, // Wk15 vs HOU
+      { rushAtt: 26, rushYds: 98, rushTD: 1, rec: 1, recYds: 6, recTD: 0 }, // Wk16 @SFO
+    ],
+  },
 };
