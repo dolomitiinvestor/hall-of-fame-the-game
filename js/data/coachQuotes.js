@@ -259,4 +259,40 @@ export const COACH_QUOTES = {
     "You can't fake passion. It has to be genuine, and it has to show up every single day.",
     "The scoreboard takes care of itself if you take care of the process.",
   ],
+  "coach-bear-bryant": [
+    "When they tell you as a teenager in Arkansas that you have to wrestle a captive bear for a carnival stunt to win five dollars, you realize real quick what kind of toughness it takes to survive life.",
+    "They used to say you couldn't build a powerhouse program on pure discipline, black-and-white houndstooth hats, and brutal two-a-day practices in the suffocating Junction humidity, but the scoreboard usually disagreed.",
+    "When you walk back onto the campus at Alabama in 1958 and utter the immortal words 'Mama called, and damn near every other coach in America heard it,' you instantly change the entire trajectory of college football.",
+    "Going from turning Kentucky into a basketball-and-football contender to dragging Texas A&M out of the dirt teaches you that a hard-nosed coach can win anywhere if his players are willing to empty the tank.",
+    "Preparation during the week under Coach Bryant meant running 'the Mama' until players were literally crawling off the practice field, because fatigue makes cowards of us all.",
+    "You don't accumulate 323 career victories and six national championships without an obsessive dedication to execution, defense, and running the football right down the opponent's throat.",
+    "Playing for Bear Bryant meant you learned real fast that there were only two kinds of people in the world: winners, and people who made excuses.",
+    "The bond you build with assistant coaches like Gene Stallings and Mal Moore is forged in a tiny office late at night, breaking down game film until your eyes bleed.",
+    "When the game is on the line in the fourth quarter of a tight SEC battle, you want a conservative ground game, a suffocating defense, and a kicker who doesn't blink.",
+    "You respect every legendary opponent on the schedule, but once Saturday afternoon arrives, you expect your team to physically break the will of whoever is standing across the line.",
+    "Coaching legends don't need to scream when a simple, gravel-voiced glare from across the sideline tells an All-American player exactly how badly he messed up.",
+    "Individual accolades like Coach of the Year honors and the Presidential Medal of Freedom are nice, but the real legacy is the army of former players who became leaders of men.",
+    "When you find a synchronized rhythm with your triple-option or Wishbone offense, running the ball forty times a game feels less like a strategy and more like an inevitable march.",
+    "I've heard every narrative about the brutal nature of my training camps, which is why I preferred to let the championship trophies speak for themselves.",
+    "Standing on the sideline with a rolled-up game program in your hand, a cigarette burning away, and the weight of an entire state riding on every snap is just another Saturday afternoon in the South.",
+    "When your career is finally over, you want people to remember that you lived for football, demanded absolute excellence from everyone around you, and bled crimson until the very end."
+  ]
+"coach-bobby-bowden": [
+    "When you spend your entire life building a national powerhouse out in the Florida panhandle by promising every recruit's mama that you'll look after him like your own, you quickly learn that southern hospitality and a lethal wide-open offense are an unbeatable combination.",
+    "They used to say we gambled too much by scheduling anybody, anywhere, anytime—playing Nebraska, Miami, and Florida all in the same season—which was true, but that's how you earn a permanent spot in the national championship conversation.",
+    "When your faith is as important to you as your playbook, walking out onto a packed Doak Campbell Stadium with a heavy heart and a quiet prayer is just part of getting ready for kickoff.",
+    "Going from coaching small college ball at South Alabama and West Virginia to creating 'Bowden Dynasty' magic in Tallahassee teaches you real quick that a great coach is part strategist, part psychologist, and part southern grandfather.",
+    "Preparation during the week means watching endless hours of film, drawing up razzle-dazzle trick plays on napkins, and figuring out how to keep a locker room full of five-star egos focused on winning.",
+    "You don't win 377 career games and two national championships without an explosive passing attack, a ferocious defense, and a knack for winning wild, high-scoring shootouts.",
+    "Playing football under Bobby Bowden meant you had plenty of freedom to make plays, just as long as you were ready to hear a hilarious, self-deprecating story if you fumbled the ball.",
+    "The bond you build with legendary coordinators like Mickey Andrews is built on absolute trust, fierce competitiveness, and shouting across the practice field until the defense finally stops the deep post.",
+    "When the game is on the line in the fourth quarter of a rivalry game, you want the crowd roaring, the momentum hanging by a thread, and your offense driving down the field for the winning score.",
+    "You respect every brilliant defensive coordinator who tried to trap your wide-open scheme, but eventually, you knew a Peter Warrick punt return or a Charlie Ward scramble would break their hearts.",
+    "Coaching legends don't need to scream to control a room; a quick, folksy joke delivered with a grin usually made you feel worse than any tirade ever could.",
+    "Individual Hall of Fame inductions and bronze statues outside the stadium are nice, but the real legacy is the thousands of young men who graduated and grew up under your watch.",
+    "When you find a synchronized rhythm with your offense, letting your quarterback air it out downfield feels less like a risk and more like inevitable destiny.",
+    "I've heard every joke about my clock management and my tendency to misplace things, which is why I always preferred to laugh right along with the press box.",
+    "Watching a missed field goal sail wide left at the end of a national championship game hurts, but knowing your boys left everything on the field makes it a little easier to swallow.",
+    "When your career is finally over, you want people to remember that you loved the game, loved your players, and coached every single Saturday with a joyful heart."
+  ]  
 };
