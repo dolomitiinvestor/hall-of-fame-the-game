@@ -246,7 +246,7 @@ export const PLAYERS = [
     heightIn: 75,
     weightLbs: 220,
     seasons: [
-      { year: 1984, team: "LAR", games: 16, stats: { rushYds: 2105, rushTD: 14, rec: 21, recYds: 139, recTD: 1 } },
+      { year: 1984, team: "LAR", games: 16, stats: { rushYds: 2105, rushTD: 14, rec: 21, recYds: 139, passInt: 1 } },
     ],
   },
   {
