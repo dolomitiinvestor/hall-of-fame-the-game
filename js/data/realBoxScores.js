@@ -29,6 +29,25 @@
 //     },
 //   };
 export const REAL_GAME_LOGS = {
+  "le-veon-bell": {
+    2017: [
+      { rushAtt: 10, rushYds: 32, rushTD: 0, rec: 3, recYds: 15, recTD: 0 }, // Wk1 @CLE
+      { rushAtt: 27, rushYds: 87, rushTD: 0, rec: 4, recYds: 4, recTD: 0 }, // Wk2 vs MIN
+      { rushAtt: 15, rushYds: 61, rushTD: 1, rec: 6, recYds: 37, recTD: 0 }, // Wk3 @CHI (OT)
+      { rushAtt: 35, rushYds: 144, rushTD: 2, rec: 4, recYds: 42, recTD: 0 }, // Wk4 @BAL
+      { rushAtt: 15, rushYds: 47, rushTD: 0, rec: 10, recYds: 46, recTD: 0 }, // Wk5 vs JAX
+      { rushAtt: 32, rushYds: 179, rushTD: 1, rec: 3, recYds: 12, recTD: 0 }, // Wk6 @KAN
+      { rushAtt: 35, rushYds: 134, rushTD: 0, rec: 3, recYds: 58, recTD: 0 }, // Wk7 vs CIN
+      { rushAtt: 25, rushYds: 76, rushTD: 1, rec: 2, recYds: 5, recTD: 0, fumblesLost: 1 }, // Wk8 @DET
+      { rushAtt: 26, rushYds: 80, rushTD: 0, rec: 5, recYds: 32, recTD: 0 }, // Wk10 @IND
+      { rushAtt: 12, rushYds: 46, rushTD: 0, rec: 9, recYds: 57, recTD: 0 }, // Wk11 vs TEN
+      { rushAtt: 20, rushYds: 95, rushTD: 0, rec: 12, recYds: 88, recTD: 1, fumblesLost: 1 }, // Wk12 vs GNB
+      { rushAtt: 18, rushYds: 76, rushTD: 0, rec: 5, recYds: 106, recTD: 1 }, // Wk13 @CIN
+      { rushAtt: 13, rushYds: 48, rushTD: 2, rec: 9, recYds: 77, recTD: 1 }, // Wk14 vs BAL
+      { rushAtt: 24, rushYds: 117, rushTD: 1, rec: 5, recYds: 48, recTD: 0 }, // Wk15 vs NWE
+      { rushAtt: 14, rushYds: 69, rushTD: 1, rec: 5, recYds: 28, recTD: 0 }, // Wk16 @HOU
+    ],
+  },
   "isaac-bruce": {
     2000: [
       { rec: 4, recYds: 60, recTD: 0 }, // Wk1 @DEN

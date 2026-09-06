@@ -1056,7 +1056,7 @@ export const PLAYERS = [
     position: "RB",
     tag: "HOVG",
     seasons: [
-      { year: 2017, team: "PIT", games: 15, stats: { rushYds: 1291, rushTD: 9, rec: 85, recYds: 655, recTD: 2 } },
+      { year: 2017, team: "PIT", games: 15, stats: { rushYds: 1291, rushTD: 9, rec: 85, recYds: 655, recTD: 2, fumblesLost: 2 } },
     ],
   },
   {
