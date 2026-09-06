@@ -325,6 +325,7 @@ export const PLAYERS = [
     weightLbs: 230,
     seasons: [
       { year: 1975, team: "PIT", games: 14, stats: { rushYds: 1246, rushTD: 10, rec: 28, recYds: 179, recTD: 1 } },
+      { year: 1976, team: "PIT", games: 14, stats: { rushYds: 1128, rushTD: 14, rec: 23, recYds: 151 } },
     ],
   },
   {
