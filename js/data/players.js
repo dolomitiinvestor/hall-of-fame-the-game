@@ -236,6 +236,7 @@ export const PLAYERS = [
     weightLbs: 212,
     seasons: [
       { year: 1973, team: "BUF", games: 14, stats: { rushYds: 2003, rushTD: 12, rec: 6, recYds: 70, recTD: 0 } },
+      { year: 1975, team: "BUF", games: 14, stats: { rushYds: 1817, rushTD: 16, rec: 28, recYds: 426, recTD: 7 } },
     ],
   },
   {
