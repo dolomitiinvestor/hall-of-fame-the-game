@@ -74,9 +74,34 @@ const ROSTER_SLOT_FIELDS = [
   { key: "defSlots", label: "Def Spots", max: 2 },
 ];
 
+// Default team names offered on the league setup screen before the
+// user types their own -- shuffled per team so each new league gets a
+// random, non-repeating set (falls back to "Team N" once the pool of
+// 19 is exhausted, which only happens past the 12-team max).
+const DEFAULT_TEAM_NAME_POOL = [
+  "Eagles", "Tigers", "Bulldogs", "Panthers", "Wildcats", "Warriors", "Lions", "Knights",
+  "Cougars", "Cardinals", "Mustangs", "Trojans", "Falcons", "Pirates", "Vikings", "Raiders",
+  "Spartans", "Rams", "Hawks",
+];
+
+function shuffledDefaultTeamNames(count) {
+  const pool = [...DEFAULT_TEAM_NAME_POOL];
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return Array.from({ length: count }, (_, i) => pool[i] ?? `Team ${i + 1}`);
+}
+
+function nextDefaultTeamName(existingNames) {
+  const available = DEFAULT_TEAM_NAME_POOL.filter((n) => !existingNames.includes(n));
+  if (available.length === 0) return `Team ${existingNames.length + 1}`;
+  return available[Math.floor(Math.random() * available.length)];
+}
+
 const state = {
   screen: "setup",
-  setupTeamNames: Array.from({ length: 8 }, (_, i) => `Team ${i + 1}`),
+  setupTeamNames: shuffledDefaultTeamNames(8),
   leagueSettings: { ...DEFAULT_LEAGUE_SETTINGS },
   draft: null,
   season: null,
@@ -447,7 +472,7 @@ function renderSetup() {
 
 function handleSetupClick(action, target) {
   if (action === "add-team") {
-    state.setupTeamNames.push(`Team ${state.setupTeamNames.length + 1}`);
+    state.setupTeamNames.push(nextDefaultTeamName(state.setupTeamNames));
     render();
   } else if (action === "remove-team") {
     const idx = Number(target.dataset.idx);
