@@ -276,8 +276,8 @@ export const COACH_QUOTES = {
     "I've heard every narrative about the brutal nature of my training camps, which is why I preferred to let the championship trophies speak for themselves.",
     "Standing on the sideline with a rolled-up game program in your hand, a cigarette burning away, and the weight of an entire state riding on every snap is just another Saturday afternoon in the South.",
     "When your career is finally over, you want people to remember that you lived for football, demanded absolute excellence from everyone around you, and bled crimson until the very end."
-  ]
-"coach-bobby-bowden": [
+  ],
+  "coach-bobby-bowden": [
     "When you spend your entire life building a national powerhouse out in the Florida panhandle by promising every recruit's mama that you'll look after him like your own, you quickly learn that southern hospitality and a lethal wide-open offense are an unbeatable combination.",
     "They used to say we gambled too much by scheduling anybody, anywhere, anytime—playing Nebraska, Miami, and Florida all in the same season—which was true, but that's how you earn a permanent spot in the national championship conversation.",
     "When your faith is as important to you as your playbook, walking out onto a packed Doak Campbell Stadium with a heavy heart and a quiet prayer is just part of getting ready for kickoff.",
