@@ -369,4 +369,22 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 26, rushYds: 98, rushTD: 1, rec: 1, recYds: 6, recTD: 0 }, // Wk16 @SFO
     ],
   },
+  "franco-harris": {
+    1976: [
+      { rushAtt: 18, rushYds: 68, rushTD: 1, rec: 1, recYds: 39, recTD: 0 }, // Wk1 @OAK
+      { rushAtt: 25, rushYds: 118, rushTD: 1, rec: 2, recYds: 10, recTD: 0 }, // Wk2 vs CLE
+      { rushAtt: 19, rushYds: 78, rushTD: 2 }, // Wk3 vs NWE
+      { rushAtt: 17, rushYds: 34, rushTD: 0, rec: 4, recYds: 38, recTD: 0 }, // Wk4 @MIN
+      { rushAtt: 13, rushYds: 39, rushTD: 1, rec: 6, recYds: 13, recTD: 0 }, // Wk5 @CLE
+      { rushAtt: 41, rushYds: 143, rushTD: 2 }, // Wk6 vs CIN
+      { rushAtt: 27, rushYds: 106, rushTD: 2, rec: 4, recYds: 12, recTD: 0 }, // Wk7 @NYG
+      { rushAtt: 11, rushYds: 32, rushTD: 0, rec: 1, recYds: 11, recTD: 0 }, // Wk8 vs SDG
+      { rushAtt: 23, rushYds: 117, rushTD: 2 }, // Wk9 @KAN
+      { rushAtt: 22, rushYds: 110, rushTD: 1, rec: 1, recYds: 7, recTD: 0 }, // Wk10 vs MIA
+      { rushAtt: 10, rushYds: 37, rushTD: 0, rec: 1, recYds: 4, recTD: 0 }, // Wk11 vs HOU
+      { rushAtt: 26, rushYds: 87, rushTD: 1, rec: 1, recYds: 5, recTD: 0 }, // Wk12 @CIN
+      { rushAtt: 14, rushYds: 55, rushTD: 0 }, // Wk13 vs TAM
+      { rushAtt: 23, rushYds: 104, rushTD: 1, rec: 2, recYds: 12, recTD: 0 }, // Wk14 @HOU
+    ],
+  },
 };
