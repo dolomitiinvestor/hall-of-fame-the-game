@@ -387,4 +387,22 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 23, rushYds: 104, rushTD: 1, rec: 2, recYds: 12, recTD: 0 }, // Wk14 @HOU
     ],
   },
+  "oj-simpson": {
+    1975: [
+      { rushAtt: 32, rushYds: 173, rushTD: 2, rec: 1, recYds: 5, recTD: 0 }, // Wk1 vs NYJ
+      { rushAtt: 28, rushYds: 227, rushTD: 1 }, // Wk2 @PIT
+      { rushAtt: 26, rushYds: 138, rushTD: 1 }, // Wk3 vs DEN
+      { rushAtt: 32, rushYds: 159, rushTD: 1, rec: 1, recYds: 14, recTD: 0 }, // Wk4 @BAL
+      { rushAtt: 34, rushYds: 126, rushTD: 1 }, // Wk5 vs NYG
+      { rushAtt: 19, rushYds: 88, rushTD: 1, rec: 2, recYds: 16, recTD: 0 }, // Wk6 vs MIA
+      { rushAtt: 21, rushYds: 94, rushTD: 0, rec: 2, recYds: 66, recTD: 1 }, // Wk7 @NYJ
+      { rushAtt: 19, rushYds: 123, rushTD: 1, rec: 3, recYds: 71, recTD: 2 }, // Wk8 vs BAL
+      { rushAtt: 17, rushYds: 197, rushTD: 2, rec: 2, recYds: 21, recTD: 0 }, // Wk9 @CIN
+      { rushAtt: 27, rushYds: 69, rushTD: 2, rec: 4, recYds: 22, recTD: 2 }, // Wk10 vs NWE
+      { rushAtt: 23, rushYds: 85, rushTD: 1 }, // Wk11 @STL
+      { rushAtt: 18, rushYds: 96, rushTD: 1, rec: 8, recYds: 117, recTD: 1 }, // Wk12 @MIA
+      { rushAtt: 21, rushYds: 185, rushTD: 1, rec: 2, recYds: 28, recTD: 0 }, // Wk13 @NWE
+      { rushAtt: 12, rushYds: 57, rushTD: 1, rec: 3, recYds: 66, recTD: 1 }, // Wk14 vs MIN
+    ],
+  },
 };
