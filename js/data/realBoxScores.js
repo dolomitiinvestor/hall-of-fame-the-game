@@ -30,6 +30,24 @@
 //   };
 export const REAL_GAME_LOGS = {
   "le-veon-bell": {
+    2014: [
+      { rushAtt: 21, rushYds: 109, rushTD: 1, rec: 6, recYds: 88, recTD: 0 }, // Wk1 vs CLE
+      { rushAtt: 11, rushYds: 59, rushTD: 0, rec: 5, recYds: 48, recTD: 0 }, // Wk2 @BAL
+      { rushAtt: 21, rushYds: 147, rushTD: 0, rec: 2, recYds: 10, recTD: 0 }, // Wk3 @CAR
+      { rushAtt: 19, rushYds: 63, rushTD: 0, rec: 6, recYds: 46, recTD: 0 }, // Wk4 vs TAM
+      { rushAtt: 15, rushYds: 82, rushTD: 0, rec: 5, recYds: 36, recTD: 0 }, // Wk5 @JAX
+      { rushAtt: 18, rushYds: 82, rushTD: 0, rec: 4, recYds: 23, recTD: 0 }, // Wk6 @CLE
+      { rushAtt: 12, rushYds: 57, rushTD: 0, rec: 8, recYds: 88, recTD: 1 }, // Wk7 vs HOU
+      { rushAtt: 24, rushYds: 92, rushTD: 0, rec: 6, recYds: 56, recTD: 0 }, // Wk8 vs IND
+      { rushAtt: 10, rushYds: 20, rushTD: 0, rec: 5, recYds: 38, recTD: 1 }, // Wk9 vs BAL
+      { rushAtt: 11, rushYds: 36, rushTD: 0, rec: 8, recYds: 33, recTD: 0 }, // Wk10 @NYJ
+      { rushAtt: 33, rushYds: 204, rushTD: 1, rec: 2, recYds: 18, recTD: 0 }, // Wk11 @TEN
+      { rushAtt: 21, rushYds: 95, rushTD: 1, rec: 8, recYds: 159, recTD: 0 }, // Wk13 vs NOR
+      { rushAtt: 26, rushYds: 185, rushTD: 2, rec: 6, recYds: 50, recTD: 1 }, // Wk14 @CIN
+      { rushAtt: 20, rushYds: 47, rushTD: 2, rec: 5, recYds: 72, recTD: 0 }, // Wk15 @ATL
+      { rushAtt: 20, rushYds: 63, rushTD: 1, rec: 1, recYds: 9, recTD: 0 }, // Wk16 vs KAN
+      { rushAtt: 8, rushYds: 20, rushTD: 0, rec: 6, recYds: 80, recTD: 0 }, // Wk17 vs CIN
+    ],
     2017: [
       { rushAtt: 10, rushYds: 32, rushTD: 0, rec: 3, recYds: 15, recTD: 0 }, // Wk1 @CLE
       { rushAtt: 27, rushYds: 87, rushTD: 0, rec: 4, recYds: 4, recTD: 0 }, // Wk2 vs MIN
