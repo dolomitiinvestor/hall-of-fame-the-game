@@ -1252,6 +1252,14 @@ select {
   max-width: 100%;
 }
 
+/* Slot-machine reel digits (see startSlotMachineReels() in app.js):
+   .reel-pad reserves a real digit's width but stays invisible, so a
+   short number's reel never reflows once it lands and never flashes a
+   misleading leading "0". */
+.reel-pad {
+  visibility: hidden;
+}
+
 .hof-quote {
   font: italic 400 0.78rem/1.5 "Public Sans", sans-serif;
   color: rgba(242, 240, 236, 0.55);
