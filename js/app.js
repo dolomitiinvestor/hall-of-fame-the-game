@@ -1072,93 +1072,195 @@ function benchEntries(team, week) {
     .filter(Boolean);
 }
 
-// The Pos/Player/Pts cells for one entry (a starter or a bench
-// player). `mirrored` right-aligns the player cell so it reads
-// correctly on the right-hand side of the combined matchup table --
-// see buildMatchupTableHtml() below. `entry` may be null when one
-// side has fewer rows than the other (e.g. uneven bench counts); that
-// renders as three empty cells so the table stays rectangular.
-function matchupRowCells(entry, coachBonus, week, mirrored) {
-  if (!entry) return { pos: "<td></td>", player: "<td></td>", pts: "<td></td>" };
+// Position accent colors for the Hall of Fame matchup view (chip text,
+// chip background/border at reduced alpha, headshot/score-box hover
+// border, score number hover color) -- oklch(L C H), split into
+// components so they can be composed at different alphas via CSS
+// custom properties (see .hof-chip etc. in style.css). Falls back to a
+// neutral gray for any slot not listed here.
+const HOF_POSITION_COLOR = {
+  QB: [0.78, 0.15, 65],
+  RB: [0.72, 0.14, 250],
+  WR: [0.8, 0.17, 150],
+  TE: [0.75, 0.16, 305],
+  FLEX: [0.78, 0.13, 195],
+  SUPERFLEX: [0.78, 0.13, 195],
+  K: [0.75, 0.19, 350],
+  DEF: [0.78, 0.13, 220],
+  COACH: [0.82, 0.1, 85],
+};
+
+function hofPosVars(position) {
+  const [l, c, h] = HOF_POSITION_COLOR[position] || [0.7, 0, 0];
+  return `--p-l:${l};--p-c:${c};--p-h:${h}`;
+}
+
+// A team's win-loss(-tie) record as of (and including) weekIdx --
+// summed from the regular-season entries of season.weeklyResults up to
+// that point, rather than read off season.standings (which reflects
+// the record as of *now*, i.e. however far the season has actually
+// advanced). Playoff games never change the record (see
+// playPlayoffMatchup() in season.js), so they're skipped here too --
+// a playoff week's record is just whatever the regular season ended
+// with.
+function teamRecordThroughWeek(season, teamId, weekIdx) {
+  let wins = 0,
+    losses = 0,
+    ties = 0;
+  for (let i = 0; i <= weekIdx && i < season.weeklyResults.length; i++) {
+    const wk = season.weeklyResults[i];
+    if (wk.round !== "regular") continue;
+    for (const m of wk.matchups) {
+      if (!m.teamIds.includes(teamId)) continue;
+      if (m.winnerId === teamId) wins++;
+      else if (m.winnerId == null) ties++;
+      else losses++;
+    }
+  }
+  return { wins, losses, ties };
+}
+
+function formatRecord({ wins, losses, ties }) {
+  return ties ? `${wins}-${losses}-${ties}` : `${wins}-${losses}`;
+}
+
+// 3-letter team monogram for the score-block badge -- letters only, so
+// a team named e.g. "Bob's Legends!" still yields "BOB" rather than
+// tripping over the punctuation.
+function teamMonogram(name) {
+  const letters = (name || "").replace(/[^a-zA-Z]/g, "");
+  return (letters.slice(0, 3) || "TM").toUpperCase();
+}
+
+// "Rams · 2006 season · FINAL" (retired players) or "Bengals · 2026 ·
+// FINAL" (active) -- the era/team credit line shown once a roster row
+// is expanded. Every simulated week is already fully resolved by the
+// time this view can be opened (there's no "live, still in progress"
+// state in a turn-based season), so the game-state segment is always
+// FINAL. Null if the player (or their season) can't be resolved.
+function matchupCredit(player, rules, season) {
+  if (!player || !player.seasons?.length) return null;
+  const sel = resolvePlayerSeasonSelection(player.id, rules, season);
+  const year = sel?.year ?? getBestSeason(player, rules).season?.year;
+  if (year == null) return null;
+  const seasonObj = getSeasonByYear(player, year) || getBestSeason(player, rules).season;
+  const teamName = seasonObj?.team ? NFL_TEAM_NAMES[seasonObj.team] || seasonObj.team : null;
+  const retired = player.tag === "HOF" || player.tag === "HOVG";
+  const parts = [teamName, retired ? `${year} season` : `${year}`, "FINAL"].filter(Boolean);
+  return parts.join(" · ");
+}
+
+// One side (team A or team B) of one roster row: position chip,
+// headshot, name/badge/stat/quote/credit text column. `side` ("a"|"b")
+// only controls left/right mirroring (via the .hof-side-b class in
+// CSS, which flips the flex direction and text alignment) -- the
+// underlying markup is identical either way, which is what lets a
+// single click handler and a single CSS hover/expand rule cover both.
+// `entry` is null when this side has no player for this row (e.g.
+// uneven bench counts); that renders an empty placeholder cell so the
+// grid stays aligned.
+function renderHofSide(entry, side, week, coachBonus, rules, season) {
+  const posVars = hofPosVars(entry?.position);
+  if (!entry) {
+    return `<div class="hof-cell hof-side-${side}" style="${posVars}"></div>`;
+  }
   const player = getPlayerById(entry.playerId);
+  const isCoachBonusRow = entry.position === "COACH" && coachBonus && coachBonus.coachName === entry.name;
+
   const badge = INJURY_STATUSES[entry.injury]?.code
     ? `<span class="injury-badge ${INJURY_BADGE_CLASS[entry.injury]}" title="${escapeHtml(INJURY_STATUSES[entry.injury].label)}">${INJURY_STATUSES[entry.injury].code}</span>`
     : "";
-  const boxLine = formatBoxScoreLine(entry.boxScore);
-  const quote = entry.isBench ? null : playerQuoteFor(entry.playerId, week);
-  // The started Coach's bonus line lives right under their own row
-  // (not as a separate paragraph after the whole table), and their
-  // name gets a " - coach bonus" suffix so it's obvious at a glance
-  // which row it belongs to.
-  const isCoachBonusRow = entry.position === "COACH" && coachBonus && coachBonus.coachName === entry.name;
   const nameHtml = player ? playerNameLink(player) : escapeHtml(entry.name);
+  const tag = player?.tag === "HOF" || player?.tag === "HOVG" ? player.tag : null;
+  const tagHtml = tag
+    ? `<span class="hof-tag hof-tag-legend">${tag}</span>`
+    : player
+      ? `<span class="hof-tag hof-tag-active">${escapeHtml(String(resolvePlayerSeasonSelection(player.id, rules, season)?.year ?? "ACTIVE"))}</span>`
+      : "";
+  const statLine = formatBoxScoreLine(entry.boxScore);
+  const quote = entry.isBench ? null : playerQuoteFor(entry.playerId, week);
+  const credit = player ? matchupCredit(player, rules, season) : null;
   const coachSuffix = isCoachBonusRow ? ` <span class="coach-bonus-suffix">- coach bonus</span>` : "";
   const coachBonusLine = isCoachBonusRow
-    ? `<div class="coach-bonus-line">${coachBonus.amount >= 0 ? "+" : ""}${coachBonus.amount.toFixed(1)} (${(coachBonus.rate * 100).toFixed(0)}%)</div>`
+    ? `<div class="hof-coach-bonus-line">${coachBonus.amount >= 0 ? "+" : ""}${coachBonus.amount.toFixed(1)} coach bonus (${(coachBonus.rate * 100).toFixed(0)}%)</div>`
     : "";
-  // Coaches don't rack up their own box-score points -- their Pts
-  // column shows the bonus they generated instead of a flat 0.0, so
-  // the row reads as "the coach scored this."
-  const displayPoints = isCoachBonusRow ? coachBonus.amount : entry.points;
-  return {
-    pos: `<td class="pos-cell"><span class="pos-badge pos-${entry.position}">${entry.position}</span></td>`,
-    player: `<td class="player-cell${mirrored ? " mirrored" : ""}">
-        <div class="player-row-name">${player ? playerAvatar(player) : ""}${nameHtml}${coachSuffix} ${badge}</div>
-        ${boxLine ? `<div class="box-score-line">${escapeHtml(boxLine)}</div>` : ""}
-        ${quote ? `<div class="player-quote" onclick="this.classList.toggle('expanded')">&ldquo;${escapeHtml(quote)}&rdquo;</div>` : ""}
+
+  return `
+    <div class="hof-cell hof-side-${side}" style="${posVars}" onclick="if(!event.target.closest('[data-action]')) this.classList.toggle('expanded')">
+      <span class="hof-chip">${entry.position}</span>
+      <div class="hof-headshot">
+        <span class="hof-headshot-label">PHOTO</span>
+        ${player ? headshotImg(player.id) : ""}
+      </div>
+      <div class="hof-textcol">
+        <div class="hof-name-row">${nameHtml}${tagHtml}${coachSuffix}${badge}</div>
+        ${statLine ? `<div class="hof-stat">${escapeHtml(statLine)}</div>` : ""}
+        ${quote ? `<div class="hof-quote">&ldquo;${escapeHtml(quote)}&rdquo;</div>` : ""}
+        ${credit ? `<div class="hof-credit">${escapeHtml(credit)}</div>` : ""}
         ${coachBonusLine}
-      </td>`,
-    pts: `<td class="pts-cell">${displayPoints.toFixed(1)}</td>`,
-  };
+      </div>
+    </div>`;
 }
 
-// One <tr> with team A's entry read outward from the left edge (Pos,
-// Player, Pts) and team B's entry read outward from the right edge
-// (Pts, Player, Pos) -- a mirror image across the table's center, so
-// both teams' points sit next to each other in the middle columns.
-function renderMirroredRow(entryA, entryB, aCoachBonus, bCoachBonus, week, rowClass) {
-  const a = matchupRowCells(entryA, aCoachBonus, week, false);
-  const b = matchupRowCells(entryB, bCoachBonus, week, true);
-  return `<tr${rowClass ? ` class="${rowClass}"` : ""}>${a.pos}${a.player}${a.pts}${b.pts}${b.player}${b.pos}</tr>`;
+function renderHofScoreBox(entry, side, coachBonus) {
+  const posVars = hofPosVars(entry?.position);
+  if (!entry) return `<div class="hof-score-box hof-score-${side}" style="${posVars}"><div class="hof-score-inner">&ndash;</div></div>`;
+  const isCoachBonusRow = entry.position === "COACH" && coachBonus && coachBonus.coachName === entry.name;
+  const displayPoints = isCoachBonusRow ? coachBonus.amount : entry.points;
+  return `<div class="hof-score-box hof-score-${side}" style="${posVars}"><div class="hof-score-inner">${displayPoints.toFixed(1)}</div></div>`;
 }
 
-// The full mirrored box score for a matchup: both teams' starters
-// (from the stored score's breakdown -- an accurate historical record
-// even after a lineup is edited later, since it's computed once at
-// simulation time) row-for-row by roster slot, then both teams'
-// bench players (computed live off the *current* roster, like
+// One roster row: team A's side (left), the two score boxes (center
+// rail), team B's side (right, mirrored). See renderHofSide() above --
+// a hover or an expanded quote on one side only tints that side's own
+// score box, via the :has() rules in style.css.
+function renderHofRow(entryA, entryB, aCoachBonus, bCoachBonus, week, rules, season, rowClass) {
+  return `
+    <div class="hof-row${rowClass ? ` ${rowClass}` : ""}">
+      ${renderHofSide(entryA, "a", week, aCoachBonus, rules, season)}
+      <div class="hof-score-rail">
+        ${renderHofScoreBox(entryA, "a", aCoachBonus)}
+        ${renderHofScoreBox(entryB, "b", bCoachBonus)}
+      </div>
+      ${renderHofSide(entryB, "b", week, bCoachBonus, rules, season)}
+    </div>`;
+}
+
+// The full mirrored roster for a matchup: both teams' starters (from
+// the stored score's breakdown -- an accurate historical record even
+// after a lineup is edited later, since it's computed once at
+// simulation time) row-for-row by roster slot, then both teams' bench
+// players (computed live off the *current* roster, like
 // coachQuoteForTeam() below -- bench assignments aren't stored per
 // week) under a shared "Bench" divider. Slot order is identical for
 // every team (see buildRosterSlots()), so index-for-index pairing
 // keeps each row lined up between the two sides.
-function buildMatchupTableHtml(aTeam, aScore, bTeam, bScore, week) {
+function buildHofRosterHtml(aTeam, aScore, bTeam, bScore, week, rules, season) {
   if (!aScore.breakdown.length && !bScore.breakdown.length) {
     return `<p class="hint">No starters were set that week.</p>`;
   }
   let rows = "";
   const starterLen = Math.max(aScore.breakdown.length, bScore.breakdown.length);
   for (let i = 0; i < starterLen; i++) {
-    rows += renderMirroredRow(aScore.breakdown[i] || null, bScore.breakdown[i] || null, aScore.coachBonus, bScore.coachBonus, week);
+    rows += renderHofRow(aScore.breakdown[i] || null, bScore.breakdown[i] || null, aScore.coachBonus, bScore.coachBonus, week, rules, season);
   }
   const aBench = benchEntries(aTeam, week);
   const bBench = benchEntries(bTeam, week);
   if (aBench.length || bBench.length) {
-    rows += `<tr class="bench-header-row"><td colspan="6">Bench</td></tr>`;
+    rows += `<div class="hof-bench-divider">Bench</div>`;
     const benchLen = Math.max(aBench.length, bBench.length);
     for (let i = 0; i < benchLen; i++) {
-      rows += renderMirroredRow(aBench[i] || null, bBench[i] || null, null, null, week, "bench-row");
+      rows += renderHofRow(aBench[i] || null, bBench[i] || null, null, null, week, rules, season, "hof-row-bench");
     }
   }
   return `
-    <div class="matchup-table-scroll">
-      <table class="roster-table matchup-table mirrored-matchup-table">
-        <colgroup>
-          <col class="col-pos" /><col class="col-player" /><col class="col-pts" />
-          <col class="col-pts" /><col class="col-player" /><col class="col-pos" />
-        </colgroup>
-        <thead><tr><th>Pos</th><th>Player</th><th>Pts</th><th>Pts</th><th>Player</th><th>Pos</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
+    <div class="hof-roster">
+      <div class="hof-roster-headrow">
+        <div class="hof-roster-head hof-head-left"><span class="hof-head-pos">POS</span><span>ROSTER</span></div>
+        <div class="hof-roster-head hof-head-center">PTS</div>
+        <div class="hof-roster-head hof-head-right"><span>ROSTER</span><span class="hof-head-pos">POS</span></div>
+      </div>
+      ${rows}
     </div>`;
 }
 
@@ -1177,48 +1279,66 @@ function coachQuoteForTeam(team, week) {
   return { coachName: coach.name, text: quotes[idx] };
 }
 
-// Score + coach quote for one team's side of the matchup header.
-// Coach-only (no team/player quote below it), so both sides show at
-// most one quote line and the team-name row above them lines up
-// regardless of whether either coach has a quote that week.
-function renderScoreBlock(team, score, win, week) {
+// One team's score block: record, name, monogram badge, big score,
+// FINAL/margin line, and (if their starting coach has one) a
+// click-to-expand coach quote. `side` ("a"|"b") mirrors left/right
+// alignment and picks the badge color (gold for the left/home side,
+// blue for the right/away side -- a fixed pair for this single
+// matchup view, not a persistent per-team color).
+function renderHofScoreBlock(team, score, otherScore, side, win, tie, week, weekIdx, season) {
+  const record = formatRecord(teamRecordThroughWeek(season, team.id, weekIdx));
+  const margin = Math.abs(score.total - otherScore.total).toFixed(1);
+  const resultLine = tie ? `<span class="hof-result-tie">TIE</span>` : win ? `<span class="hof-result-win">+${margin}</span>` : `<span class="hof-result-loss">&minus;${margin}</span>`;
   const coachQuote = coachQuoteForTeam(team, week);
   const coachQuoteHtml = coachQuote
-    ? `<p class="coach-quote">&ldquo;${escapeHtml(coachQuote.text)}&rdquo; <span class="coach-quote-author">&mdash; ${escapeHtml(coachQuote.coachName)}</span></p>`
+    ? `<div class="hof-coach-quote" onclick="this.classList.toggle('expanded')">
+        <div class="hof-coach-quote-text">&ldquo;${escapeHtml(coachQuote.text)}&rdquo;</div>
+        <div class="hof-coach-quote-author">COACH &middot; ${escapeHtml(coachQuote.coachName.toUpperCase())}</div>
+      </div>`
     : "";
   return `
-    <div class="matchup-score-block">
-      <span class="${win}">${escapeHtml(team.name)} ${score.total.toFixed(1)}</span>
+    <div class="hof-score-block hof-side-${side}">
+      <div class="hof-team-identity">
+        <span class="hof-team-record">${record}</span>
+        <span class="hof-team-name">${escapeHtml(team.name)}</span>
+        <span class="hof-team-badge hof-badge-${side}">${teamMonogram(team.name)}</span>
+      </div>
+      <div class="hof-team-score${win || tie ? "" : " hof-team-score-trail"}">${score.total.toFixed(1)}</div>
+      <div class="hof-team-statline">FINAL ${resultLine}</div>
       ${coachQuoteHtml}
     </div>`;
 }
 
 // Full game detail: header (both teams' scores + coach quotes) and the
-// mirrored box score below it. Used by the Games tab's fullscreen
-// game view (see openGameFullscreen()) -- clicking a compact game row
-// opens exactly this, full-screen, rather than expanding in place.
-function buildGameDetailHtml(m, draft, label, week) {
+// mirrored roster below it -- the "Hall of Fame" matchup layout. Used
+// by the Games tab's fullscreen game view (see openGameFullscreen())
+// -- clicking a compact game row opens exactly this, full-screen,
+// rather than expanding in place.
+function buildGameDetailHtml(m, draft, label, week, weekIdx, season, rules) {
   const [aId, bId] = m.teamIds;
   const aTeam = draft.teams.find((t) => t.id === aId);
   const bTeam = draft.teams.find((t) => t.id === bId);
   const aScore = m.scores[aId];
   const bScore = m.scores[bId];
-  const aWin = m.winnerId === aId ? " win" : "";
-  const bWin = m.winnerId === bId ? " win" : "";
-  const labelTag = label ? `<span class="tag-badge hovg-tag">${escapeHtml(label)}</span>` : "";
+  const tie = m.winnerId == null;
+  const aWin = m.winnerId === aId;
+  const bWin = m.winnerId === bId;
+  const weekLabel = label ? `WEEK ${week} &middot; ${escapeHtml(label.toUpperCase())}` : `WEEK ${week}`;
   return `
-    <div class="game-detail-header">
-      ${labelTag}
-      ${renderScoreBlock(aTeam, aScore, aWin, week)}
-      <span class="vs">vs</span>
-      ${renderScoreBlock(bTeam, bScore, bWin, week)}
-    </div>
-    <div class="matchup-detail">
-      <div class="matchup-team-names">
-        <h5>${escapeHtml(aTeam.name)}</h5>
-        <h5 class="mirrored">${escapeHtml(bTeam.name)}</h5>
+    <div class="hof-matchup">
+      <div class="hof-matchup-eyebrow-row">
+        <div class="hof-matchup-eyebrow">
+          <span class="hof-eyebrow-brand">HALL OF FAME</span>
+          <span class="hof-eyebrow-divider"></span>
+          <span class="hof-eyebrow-week">${weekLabel}</span>
+        </div>
+        <div class="hof-final-pill"><span class="hof-final-dot"></span>FINAL</div>
       </div>
-      ${buildMatchupTableHtml(aTeam, aScore, bTeam, bScore, week)}
+      <div class="hof-score-grid">
+        ${renderHofScoreBlock(aTeam, aScore, bScore, "a", aWin, tie, week, weekIdx, season)}
+        ${renderHofScoreBlock(bTeam, bScore, aScore, "b", bWin, tie, week, weekIdx, season)}
+      </div>
+      ${buildHofRosterHtml(aTeam, aScore, bTeam, bScore, week, rules, season)}
     </div>`;
 }
 
@@ -1706,14 +1826,10 @@ function openGameFullscreen(weekIdx, matchupIdx) {
       ? ["Championship", "3rd Place"]
       : wk.matchups.map(() => wk.roundLabel);
   const label = isPlayoff ? labels[matchupIdx] : null;
-  const weekHeading = isPlayoff ? `Week ${wk.week} &mdash; Playoffs: ${escapeHtml(wk.roundLabel)}` : `Week ${wk.week}`;
 
   const body = document.getElementById("game-fullscreen-body");
   if (!body) return;
-  body.innerHTML = `
-    <h2>${weekHeading}</h2>
-    ${buildGameDetailHtml(m, state.draft, label, wk.week)}
-  `;
+  body.innerHTML = buildGameDetailHtml(m, state.draft, label, wk.week, weekIdx, state.season, getRules());
   document.getElementById("game-fullscreen-overlay").hidden = false;
 }
 
