@@ -270,6 +270,28 @@ select {
   border-radius: var(--radius);
 }
 
+/* The site-wide h3 rule (section-divider top border) looks redundant
+   stacked right under a .panel's own border -- suppress it only when
+   the h3 is the panel's very first child, as in the Dev toggle box
+   above. */
+.panel > h3:first-child {
+  margin-top: 0;
+  border-top: none;
+  padding-top: 0;
+}
+
+.dev-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.dev-toggle-row input {
+  width: auto;
+}
+
 .draft-filters {
   display: flex;
   gap: 0.5rem;
@@ -1260,6 +1282,36 @@ select {
   visibility: hidden;
 }
 
+/* One flash when a reel lands (see startSlotMachineReels() in app.js):
+   a brief glow burst rather than a color change, so it reads correctly
+   regardless of the number's own color (default dim white, or a
+   position tint when hovered/expanded). */
+.reel-group {
+  display: inline-block;
+}
+
+@keyframes reel-flash {
+  0% {
+    text-shadow: 0 0 10px rgba(255, 214, 120, 0.9), 0 0 2px rgba(255, 255, 255, 0.9);
+  }
+  100% {
+    text-shadow: none;
+  }
+}
+
+.reel-group.reel-flash {
+  animation: reel-flash 0.5s ease-out;
+}
+
+/* Team-score header placeholders while the roster's reels are still
+   rolling (see the `animate` branch of renderHofScoreBlock() and
+   revealHofTeamScores() in app.js) -- dimmed so the em-dashes read as
+   "pending" rather than as odd stray punctuation. */
+.hof-score-pending,
+.hof-result-pending {
+  opacity: 0.35;
+}
+
 .hof-quote {
   font: italic 400 0.78rem/1.5 "Public Sans", sans-serif;
   color: rgba(242, 240, 236, 0.55);
@@ -1653,7 +1705,17 @@ select {
   z-index: 900;
   background: var(--bg);
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 1rem;
+}
+
+/* While any full-screen overlay is open (see syncBodyScrollLock() in
+   app.js): the page behind it can't scroll or rubber-band past the
+   overlay's own edges -- overscroll-behavior above keeps a scroll that
+   reaches the top/bottom of the overlay's content from "chaining" into
+   scrolling the page underneath. */
+body.body-scroll-locked {
+  overflow: hidden;
 }
 
 .fullscreen-overlay[hidden] {
