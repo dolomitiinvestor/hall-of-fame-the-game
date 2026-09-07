@@ -1159,6 +1159,59 @@ function matchupCredit(player, rules, season) {
 // `entry` is null when this side has no player for this row (e.g.
 // uneven bench counts); that renders an empty placeholder cell so the
 // grid stays aligned.
+// One run of digits as slot-machine reel spans (see
+// startSlotMachineReels() below): `minDigits - digits.length` invisible
+// placeholder digits first -- same glyph, so they reserve the exact
+// same width as a real digit -- then one real <span class="reel-digit">
+// per digit, each carrying its correct final value in data-final for
+// the reel to land on. Padding with an invisible digit (rather than a
+// blank/space) rather than just rendering fewer digits means every
+// number in a family (e.g. every stat count) reserves the same width
+// from the very first frame, so nothing reflows once the reel stops --
+// and a single-digit stat never flashes a misleading leading "0".
+function renderDigitRun(digits, minDigits) {
+  const padCount = Math.max(0, minDigits - digits.length);
+  let html = "";
+  for (let i = 0; i < padCount; i++) {
+    html += `<span class="reel-pad" aria-hidden="true">0</span>`;
+  }
+  for (const ch of digits) {
+    html += `<span class="reel-digit" data-final="${ch}">${ch}</span>`;
+  }
+  return html;
+}
+
+// Wraps every run of digits in `text` with animated reel spans; all
+// other text (labels, punctuation) passes through escaped as normal.
+// Used for the Hall of Fame matchup view's box-score stat lines (e.g.
+// "27 car, 118 rush yds, 1 rush TD, 7 rec") -- every count in the line
+// gets its own independently-landing reel. `minDigits` reserves at
+// least 2 digits per number so short stats (a TD count, a single-digit
+// reception total) still read as a slot-machine reel rather than a
+// single flickering character.
+function digitizeText(text, minDigits = 2) {
+  let html = "";
+  let lastIndex = 0;
+  const re = /\d+/g;
+  let match;
+  while ((match = re.exec(text))) {
+    html += escapeHtml(text.slice(lastIndex, match.index));
+    html += renderDigitRun(match[0], minDigits);
+    lastIndex = re.lastIndex;
+  }
+  html += escapeHtml(text.slice(lastIndex));
+  return html;
+}
+
+// The score-box number (e.g. "8.8", "22.8") as reel spans: at least 2
+// integer digits (blank-padded per renderDigitRun above), a static
+// ".", then exactly 1 fractional digit -- toFixed(1) always yields
+// exactly one, so it never needs padding.
+function renderScoreReel(value) {
+  const [intPart, fracPart] = value.toFixed(1).split(".");
+  return `${renderDigitRun(intPart, 2)}<span class="reel-dot">.</span>${renderDigitRun(fracPart, 1)}`;
+}
+
 function renderHofSide(entry, side, week, coachBonus, rules, season) {
   const posVars = hofPosVars(entry?.position);
   if (!entry) {
@@ -1194,7 +1247,7 @@ function renderHofSide(entry, side, week, coachBonus, rules, season) {
       </div>
       <div class="hof-textcol">
         <div class="hof-name-row">${nameHtml}${tagHtml}${coachSuffix}${badge}</div>
-        ${statLine ? `<div class="hof-stat">${escapeHtml(statLine)}</div>` : ""}
+        ${statLine ? `<div class="hof-stat">${digitizeText(statLine)}</div>` : ""}
         ${quote ? `<div class="hof-quote">&ldquo;${escapeHtml(quote)}&rdquo;</div>` : ""}
         ${credit ? `<div class="hof-credit">${escapeHtml(credit)}</div>` : ""}
         ${coachBonusLine}
@@ -1207,7 +1260,7 @@ function renderHofScoreBox(entry, side, coachBonus) {
   if (!entry) return `<div class="hof-score-box hof-score-${side}" style="${posVars}"><div class="hof-score-inner">&ndash;</div></div>`;
   const isCoachBonusRow = entry.position === "COACH" && coachBonus && coachBonus.coachName === entry.name;
   const displayPoints = isCoachBonusRow ? coachBonus.amount : entry.points;
-  return `<div class="hof-score-box hof-score-${side}" style="${posVars}"><div class="hof-score-inner">${displayPoints.toFixed(1)}</div></div>`;
+  return `<div class="hof-score-box hof-score-${side}" style="${posVars}"><div class="hof-score-inner">${renderScoreReel(displayPoints)}</div></div>`;
 }
 
 // One roster row: team A's side (left), the two score boxes (center
@@ -1814,6 +1867,57 @@ function handleGamesClick(action, target) {
   }
 }
 
+// ------------------------------------------------- slot-machine reels
+//
+// Every reel-digit span in the Hall of Fame matchup view (see
+// renderDigitRun()/digitizeText()/renderScoreReel() above) already
+// carries its correct, already-decided final value in data-final --
+// the "outcome" was never in question, this is purely a reveal effect.
+// Grouped and timed per .hof-row (not per digit, not per whole
+// matchup): every digit in a row -- both sides' score boxes and both
+// sides' box-score stat lines -- spins on one shared interval and
+// lands together at one random 3-6s stop time per row, so different
+// rows visibly stop at different moments while a single row's numbers
+// (e.g. a RB's rush yards, rush TDs, and points) stay in sync with
+// each other.
+const SLOT_TICK_MS = 100;
+const SLOT_MIN_DURATION_MS = 3000;
+const SLOT_MAX_DURATION_MS = 6000;
+
+let activeSlotTimers = [];
+
+function clearSlotMachineReels() {
+  activeSlotTimers.forEach((id) => {
+    clearInterval(id);
+    clearTimeout(id);
+  });
+  activeSlotTimers = [];
+}
+
+function startSlotMachineReels(container) {
+  clearSlotMachineReels();
+  container.querySelectorAll(".hof-row").forEach((row) => {
+    const digitEls = row.querySelectorAll(".reel-digit");
+    if (!digitEls.length) return;
+    const spin = () => {
+      digitEls.forEach((el) => {
+        el.textContent = String(Math.floor(Math.random() * 10));
+      });
+    };
+    spin();
+    const intervalId = setInterval(spin, SLOT_TICK_MS);
+    activeSlotTimers.push(intervalId);
+    const duration = SLOT_MIN_DURATION_MS + Math.random() * (SLOT_MAX_DURATION_MS - SLOT_MIN_DURATION_MS);
+    const timeoutId = setTimeout(() => {
+      clearInterval(intervalId);
+      digitEls.forEach((el) => {
+        el.textContent = el.dataset.final;
+      });
+    }, duration);
+    activeSlotTimers.push(timeoutId);
+  });
+}
+
 // Full-screen single-game view: X (or Escape) closes it and returns to
 // the Games tab's week view underneath, unchanged -- see
 // buildGameDetailHtml() for the actual content.
@@ -1831,11 +1935,13 @@ function openGameFullscreen(weekIdx, matchupIdx) {
   if (!body) return;
   body.innerHTML = buildGameDetailHtml(m, state.draft, label, wk.week, weekIdx, state.season, getRules());
   document.getElementById("game-fullscreen-overlay").hidden = false;
+  startSlotMachineReels(body);
 }
 
 function closeGameFullscreen() {
   const overlay = document.getElementById("game-fullscreen-overlay");
   if (overlay) overlay.hidden = true;
+  clearSlotMachineReels();
 }
 
 // ---------------------------------------------------------- player card
