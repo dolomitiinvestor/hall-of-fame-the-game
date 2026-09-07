@@ -842,160 +842,531 @@ select {
   font-weight: 700;
 }
 
-.matchup-score-block {
+/* ------------------------------------------------- Hall of Fame matchup
+   Full-screen game detail (see buildGameDetailHtml() in app.js): dark
+   card, mirrored team score blocks, and a mirrored roster with
+   position-tinted chips/headshots/score boxes. Position color is
+   passed per-cell as inline --p-l/--p-c/--p-h (oklch components) so a
+   single set of rules below covers every position and both sides. */
+
+.hof-matchup {
+  position: relative;
+  background: #101215;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 1.4rem 1.3rem 1.6rem;
+  color: #f2f0ec;
+  overflow: hidden;
+}
+
+.hof-matchup::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 140px;
+  background: radial-gradient(120% 100% at 50% 0%, rgba(255, 214, 120, 0.09), transparent 70%);
+  pointer-events: none;
+}
+
+.hof-matchup-eyebrow-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.1rem;
+}
+
+.hof-matchup-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.hof-eyebrow-brand {
+  font: 700 0.8rem/1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.14em;
+  color: var(--gold-light);
+}
+
+.hof-eyebrow-divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.hof-eyebrow-week {
+  font: 500 0.8rem/1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.1em;
+  color: rgba(242, 240, 236, 0.5);
+}
+
+.hof-final-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(63, 209, 126, 0.14);
+  border: 1px solid rgba(63, 209, 126, 0.3);
+  font: 700 0.62rem/1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.12em;
+  color: var(--win);
+}
+
+.hof-final-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--win);
+}
+
+.hof-score-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hof-score-block {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
-  flex: 1 1 10rem;
-  min-width: 9rem;
+  gap: 0.4rem;
 }
 
-.coach-quote {
-  margin: 0;
-  font-size: 0.7rem;
-  font-style: italic;
-  font-weight: 400;
-  color: var(--text-dim);
-  white-space: normal;
+.hof-score-block.hof-side-a {
+  align-items: flex-end;
+  text-align: right;
 }
 
-.coach-quote-author {
-  font-style: normal;
+.hof-score-block.hof-side-b {
+  align-items: flex-start;
+  text-align: left;
 }
 
-.matchup-detail {
-  margin-top: 0.6rem;
-}
-
-.matchup-team-names {
+.hof-team-identity {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   gap: 0.5rem;
 }
 
-.matchup-team-names h5 {
-  margin: 0 0 0.3rem 0;
-  font-size: 0.85rem;
-  color: var(--text-dim);
-}
-
-.matchup-team-names h5.mirrored {
-  text-align: right;
-}
-
-.matchup-table-scroll {
-  overflow-x: auto;
-  margin-top: 0.3rem;
-}
-
-.matchup-table {
-  font-size: 0.85rem;
-  width: 100%;
-  min-width: 40rem;
-  table-layout: fixed;
-}
-
-.matchup-table .col-pos {
-  width: 8%;
-}
-
-.matchup-table .col-player {
-  width: 34%;
-}
-
-.matchup-table .col-pts {
-  width: 8%;
-}
-
-.matchup-table .pos-cell,
-.matchup-table .pts-cell {
-  text-align: center;
-}
-
-.matchup-table th:nth-child(4),
-.matchup-table th:nth-child(5),
-.matchup-table th:nth-child(6),
-.matchup-table td.player-cell.mirrored {
-  text-align: right;
-}
-
-.matchup-table .player-cell.mirrored .player-row-name {
+.hof-side-b .hof-team-identity {
   flex-direction: row-reverse;
+}
+
+.hof-team-record {
+  font: 500 0.68rem/1 "IBM Plex Mono", monospace;
+  color: rgba(242, 240, 236, 0.45);
+}
+
+.hof-team-name {
+  font: 600 0.95rem/1 "Public Sans", sans-serif;
+}
+
+.hof-team-badge {
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  color: #101215;
+  font: 800 0.85rem/2rem "Big Shoulders Display", sans-serif;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+.hof-badge-a {
+  background: var(--gold-light);
+}
+
+.hof-badge-b {
+  background: #4fb3ff;
+}
+
+.hof-team-score {
+  font: 800 3.4rem/0.85 "Big Shoulders Display", sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.hof-team-score-trail {
+  color: rgba(242, 240, 236, 0.72);
+}
+
+.hof-team-statline {
+  font: 500 0.68rem/1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.06em;
+  color: rgba(242, 240, 236, 0.5);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.hof-side-a .hof-team-statline {
   justify-content: flex-end;
 }
 
-.matchup-table .player-cell.mirrored .box-score-line,
-.matchup-table .player-cell.mirrored .player-quote,
-.matchup-table .player-cell.mirrored .coach-bonus-line {
-  text-align: right;
+.hof-result-win {
+  color: var(--gold-light);
 }
 
-/* Name, statline, and (collapsed) quote each stay on their own single
-   line, truncating with an ellipsis rather than wrapping to a second
-   line -- .player-cell was flexing all of these into one row before
-   (a bug: it's also used, correctly, as a flex row in the Teams
-   roster editor), which this overrides back to a plain vertical
-   stack for the matchup table specifically. */
-.matchup-table .player-cell {
-  display: block;
+.hof-result-loss,
+.hof-result-tie {
+  color: rgba(242, 240, 236, 0.5);
 }
 
-.matchup-table .player-row-name {
-  flex-wrap: nowrap;
-}
-
-.matchup-table .player-avatar {
-  flex-shrink: 0;
-}
-
-.matchup-table .player-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.matchup-table .box-score-line {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.matchup-table .player-quote {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.hof-coach-quote {
+  max-width: 26rem;
+  width: 100%;
+  padding-top: 0.55rem;
+  margin-top: 0.3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
   cursor: pointer;
 }
 
-.matchup-table .player-quote:hover {
-  color: var(--text);
+.hof-coach-quote-text {
+  font: italic 400 0.8rem/1.5 "Public Sans", sans-serif;
+  color: rgba(247, 245, 241, 0.7);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  transition: color 0.13s ease;
 }
 
-/* Clicked open: no longer clipped to one line, and centered on the
-   player cell via the left:50%/translateX(-50%) trick so it grows the
-   same distance left and right as it wraps, instead of just widening
-   toward whichever edge it's aligned to. Staying in normal flow (not
-   absolutely positioned) means the row still grows taller around it,
-   pushing the next row down, same as any other wrapped table cell. */
-.matchup-table .player-quote.expanded {
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  overflow: visible;
-  text-overflow: clip;
-  white-space: normal;
-  width: max-content;
-  max-width: min(80vw, 26rem);
-  text-align: left;
-  background: var(--panel-alt);
-  padding: 0.35rem 0.6rem;
+.hof-coach-quote.expanded .hof-coach-quote-text {
+  -webkit-line-clamp: 6;
+  color: rgba(247, 245, 241, 0.92);
+}
+
+.hof-coach-quote-author {
+  font: 500 0.6rem/1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.1em;
+  color: rgba(242, 240, 236, 0.4);
+  margin-top: 0.25rem;
+}
+
+/* ---- roster ---- */
+
+.hof-roster {
+  margin-top: 0.2rem;
+}
+
+.hof-roster-headrow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr);
+  gap: 0.7rem;
+  padding: 0.9rem 0 0.4rem;
+  font: 600 0.62rem/1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.12em;
+  color: rgba(242, 240, 236, 0.32);
+}
+
+.hof-roster-head {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.hof-head-left {
+  padding-left: 0.9rem;
+}
+
+.hof-head-right {
+  justify-content: flex-end;
+  padding-right: 0.9rem;
+}
+
+.hof-head-center {
+  justify-content: center;
+  text-align: center;
+}
+
+.hof-head-pos {
+  width: 2.6rem;
+}
+
+.hof-head-right .hof-head-pos {
+  text-align: right;
+}
+
+.hof-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr);
+  gap: 0.7rem;
+  align-items: stretch;
+  border-top: 1px solid rgba(255, 255, 255, 0.055);
+}
+
+.hof-row-bench {
+  opacity: 0.75;
+}
+
+.hof-bench-divider {
+  margin-top: 0.4rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+  font: 600 0.62rem/1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(242, 240, 236, 0.4);
+}
+
+.hof-cell {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.8rem;
+  border-radius: 10px;
+  cursor: pointer;
+  min-width: 0;
+  transition: background 0.13s ease, box-shadow 0.13s ease;
+}
+
+.hof-cell:hover,
+.hof-cell.expanded {
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.11);
+}
+
+.hof-cell.hof-side-b {
+  flex-direction: row-reverse;
+}
+
+/* No align-items override here on purpose: the default `stretch`
+   keeps .hof-name-row (and the plain-text stat/quote/credit divs)
+   full-width, which is what lets the name's overflow/ellipsis actually
+   clip instead of just hugging its own content size and overflowing
+   past the cell -- text-align (block text) and the name row's own
+   justify-content: flex-end (flex text) handle the right-alignment. */
+.hof-cell.hof-side-b .hof-textcol {
+  text-align: right;
+}
+
+.hof-chip {
+  flex: none;
+  width: 2.2rem;
+  text-align: center;
+  padding: 0.25rem 0;
+  margin-top: 1px;
   border-radius: 6px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
-  z-index: 2;
+  font: 600 0.6rem/1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  color: oklch(var(--p-l) var(--p-c) var(--p-h));
+  background: oklch(var(--p-l) var(--p-c) var(--p-h) / 0.12);
+  border: 1px solid oklch(var(--p-l) var(--p-c) var(--p-h) / 0.45);
 }
 
-.matchup-table .player-cell.mirrored .player-quote.expanded {
-  text-align: left;
+.hof-headshot {
+  position: relative;
+  flex: none;
+  width: 2.1rem;
+  height: 2.4rem;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.13s ease;
+}
+
+.hof-cell:hover .hof-headshot,
+.hof-cell.expanded .hof-headshot {
+  border-color: oklch(var(--p-l) var(--p-c) var(--p-h) / 0.5);
+}
+
+.hof-headshot-label {
+  font: 500 0.45rem/1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  color: rgba(242, 240, 236, 0.28);
+}
+
+.hof-headshot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.hof-textcol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.hof-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.hof-side-b .hof-name-row {
+  justify-content: flex-end;
+}
+
+.hof-name-row .player-name {
+  font: 600 0.9rem/1.1 "Public Sans", sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.hof-tag {
+  flex: none;
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+  font: 600 0.55rem/1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.08em;
+}
+
+.hof-tag-legend {
+  color: #101215;
+  background: var(--gold-light);
+}
+
+.hof-tag-active {
+  color: rgba(242, 240, 236, 0.6);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.hof-stat {
+  font: 400 0.7rem/1 "IBM Plex Mono", monospace;
+  color: rgba(242, 240, 236, 0.44);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.hof-quote {
+  font: italic 400 0.78rem/1.5 "Public Sans", sans-serif;
+  color: rgba(242, 240, 236, 0.55);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  transition: color 0.13s ease;
+}
+
+.hof-cell.expanded .hof-quote {
+  -webkit-line-clamp: 6;
+  color: rgba(247, 245, 241, 0.92);
+}
+
+.hof-credit {
+  display: none;
+  padding-top: 0.1rem;
+  font: 500 0.58rem/1 "IBM Plex Mono", monospace;
+  letter-spacing: 0.08em;
+  color: rgba(242, 240, 236, 0.4);
+}
+
+.hof-cell.expanded .hof-credit {
+  display: block;
+}
+
+.hof-coach-bonus-line {
+  color: var(--win);
+  font-size: 0.7rem;
+}
+
+.hof-score-rail {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.8rem 0;
+}
+
+.hof-score-box {
+  flex: none;
+  width: 2.7rem;
+  height: 2.3rem;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: border-color 0.13s ease;
+}
+
+.hof-row:has(.hof-side-a:hover) .hof-score-a,
+.hof-row:has(.hof-side-a.expanded) .hof-score-a,
+.hof-row:has(.hof-side-b:hover) .hof-score-b,
+.hof-row:has(.hof-side-b.expanded) .hof-score-b {
+  border-color: oklch(var(--p-l) var(--p-c) var(--p-h) / 0.5);
+}
+
+.hof-score-inner {
+  font: 800 1.25rem/1 "Big Shoulders Display", sans-serif;
+  font-variant-numeric: tabular-nums;
+  color: rgba(242, 240, 236, 0.92);
+  transition: color 0.13s ease;
+}
+
+.hof-row:has(.hof-side-a:hover) .hof-score-a .hof-score-inner,
+.hof-row:has(.hof-side-a.expanded) .hof-score-a .hof-score-inner,
+.hof-row:has(.hof-side-b:hover) .hof-score-b .hof-score-inner,
+.hof-row:has(.hof-side-b.expanded) .hof-score-b .hof-score-inner {
+  color: oklch(var(--p-l) var(--p-c) var(--p-h));
+}
+
+@media (max-width: 720px) {
+  .hof-score-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+
+  .hof-score-block.hof-side-b {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .hof-side-b .hof-team-identity {
+    flex-direction: row;
+  }
+
+  .hof-roster-headrow,
+  .hof-row {
+    grid-template-columns: minmax(0, 1fr) 72px minmax(0, 1fr);
+    gap: 0.35rem;
+  }
+
+  .hof-cell {
+    padding: 0.55rem;
+    gap: 0.4rem;
+  }
+
+  .hof-headshot {
+    display: none;
+  }
+
+  .hof-name-row {
+    flex-wrap: nowrap;
+  }
+
+  .hof-stat,
+  .hof-quote,
+  .hof-credit {
+    display: none;
+  }
 }
 
 .link-btn {
@@ -1302,6 +1673,10 @@ select {
   margin: 0 auto;
 }
 
+.fullscreen-body:has(.hof-matchup) {
+  max-width: 1100px;
+}
+
 .player-card-header {
   display: flex;
   align-items: flex-start;
@@ -1325,18 +1700,6 @@ select {
   gap: 0.4rem;
   flex-wrap: wrap;
   margin: 0.3rem 0;
-}
-
-.game-detail-header {
-  display: flex;
-  gap: 0.5rem;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  margin-bottom: 0.5rem;
-}
-
-.game-detail-header .vs {
-  margin-top: 0.15rem;
 }
 
 @media (max-width: 480px) {
