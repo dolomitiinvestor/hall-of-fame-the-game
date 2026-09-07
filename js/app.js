@@ -21,7 +21,6 @@ import {
   advanceWeek,
   isSeasonComplete,
   isRegularSeasonComplete,
-  getStandingsList,
   getPlayerLeaders,
   weeklyPointsForPlayer,
   computePlayerWeek,
@@ -110,6 +109,7 @@ const state = {
   freeAgentFilter: { query: "", position: "ALL", tagFilter: "ALL" },
   devFilter: { query: "", position: "ALL", tagFilter: "ALL" },
   gamesWeekIndex: null,
+  devSettings: { slotMachineEnabled: true },
 };
 
 function getRules() {
@@ -122,6 +122,7 @@ function persist() {
     leagueSettings: state.leagueSettings,
     draft: state.draft,
     season: state.season,
+    devSettings: state.devSettings,
   });
 }
 
@@ -132,6 +133,7 @@ function restore() {
     // Merge (not replace) so a save from before a new setting existed
     // still gets that setting's default rather than `undefined`.
     state.leagueSettings = { ...DEFAULT_LEAGUE_SETTINGS, ...(saved.leagueSettings || {}) };
+    state.devSettings = { ...state.devSettings, ...(saved.devSettings || {}) };
     state.draft = saved.draft || null;
     state.season = saved.season || null;
     if (state.draft && state.draft.status === "complete") {
@@ -1196,7 +1198,7 @@ function digitizeText(text, minDigits = 2) {
   let match;
   while ((match = re.exec(text))) {
     html += escapeHtml(text.slice(lastIndex, match.index));
-    html += renderDigitRun(match[0], minDigits);
+    html += `<span class="reel-group">${renderDigitRun(match[0], minDigits)}</span>`;
     lastIndex = re.lastIndex;
   }
   html += escapeHtml(text.slice(lastIndex));
@@ -1206,10 +1208,12 @@ function digitizeText(text, minDigits = 2) {
 // The score-box number (e.g. "8.8", "22.8") as reel spans: at least 2
 // integer digits (blank-padded per renderDigitRun above), a static
 // ".", then exactly 1 fractional digit -- toFixed(1) always yields
-// exactly one, so it never needs padding.
+// exactly one, so it never needs padding. Wrapped as one .reel-group so
+// the whole number (not each individual digit) gets one flash when it
+// lands -- see startSlotMachineReels().
 function renderScoreReel(value) {
   const [intPart, fracPart] = value.toFixed(1).split(".");
-  return `${renderDigitRun(intPart, 2)}<span class="reel-dot">.</span>${renderDigitRun(fracPart, 1)}`;
+  return `<span class="reel-group">${renderDigitRun(intPart, 2)}<span class="reel-dot">.</span>${renderDigitRun(fracPart, 1)}</span>`;
 }
 
 function renderHofSide(entry, side, week, coachBonus, rules, season) {
@@ -1338,10 +1342,29 @@ function coachQuoteForTeam(team, week) {
 // alignment and picks the badge color (gold for the left/home side,
 // blue for the right/away side -- a fixed pair for this single
 // matchup view, not a persistent per-team color).
-function renderHofScoreBlock(team, score, otherScore, side, win, tie, week, weekIdx, season) {
+//
+// `animate`: when true, the big score and the result/margin render as
+// blank placeholders (data-final/data-result/data-margin hold the real
+// values) instead of the real numbers -- revealHofTeamScores() in the
+// slot-machine driver swaps them in once every roster row has landed,
+// so the header can't spoil who won before the roll finishes. The
+// losing side's dimmed-score class is likewise deferred to that same
+// reveal (via data-trailing) rather than applied upfront, since an
+// early "this one's dimmer" would itself be a spoiler.
+function renderHofScoreBlock(team, score, otherScore, side, win, tie, week, weekIdx, season, animate) {
   const record = formatRecord(teamRecordThroughWeek(season, team.id, weekIdx));
   const margin = Math.abs(score.total - otherScore.total).toFixed(1);
-  const resultLine = tie ? `<span class="hof-result-tie">TIE</span>` : win ? `<span class="hof-result-win">+${margin}</span>` : `<span class="hof-result-loss">&minus;${margin}</span>`;
+  const resultKind = tie ? "tie" : win ? "win" : "loss";
+  const scoreHtml = animate
+    ? `<div class="hof-team-score hof-score-pending" data-final="${score.total.toFixed(1)}" data-trailing="${win || tie ? "false" : "true"}">&mdash;&mdash;</div>`
+    : `<div class="hof-team-score${win || tie ? "" : " hof-team-score-trail"}">${score.total.toFixed(1)}</div>`;
+  const resultHtml = animate
+    ? `<span class="hof-result-pending" data-result="${resultKind}" data-margin="${margin}">&mdash;</span>`
+    : resultKind === "tie"
+      ? `<span class="hof-result-tie">TIE</span>`
+      : resultKind === "win"
+        ? `<span class="hof-result-win">+${margin}</span>`
+        : `<span class="hof-result-loss">&minus;${margin}</span>`;
   const coachQuote = coachQuoteForTeam(team, week);
   const coachQuoteHtml = coachQuote
     ? `<div class="hof-coach-quote" onclick="this.classList.toggle('expanded')">
@@ -1356,8 +1379,8 @@ function renderHofScoreBlock(team, score, otherScore, side, win, tie, week, week
         <span class="hof-team-name">${escapeHtml(team.name)}</span>
         <span class="hof-team-badge hof-badge-${side}">${teamMonogram(team.name)}</span>
       </div>
-      <div class="hof-team-score${win || tie ? "" : " hof-team-score-trail"}">${score.total.toFixed(1)}</div>
-      <div class="hof-team-statline">FINAL ${resultLine}</div>
+      ${scoreHtml}
+      <div class="hof-team-statline">FINAL ${resultHtml}</div>
       ${coachQuoteHtml}
     </div>`;
 }
@@ -1366,8 +1389,12 @@ function renderHofScoreBlock(team, score, otherScore, side, win, tie, week, week
 // mirrored roster below it -- the "Hall of Fame" matchup layout. Used
 // by the Games tab's fullscreen game view (see openGameFullscreen())
 // -- clicking a compact game row opens exactly this, full-screen,
-// rather than expanding in place.
-function buildGameDetailHtml(m, draft, label, week, weekIdx, season, rules) {
+// rather than expanding in place. `animate` (see openGameFullscreen())
+// only affects the team-score header here (see renderHofScoreBlock());
+// the roster's reel spans always render the same way regardless --
+// when nothing spins them, they simply display their final digit, so
+// an already-revealed game looks pixel-identical minus the motion.
+function buildGameDetailHtml(m, draft, label, week, weekIdx, season, rules, animate) {
   const [aId, bId] = m.teamIds;
   const aTeam = draft.teams.find((t) => t.id === aId);
   const bTeam = draft.teams.find((t) => t.id === bId);
@@ -1388,8 +1415,8 @@ function buildGameDetailHtml(m, draft, label, week, weekIdx, season, rules) {
         <div class="hof-final-pill"><span class="hof-final-dot"></span>FINAL</div>
       </div>
       <div class="hof-score-grid">
-        ${renderHofScoreBlock(aTeam, aScore, bScore, "a", aWin, tie, week, weekIdx, season)}
-        ${renderHofScoreBlock(bTeam, bScore, aScore, "b", bWin, tie, week, weekIdx, season)}
+        ${renderHofScoreBlock(aTeam, aScore, bScore, "a", aWin, tie, week, weekIdx, season, animate)}
+        ${renderHofScoreBlock(bTeam, bScore, aScore, "b", bWin, tie, week, weekIdx, season, animate)}
       </div>
       ${buildHofRosterHtml(aTeam, aScore, bTeam, bScore, week, rules, season)}
     </div>`;
@@ -1514,7 +1541,7 @@ function renderPlayoffsSection(season, draft) {
   const regularDone = isRegularSeasonComplete(season);
   const seeds = season.playoffs
     ? season.playoffs.seeds
-    : getStandingsList(season, draft)
+    : getRevealedStandingsList(season, draft)
         .slice(0, Math.min(4, draft.teams.length))
         .map((s) => s.teamId);
   const bracketSize = seeds.length;
@@ -1558,6 +1585,54 @@ function renderPlayoffsSection(season, draft) {
   `;
 }
 
+// Same shape/sort as getStandingsList() (season.js), but tallied fresh
+// from only the *revealed* regular-season matchups (see
+// isMatchupRevealed()) instead of reading season.standings, which
+// accumulates every played matchup the moment it's simulated. Every
+// game is still fully computed as soon as its week is advanced --
+// nothing here changes when or how results are decided, only when they
+// count toward what the Standings table (and the pre-playoff seed
+// preview, which is derived from the same table) is allowed to show.
+// Playoffs never affect the record either way (season.js's
+// updateStandings() is never called for them), so playoff weeks are
+// skipped here too, same as the real standings.
+function getRevealedStandingsList(season, draft) {
+  const tally = {};
+  draft.teams.forEach((t) => {
+    tally[t.id] = { teamId: t.id, teamName: t.name, wins: 0, losses: 0, ties: 0, pointsFor: 0, pointsAgainst: 0 };
+  });
+  season.weeklyResults.forEach((wk, weekIdx) => {
+    if (wk.round !== "regular") return;
+    wk.matchups.forEach((m, matchupIdx) => {
+      if (!isMatchupRevealed(weekIdx, matchupIdx)) return;
+      const [aId, bId] = m.teamIds;
+      const scoreA = m.scores[aId].total;
+      const scoreB = m.scores[bId].total;
+      const sa = tally[aId];
+      const sb = tally[bId];
+      sa.pointsFor += scoreA;
+      sa.pointsAgainst += scoreB;
+      sb.pointsFor += scoreB;
+      sb.pointsAgainst += scoreA;
+      if (m.winnerId === aId) {
+        sa.wins++;
+        sb.losses++;
+      } else if (m.winnerId === bId) {
+        sb.wins++;
+        sa.losses++;
+      } else {
+        sa.ties++;
+        sb.ties++;
+      }
+    });
+  });
+  return Object.values(tally).sort((a, b) => {
+    if (b.wins !== a.wins) return b.wins - a.wins;
+    if (a.losses !== b.losses) return a.losses - b.losses;
+    return b.pointsFor - a.pointsFor;
+  });
+}
+
 function renderSeason() {
   const draft = state.draft;
   if (!draft || draft.status !== "complete") {
@@ -1569,7 +1644,7 @@ function renderSeason() {
   }
   const season = state.season;
 
-  const standings = getStandingsList(season, draft)
+  const standings = getRevealedStandingsList(season, draft)
     .map(
       (s, i) => `
       <tr>
@@ -1673,24 +1748,29 @@ function handleSeasonClick(action) {
 // pushed to the outer edges). No expansion in place; tapping it opens the full
 // box score full-screen (see openGameFullscreen()) instead, which is
 // what keeps a whole week's slate fitting on screen together. Once the
-// game is finalized, the winning team's name+score get a gold glow.
+// game is finalized, the winning team's name+score get a gold glow --
+// but only once this specific matchup has actually been opened at
+// least once (see isMatchupRevealed()); until then both scores show as
+// "?" and neither name gets the win glow, so the week's slate can't be
+// skimmed for results without clicking into them.
 function renderCompactGameRow(m, draft, weekIdx, matchupIdx, label) {
   const [aId, bId] = m.teamIds;
   const aTeam = draft.teams.find((t) => t.id === aId);
   const bTeam = draft.teams.find((t) => t.id === bId);
   const aScore = m.scores[aId];
   const bScore = m.scores[bId];
-  const aWin = m.winnerId === aId ? " win" : "";
-  const bWin = m.winnerId === bId ? " win" : "";
+  const revealed = isMatchupRevealed(weekIdx, matchupIdx);
+  const aWin = revealed && m.winnerId === aId ? " win" : "";
+  const bWin = revealed && m.winnerId === bId ? " win" : "";
   const labelTag = label ? `<div class="game-row-label"><span class="tag-badge hovg-tag">${escapeHtml(label)}</span></div>` : "";
   return `
     <div class="game-row-wrap">
       ${labelTag}
       <button class="game-row" data-action="open-game" data-week-idx="${weekIdx}" data-matchup-idx="${matchupIdx}">
         <span class="game-row-name${aWin}">${escapeHtml(aTeam.name)}</span>
-        <span class="game-row-score${aWin}">${aScore.total.toFixed(1)}</span>
+        <span class="game-row-score${aWin}">${revealed ? aScore.total.toFixed(1) : "?"}</span>
         <span class="game-row-vs">vs</span>
-        <span class="game-row-score${bWin}">${bScore.total.toFixed(1)}</span>
+        <span class="game-row-score${bWin}">${revealed ? bScore.total.toFixed(1) : "?"}</span>
         <span class="game-row-name${bWin}">${escapeHtml(bTeam.name)}</span>
       </button>
     </div>`;
@@ -1740,7 +1820,7 @@ function previewWeekMatchups(season, draft, weekIndex) {
   const playoffWeekNum = weekIndex - season.regularSeasonWeeks;
   const seeds = season.playoffs
     ? season.playoffs.seeds
-    : getStandingsList(season, draft)
+    : getRevealedStandingsList(season, draft)
         .slice(0, Math.min(4, draft.teams.length))
         .map((s) => s.teamId);
   const bracketSize = seeds.length;
@@ -1876,13 +1956,16 @@ function handleGamesClick(action, target) {
 // Grouped and timed per .hof-row (not per digit, not per whole
 // matchup): every digit in a row -- both sides' score boxes and both
 // sides' box-score stat lines -- spins on one shared interval and
-// lands together at one random 3-6s stop time per row, so different
+// lands together at one random 2-5s stop time per row, so different
 // rows visibly stop at different moments while a single row's numbers
 // (e.g. a RB's rush yards, rush TDs, and points) stay in sync with
-// each other.
+// each other. The two team totals at the top stay hidden (see
+// renderHofScoreBlock()'s `animate` branch) until every row has landed,
+// so nothing at the bottom can spoil who won before the reveal finishes.
 const SLOT_TICK_MS = 100;
-const SLOT_MIN_DURATION_MS = 3000;
-const SLOT_MAX_DURATION_MS = 6000;
+const SLOT_MIN_DURATION_MS = 2000;
+const SLOT_MAX_DURATION_MS = 5000;
+const SLOT_FLASH_MS = 500;
 
 let activeSlotTimers = [];
 
@@ -1894,11 +1977,71 @@ function clearSlotMachineReels() {
   activeSlotTimers = [];
 }
 
+// One short percussive tick, synthesized with the Web Audio API rather
+// than a shipped sound file. The AudioContext is created (or resumed)
+// here, on the very first row to land -- but startSlotMachineReels()
+// itself always runs synchronously inside the click that opened the
+// game, so the *context* has already been created within that user
+// gesture by the time this actually plays; browsers are fine with a
+// gesture-created context making sound later from a timer.
+let slotAudioCtx = null;
+
+function playReelClickSound() {
+  try {
+    slotAudioCtx = slotAudioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (slotAudioCtx.state === "suspended") slotAudioCtx.resume();
+    const osc = slotAudioCtx.createOscillator();
+    const gain = slotAudioCtx.createGain();
+    osc.type = "square";
+    osc.frequency.value = 1200;
+    gain.gain.setValueAtTime(0.15, slotAudioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, slotAudioCtx.currentTime + 0.06);
+    osc.connect(gain).connect(slotAudioCtx.destination);
+    osc.start();
+    osc.stop(slotAudioCtx.currentTime + 0.06);
+  } catch {
+    // Web Audio unavailable/blocked -- the flash still shows without it.
+  }
+}
+
+// Reveals the two team totals + result line at the top once every row
+// has landed (see the `pendingRows` countdown in startSlotMachineReels
+// below) -- until then they're rendered as blank placeholders (see
+// renderHofScoreBlock()) so the header can't spoil the outcome ahead of
+// the roster roll finishing.
+function revealHofTeamScores(container) {
+  container.querySelectorAll(".hof-score-pending").forEach((el) => {
+    el.textContent = el.dataset.final;
+    if (el.dataset.trailing === "true") el.classList.add("hof-team-score-trail");
+    el.classList.remove("hof-score-pending");
+  });
+  container.querySelectorAll(".hof-result-pending").forEach((el) => {
+    const result = el.dataset.result;
+    const margin = el.dataset.margin;
+    el.classList.remove("hof-result-pending");
+    if (result === "tie") {
+      el.textContent = "TIE";
+      el.classList.add("hof-result-tie");
+    } else if (result === "win") {
+      el.textContent = `+${margin}`;
+      el.classList.add("hof-result-win");
+    } else {
+      el.textContent = `−${margin}`;
+      el.classList.add("hof-result-loss");
+    }
+  });
+}
+
 function startSlotMachineReels(container) {
   clearSlotMachineReels();
-  container.querySelectorAll(".hof-row").forEach((row) => {
+  const rows = Array.from(container.querySelectorAll(".hof-row")).filter((row) => row.querySelectorAll(".reel-digit").length);
+  if (!rows.length) {
+    revealHofTeamScores(container);
+    return;
+  }
+  let pendingRows = rows.length;
+  rows.forEach((row) => {
     const digitEls = row.querySelectorAll(".reel-digit");
-    if (!digitEls.length) return;
     const spin = () => {
       digitEls.forEach((el) => {
         el.textContent = String(Math.floor(Math.random() * 10));
@@ -1913,14 +2056,57 @@ function startSlotMachineReels(container) {
       digitEls.forEach((el) => {
         el.textContent = el.dataset.final;
       });
+      row.querySelectorAll(".reel-group").forEach((g) => {
+        g.classList.add("reel-flash");
+        const flashTimeoutId = setTimeout(() => g.classList.remove("reel-flash"), SLOT_FLASH_MS);
+        activeSlotTimers.push(flashTimeoutId);
+      });
+      playReelClickSound();
+      pendingRows--;
+      if (pendingRows === 0) revealHofTeamScores(container);
     }, duration);
     activeSlotTimers.push(timeoutId);
   });
 }
 
+// A matchup is identified for reveal-tracking purposes by its week
+// index + position within that week's matchup list -- stable for as
+// long as the season lasts, which is exactly how long it needs to be.
+// Stored on the season itself (state.season.revealedMatchups), not a
+// separate top-level state field, so it's automatically wiped whenever
+// a new season is created (nothing extra to reset) and automatically
+// persists as part of the season's own saved state (nothing extra to
+// plumb through persist()/restore()).
+function matchupRevealKey(weekIdx, matchupIdx) {
+  return `${weekIdx}:${matchupIdx}`;
+}
+
+function isMatchupRevealed(weekIdx, matchupIdx) {
+  return !!state.season?.revealedMatchups?.[matchupRevealKey(weekIdx, matchupIdx)];
+}
+
+// Marks a matchup as opened at least once -- gates the Games tab's
+// compact score row, the Standings table, and the slot-machine
+// animation itself (see openGameFullscreen() below) all off this same
+// flag. Returns true the first time (this call IS the reveal), false
+// if it was already revealed.
+function revealMatchup(weekIdx, matchupIdx) {
+  if (!state.season) return false;
+  if (!state.season.revealedMatchups) state.season.revealedMatchups = {};
+  const key = matchupRevealKey(weekIdx, matchupIdx);
+  const firstReveal = !state.season.revealedMatchups[key];
+  state.season.revealedMatchups[key] = true;
+  return firstReveal;
+}
+
 // Full-screen single-game view: X (or Escape) closes it and returns to
 // the Games tab's week view underneath, unchanged -- see
-// buildGameDetailHtml() for the actual content.
+// buildGameDetailHtml() for the actual content. The slot-machine reveal
+// (see startSlotMachineReels()) only ever plays the first time a given
+// matchup is opened, and only when the Dev screen's toggle allows it
+// (state.devSettings.slotMachineEnabled) -- reopening an already-seen
+// game, or opening any game with the toggle off, shows final numbers
+// immediately with no animation.
 function openGameFullscreen(weekIdx, matchupIdx) {
   const wk = state.season.weeklyResults[weekIdx];
   const m = wk.matchups[matchupIdx];
@@ -1931,17 +2117,27 @@ function openGameFullscreen(weekIdx, matchupIdx) {
       : wk.matchups.map(() => wk.roundLabel);
   const label = isPlayoff ? labels[matchupIdx] : null;
 
+  const animate = state.devSettings.slotMachineEnabled && !isMatchupRevealed(weekIdx, matchupIdx);
+  if (revealMatchup(weekIdx, matchupIdx)) persist();
+
   const body = document.getElementById("game-fullscreen-body");
   if (!body) return;
-  body.innerHTML = buildGameDetailHtml(m, state.draft, label, wk.week, weekIdx, state.season, getRules());
+  body.innerHTML = buildGameDetailHtml(m, state.draft, label, wk.week, weekIdx, state.season, getRules(), animate);
   document.getElementById("game-fullscreen-overlay").hidden = false;
-  startSlotMachineReels(body);
+  syncBodyScrollLock();
+  if (animate) startSlotMachineReels(body);
 }
 
 function closeGameFullscreen() {
   const overlay = document.getElementById("game-fullscreen-overlay");
   if (overlay) overlay.hidden = true;
   clearSlotMachineReels();
+  syncBodyScrollLock();
+  // Closing is the only point the Games/Season screens underneath get a
+  // chance to re-render -- if this game was just revealed for the first
+  // time, its score row and standings contribution were still hidden in
+  // whatever HTML was drawn before the overlay opened.
+  render();
 }
 
 // ---------------------------------------------------------- player card
@@ -2045,11 +2241,13 @@ function showPlayerCard(playerId) {
     ${renderPlayerGamesSection(player, rules)}
   `;
   overlay.hidden = false;
+  syncBodyScrollLock();
 }
 
 function closePlayerCard() {
   const overlay = document.getElementById("player-card-overlay");
   if (overlay) overlay.hidden = true;
+  syncBodyScrollLock();
 }
 
 // ---------------------------------------------------------------- dev
@@ -2132,6 +2330,15 @@ function renderDev() {
 
   return `
     <h2>Dev</h2>
+
+    <div class="panel">
+      <h3>Feature Toggles</h3>
+      <label class="dev-toggle-row">
+        <input type="checkbox" id="dev-slot-toggle" ${state.devSettings.slotMachineEnabled ? "checked" : ""} />
+        Slot-machine reel animation on the game-played view (spins to the real score/stats the first time you open a game)
+      </label>
+    </div>
+
     <p class="hint">Data-coverage checklist -- every player, ranked by nothing in particular (alphabetical), showing which have real quotes, a real archived season, and a headshot photo in the database. Everyone else falls back to generated data or the silhouette placeholder.</p>
     <p class="hint">
       ${withQuotes} of ${results.length} shown have quotes &middot;
@@ -2431,6 +2638,9 @@ function wireEvents() {
     } else if (state.screen === "dev" && e.target.id === "dev-tag-filter") {
       state.devFilter.tagFilter = e.target.value;
       render();
+    } else if (state.screen === "dev" && e.target.id === "dev-slot-toggle") {
+      state.devSettings.slotMachineEnabled = e.target.checked;
+      persist();
     }
   });
 }
@@ -2445,6 +2655,7 @@ function closeWelcomeSplash() {
   const overlay = document.getElementById("splash-overlay");
   if (!overlay || overlay.hidden) return;
   overlay.hidden = true;
+  syncBodyScrollLock();
   const audio = document.getElementById("splash-audio");
   if (audio) {
     audio.pause();
@@ -2456,6 +2667,7 @@ function closeWeekSplash() {
   const overlay = document.getElementById("week-splash-overlay");
   if (!overlay || overlay.hidden) return;
   overlay.hidden = true;
+  syncBodyScrollLock();
 }
 
 // Escape closes just the TOPMOST overlay, not everything at once --
@@ -2469,6 +2681,16 @@ function isAnyOverlayOpen() {
     const el = document.getElementById(id);
     return el && !el.hidden;
   });
+}
+
+// Locks the page body's own scroll while any full-screen overlay is up
+// (see .body-scroll-locked in style.css) -- otherwise, on a page taller
+// than the viewport, a scroll/swipe could move the page *behind* the
+// overlay (or rubber-band past its edges into it) instead of just
+// scrolling inside the overlay itself. Called after every place an
+// overlay's `hidden` flag changes, in either direction.
+function syncBodyScrollLock() {
+  document.body.classList.toggle("body-scroll-locked", isAnyOverlayOpen());
 }
 
 function closeTopOverlay() {
@@ -2494,6 +2716,7 @@ function initSplash() {
   const overlay = document.getElementById("splash-overlay");
   if (!overlay) return;
   overlay.hidden = false;
+  syncBodyScrollLock();
 
   const audio = document.getElementById("splash-audio");
   if (audio) {
@@ -2547,6 +2770,7 @@ function showWeekCompleteSplash(weekResult, newInjuries = []) {
     })
     .join("");
   overlay.hidden = false;
+  syncBodyScrollLock();
 }
 
 // Confetti burst for the season's final game (the championship) -- see
