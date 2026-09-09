@@ -496,6 +496,41 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 28, rushYds: 125, rushTD: 0, rec: 1, recYds: -2, recTD: 0 }, // Wk14 @WAS
     ],
   },
-
-
+  "terrell-davis": {
+    1997: [
+      { rushAtt: 26, rushYds: 101, rushTD: 1, rec: 3, recYds: 14, recTD: 0 }, // Wk1 vs KAN
+      { rushAtt: 21, rushYds: 107, rushTD: 1 }, // Wk2 @SEA
+      { rushAtt: 21, rushYds: 103, rushTD: 0, rec: 1, recYds: 4, recTD: 0 }, // Wk3 vs STL
+      { rushAtt: 27, rushYds: 215, rushTD: 1, rec: 2, recYds: 13, recTD: 0 }, // Wk4 vs CIN
+      { rushAtt: 23, rushYds: 79, rushTD: 1 }, // Wk5 @ATL
+      { rushAtt: 32, rushYds: 171, rushTD: 2, rec: 2, recYds: 7, recTD: 0 }, // Wk6 vs NWE
+      { rushAtt: 23, rushYds: 85, rushTD: 2, rec: 7, recYds: 70, recTD: 0 }, // Wk8 @OAK
+      { rushAtt: 42, rushYds: 207, rushTD: 1, rec: 5, recYds: 29, recTD: 0 }, // Wk9 @BUF (OT)
+      { rushAtt: 21, rushYds: 101, rushTD: 0, rec: 6, recYds: 17, recTD: 0 }, // Wk10 vs SEA
+      { rushAtt: 21, rushYds: 104, rushTD: 0, rec: 1, recYds: 12, recTD: 0 }, // Wk11 vs CAR
+      { rushAtt: 34, rushYds: 127, rushTD: 0, rec: 2, recYds: 13, recTD: 0 }, // Wk12 @KAN
+      { rushAtt: 21, rushYds: 69, rushTD: 3, rec: 4, recYds: 46, recTD: 0 }, // Wk13 vs OAK
+      { rushAtt: 26, rushYds: 178, rushTD: 1, rec: 4, recYds: 36, recTD: 0 }, // Wk14 @SDG
+      { rushAtt: 21, rushYds: 75, rushTD: 1, rec: 3, recYds: 26, recTD: 0 }, // Wk15 @PIT
+      { rushAtt: 10, rushYds: 28, rushTD: 1, rec: 2, recTD: 0 }, // Wk16 @SFO
+    ],
+    1998: [
+      { rushAtt: 22, rushYds: 75, rushTD: 2, rec: 1, recYds: 7, recTD: 0 }, // Wk1 vs NWE
+      { rushAtt: 23, rushYds: 191, rushTD: 3 }, // Wk2 vs DAL
+      { rushAtt: 28, rushYds: 104, rushTD: 0, rec: 1, recYds: 8, recTD: 0 }, // Wk3 @OAK
+      { rushAtt: 21, rushYds: 119, rushTD: 1, rec: 2, recYds: 7, recTD: 0 }, // Wk4 @WAS
+      { rushAtt: 20, rushYds: 168, rushTD: 2 }, // Wk5 vs PHI
+      { rushAtt: 30, rushYds: 208, rushTD: 1 }, // Wk6 @SEA
+      { rushAtt: 31, rushYds: 136, rushTD: 3, rec: 5, recYds: 76, recTD: 0 }, // Wk8 vs JAX
+      { rushAtt: 27, rushYds: 149, rushTD: 2, rec: 1, recYds: 3, recTD: 0 }, // Wk9 @CIN
+      { rushAtt: 20, rushYds: 69, rushTD: 1, rec: 2, recYds: 19, recTD: 1 }, // Wk10 vs SDG
+      { rushAtt: 18, rushYds: 111, rushTD: 1 }, // Wk11 @KAN
+      { rushAtt: 31, rushYds: 162, rushTD: 1, rec: 3, recYds: 26, recTD: 0 }, // Wk12 vs OAK
+      { rushAtt: 24, rushYds: 74, rushTD: 0, rec: 1, recYds: 4, recTD: 0 }, // Wk13 @SDG
+      { rushAtt: 24, rushYds: 88, rushTD: 3, rec: 5, recYds: 45, recTD: 0, fumblesLost: 1 }, // Wk14 vs KAN
+      { rushAtt: 28, rushYds: 147, rushTD: 1 }, // Wk15 @NYG
+      { rushAtt: 16, rushYds: 29, rushTD: 0, rec: 2, recYds: 5, recTD: 0 }, // Wk16 @MIA
+      { rushAtt: 29, rushYds: 178, rushTD: 0, rec: 2, recYds: 17, recTD: 1, fumblesLost: 1 }, // Wk17 vs SEA
+    ],
+  },
 };
