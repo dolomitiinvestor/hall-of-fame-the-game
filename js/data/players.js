@@ -304,6 +304,7 @@ export const PLAYERS = [
     weightLbs: 198,
     seasons: [
       { year: 1991, team: "BUF", games: 16, stats: { rushYds: 1407, rushTD: 7, rec: 62, recYds: 631, recTD: 5 } },
+      { year: 1992, team: "BUF", games: 16, stats: { rushYds: 1487, rushTD: 9, rec: 58, recYds: 626, recTD: 3 } },
     ],
   },
   {
@@ -348,7 +349,8 @@ export const PLAYERS = [
     heightIn: 71,
     weightLbs: 206,
     seasons: [
-      { year: 1998, team: "DEN", games: 16, stats: { rushYds: 2008, rushTD: 21, rec: 25, recYds: 217, recTD: 2 } },
+      { year: 1997, team: "DEN", games: 15, stats: { rushYds: 1750, rushTD: 15, rec: 42, recYds: 287 } },
+      { year: 1998, team: "DEN", games: 16, stats: { rushYds: 2008, rushTD: 21, rec: 25, recYds: 217, recTD: 2, fumblesLost: 2 } },
     ],
   },
   {
