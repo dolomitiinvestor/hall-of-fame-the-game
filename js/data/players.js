@@ -304,6 +304,7 @@ export const PLAYERS = [
     weightLbs: 198,
     seasons: [
       { year: 1991, team: "BUF", games: 16, stats: { rushYds: 1407, rushTD: 7, rec: 62, recYds: 631, recTD: 5 } },
+      { year: 1992, team: "BUF", games: 16, stats: { rushYds: 1487, rushTD: 9, rec: 58, recYds: 626, recTD: 3 } },
     ],
   },
   {

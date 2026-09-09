@@ -533,4 +533,44 @@ export const REAL_GAME_LOGS = {
       { rushAtt: 29, rushYds: 178, rushTD: 0, rec: 2, recYds: 17, recTD: 1, fumblesLost: 1 }, // Wk17 vs SEA
     ],
   },
+  "thurman-thomas": {
+    1992: [
+      { rushAtt: 22, rushYds: 103, rushTD: 3, rec: 3, recYds: 33, recTD: 1 }, // Wk1 vs RAM
+      { rushAtt: 19, rushYds: 85, rushTD: 1, rec: 4, recYds: 94, recTD: 1 }, // Wk2 @SFO
+      { rushAtt: 14, rushYds: 42, rushTD: 0, rec: 2, recYds: 29, recTD: 0 }, // Wk3 vs IND
+      { rushAtt: 18, rushYds: 120, rushTD: 1, rec: 2, recYds: 27, recTD: 0 }, // Wk4 @NWE
+      { rushAtt: 11, rushYds: 33, rushTD: 0, rec: 9, recYds: 83, recTD: 0 }, // Wk5 vs MIA
+      { rushAtt: 16, rushYds: 52, rushTD: 0, rec: 3, recYds: 27, recTD: 0 }, // Wk6 @RAI
+      { rushAtt: 21, rushYds: 142, rushTD: 0, rec: 3, recYds: 22, recTD: 1 }, // Wk8 @NYJ
+      { rushAtt: 12, rushYds: 29, rushTD: 0, rec: 5, recYds: 45, recTD: 0 }, // Wk9 vs NWE
+      { rushAtt: 37, rushYds: 155, rushTD: 1, rec: 4, recYds: 30, recTD: 0 }, // Wk10 vs PIT
+      { rushAtt: 22, rushYds: 73, rushTD: 0, rec: 6, recYds: 66, recTD: 0 }, // Wk11 @MIA
+      { rushAtt: 13, rushYds: 103, rushTD: 0 }, // Wk12 vs ATL
+      { rushAtt: 21, rushYds: 102, rushTD: 0, rec: 3, recYds: 37, recTD: 0 }, // Wk13 @IND (OT)
+      { rushAtt: 18, rushYds: 116, rushTD: 0, rec: 2, recYds: 24, recTD: 0 }, // Wk14 vs NYJ
+      { rushAtt: 26, rushYds: 120, rushTD: 1, rec: 3, recYds: 39, recTD: 0 }, // Wk15 vs DEN
+      { rushAtt: 24, rushYds: 115, rushTD: 2, rec: 6, recYds: 62, recTD: 0 }, // Wk16 @NOR
+      { rushAtt: 18, rushYds: 97, rushTD: 0, rec: 3, recYds: 8, recTD: 0 }, // Wk17 @HOU
+    ],
+  },
+  "randy-moss": {
+    2007: [
+      { rec: 9, recYds: 183, recTD: 1 }, // Wk1 @NYJ
+      { rec: 8, recYds: 105, recTD: 2 }, // Wk2 vs SDG
+      { rec: 5, recYds: 115, recTD: 2 }, // Wk3 vs BUF
+      { rec: 9, recYds: 102, recTD: 2 }, // Wk4 @CIN
+      { rec: 3, recYds: 46, recTD: 0 }, // Wk5 vs CLE
+      { rec: 6, recYds: 59, recTD: 1 }, // Wk6 @DAL
+      { rec: 4, recYds: 122, recTD: 2 }, // Wk7 @MIA
+      { rec: 3, recYds: 47, recTD: 1 }, // Wk8 vs WAS
+      { rec: 9, recYds: 145, recTD: 1 }, // Wk9 @IND
+      { rec: 10, recYds: 128, recTD: 4 }, // Wk11 @BUF
+      { rec: 5, recYds: 43, recTD: 0 }, // Wk12 vs PHI
+      { rec: 4, recYds: 34, recTD: 1 }, // Wk13 @BAL
+      { rec: 7, recYds: 135, recTD: 2 }, // Wk14 vs PIT
+      { rec: 5, recYds: 79, recTD: 0 }, // Wk15 vs NYJ
+      { rec: 5, recYds: 50, recTD: 2 }, // Wk16 vs MIA
+      { rec: 6, recYds: 100, recTD: 2 }, // Wk17 @NYG
+    ],
+  },
 };
