@@ -573,4 +573,24 @@ export const REAL_GAME_LOGS = {
       { rec: 6, recYds: 100, recTD: 2 }, // Wk17 @NYG
     ],
   },
+  "jerry-rice": {
+    1995: [
+      { rushAtt: 1, rushYds: 5, rushTD: 0, rec: 6, recYds: 87, recTD: 1 }, // Wk1 @NOR
+      { rec: 11, recYds: 167, recTD: 2 }, // Wk2 vs ATL
+      { rec: 6, recYds: 87, recTD: 2 }, // Wk3 vs NWE
+      { rec: 11, recYds: 181, recTD: 0 }, // Wk4 @DET
+      { rec: 7, recYds: 71, recTD: 1 }, // Wk5 vs NYG
+      { rec: 6, recYds: 43, recTD: 1 }, // Wk7 @IND
+      { rushAtt: 1, rushYds: 20, rushTD: 1, rec: 2, recYds: 21, recTD: 1 }, // Wk8 @STL
+      { rushAtt: 1, rushTD: 0, rec: 8, recYds: 108, recTD: 0 }, // Wk9 vs NOR
+      { rushAtt: 1, rushYds: 1, rushTD: 0, rec: 8, recYds: 111, recTD: 0, fumblesLost: 1 }, // Wk10 vs CAR
+      { rec: 5, recYds: 161, recTD: 1 }, // Wk11 @DAL
+      { rec: 8, recYds: 149, recTD: 2 }, // Wk12 @MIA
+      { rec: 7, recYds: 67, recTD: 1, fumblesLost: 1 }, // Wk13 vs STL
+      { rec: 5, recYds: 32, recTD: 0 }, // Wk14 vs BUF
+      { rec: 6, recYds: 121, recTD: 0 }, // Wk15 @CAR
+      { rushAtt: 1, rushYds: 10, rushTD: 0, rec: 14, recYds: 289, recTD: 3, fumblesLost: 1 }, // Wk16 vs MIN
+      { rec: 12, recYds: 153, recTD: 0, passYds: 41, passTD: 1 }, // Wk17 @ATL
+    ],
+  },
 };

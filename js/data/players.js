@@ -374,7 +374,7 @@ export const PLAYERS = [
     heightIn: 74,
     weightLbs: 200,
     seasons: [
-      { year: 1995, team: "SF", games: 16, stats: { rec: 122, recYds: 1848, recTD: 15 } },
+      { year: 1995, team: "SF", games: 16, stats: { rec: 122, recYds: 1848, recTD: 15, rushYds: 36, rushTD: 1, fumblesLost: 3, passYds: 41, passTD: 1 } },
     ],
   },
   {
