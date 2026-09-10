@@ -593,4 +593,24 @@ export const REAL_GAME_LOGS = {
       { rec: 12, recYds: 153, recTD: 0, passYds: 41, passTD: 1 }, // Wk17 @ATL
     ],
   },
+  "herschel-walker": {
+    1988: [
+      { rushAtt: 19, rushYds: 79, rushTD: 0, rec: 6, recYds: 56, recTD: 0 }, // Wk1 @PIT
+      { rushAtt: 29, rushYds: 149, rushTD: 1, rec: 3, recYds: 22, recTD: 0 }, // Wk2 @PHO
+      { rushAtt: 19, rushYds: 78, rushTD: 0, rec: 5, recYds: 80, recTD: 1 }, // Wk3 vs NYG
+      { rushAtt: 25, rushYds: 96, rushTD: 0, rec: 5, recYds: 27, recTD: 1 }, // Wk4 vs ATL
+      { rushAtt: 26, rushYds: 124, rushTD: 0, rec: 4, recYds: 23, recTD: 0 }, // Wk5 @NOR
+      { rushAtt: 15, rushYds: 51, rushTD: 0, rec: 5, recYds: 92, recTD: 0 }, // Wk6 vs WAS
+      { rushAtt: 21, rushYds: 88, rushTD: 0, rec: 4, recYds: 47, recTD: 0 }, // Wk7 @CHI
+      { rushAtt: 25, rushYds: 85, rushTD: 0, rec: 4, recYds: 42, recTD: 0 }, // Wk8 @PHI
+      { rushAtt: 17, rushYds: 87, rushTD: 0 }, // Wk9 vs PHO
+      { rushAtt: 20, rushYds: 96, rushTD: 0, rec: 6, recYds: 40, recTD: 0 }, // Wk10 @NYG
+      { rushAtt: 21, rushYds: 86, rushTD: 0 }, // Wk11 vs MIN
+      { rushAtt: 27, rushYds: 131, rushTD: 1, rec: 2, recYds: 16, recTD: 0 }, // Wk12 vs CIN
+      { rushAtt: 22, rushYds: 69, rushTD: 1, rec: 4, recYds: 20, recTD: 0 }, // Wk13 vs HOU
+      { rushAtt: 25, rushYds: 134, rushTD: 1, rec: 3, recYds: 7, recTD: 0 }, // Wk14 @CLE
+      { rushAtt: 27, rushYds: 98, rushTD: 0, rec: 2, recYds: 33, recTD: 0 }, // Wk15 @WAS
+      { rushAtt: 23, rushYds: 63, rushTD: 1 }, // Wk16 vs PHI
+    ],
+  },
 };

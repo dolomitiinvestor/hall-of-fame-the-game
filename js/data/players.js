@@ -1041,6 +1041,7 @@ export const PLAYERS = [
     tag: "HOVG",
     seasons: [
       { year: 1986, team: "DAL", games: 16, stats: { rushYds: 1514, rushTD: 12, rec: 76, recYds: 837, recTD: 2 } },
+      { year: 1988, team: "DAL", games: 16, stats: { rushYds: 1514, rushTD: 5, rec: 53, recYds: 505, recTD: 2 } },
     ],
   },
   {
