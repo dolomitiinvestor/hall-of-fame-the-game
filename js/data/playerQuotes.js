@@ -28,7 +28,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about our four straight Super Bowl losses, which is why I've always maintained that getting to the mountain top four times takes a resilience most teams never even taste.",
   "Taking a massive hit from a 250-pound linebacker over the middle hurts, but getting right back up and jogging back to the huddle lets the defense know they're never going to break you.",
   "When your career is finally over, you want people to remember that you played with unmatched grit, mastered the slot before it was fashionable, and left everything you had on the turf."
-]
+],
 "art-monk": [
   "When you spend your entire career quietly catching passes in Joe Gibbs's gritty Washington offense without ever drawing a penalty for celebrating, people start to wonder if you even know how to smile.",
   "They used to say a possession receiver couldn't be a true offensive focal point, which was a hilarious narrative right up until you break the NFL single-season receptions record with 106 catches.",
@@ -46,7 +46,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about my quiet demeanor and lack of flashy touchdown celebrations, which is why I've always preferred to let my career receptions record speak for itself.",
   "Taking a massive hit from a safety across the middle hurts, but getting right back up without saying a word sends a message that breaks the defense's spirit.",
   "When your career is finally over, you want people to remember that you played with ultimate professionalism, caught everything thrown your way, and blocked like an extra offensive lineman."
-]
+],
   
   "calvin-johnson": [
   "When defensive coordinators spend all week terrified of single coverage and still decide to put just one cornerback on a 6-foot-5 receiver who runs a 4.35, you realize real quick that some matchups are just unfair.",
@@ -65,7 +65,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about my sudden retirement from football in my prime, which is why I've always preferred to let my brief, terrifying peak speak for itself.",
   "Taking a massive hit from a linebacker while making a contested catch hurts, but popping right back up and jogging back to the huddle lets the defense know they're in for a long afternoon.",
   "When your career is finally over, you want people to remember that you played with unmatched dominance, redefined the physical standard for wide receivers, and struck fear into every secondary in the NFL."
-]
+],
   "john-elway": [
   "When you refuse to play for the franchise that drafted you first overall in 1983 because you'd rather play professional baseball for the Yankees than freeze in Baltimore, people quickly realize you aren't going to back down from anyone.",
   "They used to say an offense with an athletic quarterback rolling out and improvising couldn't win big games, which was a great theory right up until we dragged three heavily overmatched Denver rosters kicking and screaming to the Super Bowl.",
@@ -83,7 +83,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about my early Super Bowl blowouts and whether we could win the big one, which is why riding off into the sunset with consecutive championships was the sweetest redemption possible.",
   "Taking a massive hit from a 270-pound linebacker hurts, but walking back to the huddle knowing you converted a third-and-long makes the bruised ribs completely worth it.",
   "When your career is finally over, you want people to remember that you played with unmatched grit, possessed a legendary right arm, and left every single ounce of yourself on the field."
-]
+],
 "lance-alworth": [
   "When they started calling you 'Bambi' because you looked like a delicate, fleet-footed deer running downfield, you quickly taught every defensive back in the American Football League that deer have sharp antlers.",
   "They used to say a skinny receiver out of Arkansas couldn't survive the physical beating of professional football, which was hilarious right up until I became the first player in AFL history to cross 10,000 receiving yards.",
@@ -101,7 +101,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about the high-scoring, wide-open style of the old Chargers teams, which is why I've always preferred to let our offensive dominance speak for itself.",
   "Taking a massive hit from a safety while stretching out for a deep pass hurts, but walking back to the huddle knowing you burned the secondary for a touchdown makes the pain disappear.",
   "When your career is finally over, you want people to remember that you played with effortless grace, revolutionized the deep ball, and struck fear into every defensive coordinator in football."
-]  
+],
   "ozzie-newsome": [
   "When you spend your entire career quietly catching passes over the middle for the Cleveland Browns without ever drawing a single penalty for running your mouth, people start to wonder if you even know how to speak.",
   "They used to say I was too slow to be a premier tight end, which was a fair point right up until I broke nearly every franchise receiving record by simply out-thinking every linebacker trying to cover me.",
@@ -119,7 +119,7 @@ export const PLAYER_QUOTES = {
   "I've heard every joke about my infamous silence during press conferences, which is why I always maintained that if you don't say anything stupid, nobody can quote you on it.",
   "Watching a draft pick you spent months scouting turn out to be a complete bust hurts worse than any linebacker hit you ever took across the middle of the field.",
   "When your career is finally over, you want people to remember that you were a wizard in the front office, a terror on the gridiron, and a man who let his work ethic do all the shouting."
-]
+],
 "steve-largent": [
   "When you enter the league as a fourth-round draft pick whom the Houston Oilers traded away for an eighth-round pick, you quickly realize your entire career is going to be built on proving people wrong.",
   "They used to say I didn't have the size, the speed, or the vertical jump to be a premier wide receiver, which was all true right up until I retired holding nearly every major career receiving record.",
@@ -137,7 +137,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about my lack of elite burner speed, which is why I always preferred to let my career records and clutch catches do the talking.",
   "Taking a massive hit across the middle from a safety hurts, but popping right back up, handing the ball to the referee, and walking back to the huddle sends a message they won't forget.",
   "When your career is finally over, you want people to remember that you played with unmatched precision, caught everything thrown your way, and set the gold standard for professionalism."
-]
+],
 "shannon-sharpe": [
   "When you walk into the Hall of Fame as the first tight end in NFL history to cross 10,000 receiving yards, you make damn sure everyone remembers you did it while talking more trash than anyone else on the field.",
   "They used to say a skinny Savannah State prospect was too small to block defensive ends, which was a great theory until I started running past linebackers and leaving them completely lost in single coverage.",
@@ -155,7 +155,7 @@ export const PLAYER_QUOTES = {
   "I've heard every critique about my talking and my media career after football, which is why I've always maintained that if you're going to write the check with your mouth, you better make sure your game can cash it.",
   "Taking a massive hit from a safety hurts, but walking back to the huddle after converting a third down and giving the defense a free lecture makes the pain completely worth it.",
   "When your career is finally over, you want people to remember that you played with unmatched swagger, redefined the tight end position, and out-talked and out-played everybody on the field."
-]
+],
 "tim-brown": [
   "When you walk across the stage in New York City in 1987 as the first wide receiver in history to win the Heisman Trophy, you realize real quick that every single defensive back in the NFL is going to treat you like public enemy number one.",
   "They used to say playing in Al Davis's Oakland Raiders organization was chaotic, which was completely true, but when owner Al wants you to run a deep post route, you just lace up your cleats and go beat your man.",
@@ -173,7 +173,7 @@ export const PLAYER_QUOTES = {
   "I've heard every narrative about our turbulent years in Oakland and missing out on a Super Bowl ring, which is why I've always let my longevity and production speak for themselves.",
   "Taking a massive hit from a linebacker while reaching for a high pass hurts, but walking back to the huddle knowing you converted a crucial third down makes the pain disappear.",
   "When your career is finally over, you want people to remember that you played with explosive versatility, feared no defender, and redefined what a clutch wide receiver could do."
-]
+],
 "troy-aikman": [
     "When you walk into the Dallas Cowboys locker room after Jerry Jones buys the team and fires Tom Landry, you realize real quick that the media circus is going to be just as loud as the pass rush.",
     "They used to say we ran the ball too much with Emmitt Smith, which was a great narrative until you realize handing it off to the NFL's all-time leading rusher makes third-and-short feel like a vacation.",
@@ -191,7 +191,7 @@ export const PLAYER_QUOTES = {
     "I've heard every narrative about our nineties dynasty and the off-field chaos, which is why I've always preferred to let our championship dominance speak for itself.",
     "Taking a massive hit from a 270-pound defensive end hurts, but walking back to the sideline knowing you missed an open receiver on third down hurts your pride way worse.",
     "When your career is finally over, you want people to remember that you played with surgical efficiency, led the definitive dynasty of the nineties, and never backed down from anyone."
-]
+],
   "ja'marr-chase": [
     "I'm always f'ing open",
     "Pat is good, but I'm better.",
