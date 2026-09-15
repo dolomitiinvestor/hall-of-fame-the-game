@@ -559,6 +559,13 @@ function formatHeightWeight(player) {
   return `${feet}'${inches}", ${player.weightLbs} lbs`;
 }
 
+// "Hometown · College · Draft" -- each segment only appears once sourced
+// (see js/data/players.js's field comments); "" when none are.
+function formatBioLine(player) {
+  const parts = [player.hometown, player.college, player.draftPick].filter(Boolean);
+  return parts.join(" · ");
+}
+
 // Coach ids carry a "coach-" prefix (e.g. "coach-andy-reid") to keep
 // them out of the player id namespace, but uploaded headshot files are
 // inconsistently named -- some keep that prefix (coach-curly-lambeau.jpg),
@@ -2226,6 +2233,7 @@ function showPlayerCard(playerId) {
       <div>
         <h2>${escapeHtml(player.name)}</h2>
         ${formatHeightWeight(player) ? `<p class="hint player-card-hw">${formatHeightWeight(player)}</p>` : ""}
+        ${formatBioLine(player) ? `<p class="hint player-card-bio">${escapeHtml(formatBioLine(player))}</p>` : ""}
         <p class="player-card-badges">
           <span class="pos-badge pos-${player.position}">${player.position}</span>
           ${tagBadge(player)}
