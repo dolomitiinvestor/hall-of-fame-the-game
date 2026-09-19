@@ -42,6 +42,35 @@ body {
   display: none;
 }
 
+/* Welcome splash only: fills the entire viewport (tab and mobile alike)
+   instead of sitting in a padded, size-limited box -- it's just the
+   logo, so there's no text/injury content that would need room to
+   breathe like the week-complete splash still does. */
+#splash-overlay {
+  padding: 0;
+}
+
+#splash-overlay .splash-content {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+#splash-overlay .splash-logo {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  border-radius: 0;
+}
+
 /* Season-complete confetti burst -- see launchConfetti() in app.js.
    Sits above even the week-complete splash (that's exactly when it
    fires) and never intercepts clicks. */
