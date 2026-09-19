@@ -2481,7 +2481,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What are the splash screens?",
-    a: "The welcome splash (logo + theme song) shows every time you open or refresh the site. A second one -- logo again, no audio -- pops up after every 'Advance Week' to congratulate you and name the week (or playoff round) you just completed. Both close the same way: click the X, or press Escape.",
+    a: "The welcome splash (logo + theme song) shows fullscreen every time you open or refresh the site -- click the X, or press any key, to close it. A second one -- logo again, no audio -- pops up after every 'Advance Week' to congratulate you and name the week (or playoff round) you just completed; close it with the X or Escape.",
   },
   {
     q: "What's coming next?",
@@ -2655,9 +2655,12 @@ function wireEvents() {
 
 // Splash screens: the welcome splash (shown on every page load/refresh)
 // and the post-week congratulations splash (shown after each "Advance
-// Week"). Both are dismissed by their own X button, or by Escape --
-// never a timeout or backdrop click, so neither is ever mistaken for a
-// loading state.
+// Week"). Both are dismissed by their own X button, or by Escape; the
+// welcome splash (now fullscreen -- see #splash-overlay in style.css)
+// also closes on ANY keypress, since "press any key to continue" is the
+// expected way to dismiss a fullscreen title-card splash. Never a
+// timeout or backdrop click, so neither is ever mistaken for a loading
+// state.
 
 function closeWelcomeSplash() {
   const overlay = document.getElementById("splash-overlay");
@@ -2737,6 +2740,11 @@ function initSplash() {
   document.getElementById("player-card-close").addEventListener("click", closePlayerCard);
   document.getElementById("game-fullscreen-close").addEventListener("click", closeGameFullscreen);
   document.addEventListener("keydown", (e) => {
+    // Fullscreen welcome splash: any key dismisses it, not just Escape.
+    if (!overlay.hidden) {
+      closeWelcomeSplash();
+      return;
+    }
     if (e.key === "Escape") closeTopOverlay();
   });
 }
