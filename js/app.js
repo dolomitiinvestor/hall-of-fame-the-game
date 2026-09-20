@@ -2481,7 +2481,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What are the splash screens?",
-    a: "The welcome splash (logo + theme song) shows fullscreen every time you open or refresh the site -- click the X, or press any key, to close it. A second one -- logo again, no audio -- pops up after every 'Advance Week' to congratulate you and name the week (or playoff round) you just completed; close it with the X or Escape.",
+    a: "The welcome splash (logo + theme song) shows fullscreen every time you open or refresh the site -- click/tap anywhere, or press any key, to close it. A second one -- logo again, no audio -- pops up after every 'Advance Week' to congratulate you and name the week (or playoff round) you just completed; close it with the X or Escape.",
   },
   {
     q: "What's coming next?",
@@ -2657,10 +2657,11 @@ function wireEvents() {
 // and the post-week congratulations splash (shown after each "Advance
 // Week"). Both are dismissed by their own X button, or by Escape; the
 // welcome splash (now fullscreen -- see #splash-overlay in style.css)
-// also closes on ANY keypress, since "press any key to continue" is the
-// expected way to dismiss a fullscreen title-card splash. Never a
-// timeout or backdrop click, so neither is ever mistaken for a loading
-// state.
+// also closes on ANY keypress or click anywhere on it, since "press any
+// key / tap to continue" is the expected way to dismiss a fullscreen
+// title-card splash. The week-complete splash keeps its narrower
+// dismiss set (X / Escape only) since it holds text/injury content a
+// stray tap shouldn't blow past.
 
 function closeWelcomeSplash() {
   const overlay = document.getElementById("splash-overlay");
@@ -2735,7 +2736,7 @@ function initSplash() {
     audio.play().catch(() => {});
   }
 
-  document.getElementById("splash-close").addEventListener("click", closeWelcomeSplash);
+  overlay.addEventListener("click", closeWelcomeSplash);
   document.getElementById("week-splash-close").addEventListener("click", closeWeekSplash);
   document.getElementById("player-card-close").addEventListener("click", closePlayerCard);
   document.getElementById("game-fullscreen-close").addEventListener("click", closeGameFullscreen);
